@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The AIM — Shop</title>
+<meta name="description" content="Every item in the current The AIM drop — hand-picked, limited, delivered fast across India." />
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://ascentra.netlify.app/shop.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The AIM">
+<meta property="og:title" content="All Products — The AIM">
+<meta property="og:description" content="Browse every product at The AIM — room, desk, gadgets, storage and daily essentials.">
+<meta property="og:image" content="https://ascentra.netlify.app/images/products/22_butterfly_phone_stand_hero.webp">
+<meta property="og:url" content="https://ascentra.netlify.app/shop.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="All Products — The AIM">
+<meta name="twitter:description" content="Browse every product at The AIM — room, desk, gadgets, storage and daily essentials.">
+<meta name="twitter:image" content="https://ascentra.netlify.app/images/products/22_butterfly_phone_stand_hero.webp">
+<meta name="theme-color" content="#0c0c0d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/shelf.css">
+<link rel="stylesheet" href="css/cart.css">
+<style>
+:root{
+  --ink:#0c0c0d; --ink-2:#111113;
+  --line-1:#2a2a2e; --line-soft:#1e1e21;
+  --text:#ececee; --muted:#9a9a9f; --faint:#6a6a70;
+  --gold:#c9a15f; --gold-hi:#e7c98a; --live:#6aa88f;
+  --f-display:"Fraunces",Georgia,serif;
+  --f-body:"Space Grotesk",system-ui,sans-serif;
+  --f-mono:"Space Mono",monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --maxw:1240px;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ background:var(--ink); scroll-behavior:smooth; }
+body{
+  background:radial-gradient(1400px 900px at 50% -25%, #1c1c22, var(--ink) 62%) fixed;
+  color:var(--text); font-family:var(--f-body);
+  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+img{ display:block; max-width:100%; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; color:inherit; background:none; border:none; cursor:pointer; }
+::selection{ background:var(--gold); color:var(--ink); }
+:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+
+.wrap{ max-width:var(--maxw); margin:0 auto; padding:0 clamp(1.25rem,4vw,2.5rem); }
+
+header{
+  position:sticky; top:0; z-index:50;
+  background:rgba(11,10,8,.85); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line-soft);
+}
+.nav{ display:flex; align-items:center; justify-content:space-between; gap:2rem; height:76px; }
+.logo{ font-family:var(--f-display); font-size:1.2rem; letter-spacing:.3em; text-transform:uppercase; }
+.logo b{ color:var(--gold); font-weight:400; }
+.nav-links{ display:flex; gap:2.4rem; }
+.nav-links a{
+  font-family:var(--f-mono); font-size:.66rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--muted); padding:.4rem 0; position:relative; transition:color .3s;
+}
+.nav-links a::after{ content:""; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--gold); transition:width .35s var(--ease); }
+.nav-links a:hover{ color:var(--text); }
+.nav-links a:hover::after{ width:100%; }
+.nav-right{ display:flex; align-items:center; gap:1.6rem; }
+@media (max-width:880px){ .nav-links{ display:none } }
+.btn-solid{
+  font-family:var(--f-mono); font-size:.7rem; letter-spacing:.16em; text-transform:uppercase;
+  display:inline-flex; align-items:center; padding:.8rem 1.5rem;
+  border:1px solid var(--gold); background:linear-gradient(180deg,#E9CD8D,var(--gold));
+  color:#141006; font-weight:700;
+  position:relative; overflow:hidden;
+  transition:all .35s var(--ease); white-space:nowrap;
+}
+.btn-solid::after{
+  content:""; position:absolute; top:-4px; bottom:-4px; left:-70%; width:42%;
+  background:linear-gradient(100deg, transparent, rgba(255,255,255,.6), transparent);
+  transform:skewX(-20deg); transition:left .55s var(--ease); pointer-events:none;
+}
+.btn-solid:hover::after{ left:135%; }
+.btn-solid:hover{ background:var(--gold-hi); border-color:var(--gold-hi); transform:translateY(-2px); }
+
+.eyebrow{
+  font-family:var(--f-mono); font-size:.64rem; letter-spacing:.26em;
+  text-transform:uppercase; color:var(--gold);
+  display:inline-flex; align-items:center; gap:.7em;
+}
+.live-dot{
+  width:7px; height:7px; border-radius:50%; background:var(--live); display:inline-block;
+  box-shadow:0 0 0 0 rgba(106,168,143,.6); animation:pulse 2.2s infinite;
+}
+@keyframes pulse{
+  0%{ box-shadow:0 0 0 0 rgba(106,168,143,.5) }
+  70%{ box-shadow:0 0 0 9px rgba(106,168,143,0) }
+  100%{ box-shadow:0 0 0 0 rgba(106,168,143,0) }
+}
+
+.shop-head{ padding:clamp(3rem,6vw,4.5rem) 0 2.2rem; }
+.shop-head h1{
+  font-family:var(--f-display); font-weight:400; letter-spacing:-.012em; line-height:1.05;
+  font-size:clamp(2.4rem,5.5vw,4rem); margin-top:1.2rem;
+}
+.shop-head h1 em{ font-style:italic; font-weight:300;
+  background:linear-gradient(100deg, #F3E2B3 0%, #D8B472 35%, #FBEDC2 50%, #D8B472 65%, #A97F3C 100%);
+  background-size:220% 100%;
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:foil 7s ease-in-out infinite; }
+@keyframes foil{ 0%,100%{ background-position:0% 0 } 50%{ background-position:100% 0 } }
+@media (prefers-reduced-motion:reduce){ h1 em, h2 em, .shop-head h1 em, .rhead h2 em{ animation:none } }
+
+.shop-head p{ color:var(--muted); margin-top:1rem; max-width:30rem; }
+
+.filters{
+  display:flex; gap:.7rem; flex-wrap:wrap; margin:2.2rem 0 3.4rem;
+}
+.fchip{
+  font-family:var(--f-mono); font-size:.62rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--muted); border:1px solid var(--line-1); padding:.65em 1.3em; border-radius:999px;
+  transition:all .3s var(--ease);
+}
+.fchip:hover{ border-color:var(--gold); color:var(--gold-hi); }
+.fchip.on{
+  background:linear-gradient(180deg,#E9CD8D,var(--gold)); border-color:var(--gold); color:#141006; font-weight:700;
+}
+.fchip .n{ opacity:.6; margin-left:.5em; }
+
+
+/* ── search + sort ── */
+.shop-tools{ display:flex; gap:1rem; flex-wrap:wrap; align-items:center; margin-top:2rem; }
+.searchbox{
+  position:relative; flex:1; min-width:230px; max-width:380px;
+  display:flex; align-items:center;
+  border:1px solid var(--line-1); border-radius:999px;
+  background:rgba(255,255,255,.02); transition:border-color .3s;
+}
+.searchbox:focus-within{ border-color:var(--gold); }
+.searchbox .si{ padding:0 .2rem 0 1.1rem; color:var(--faint); font-size:1.05rem; }
+.searchbox input{
+  flex:1; background:none; border:none; outline:none; color:var(--text);
+  font-family:var(--f-body); font-size:.9rem; padding:.85rem .8rem;
+}
+.searchbox input::placeholder{ color:var(--faint); }
+.searchbox button{
+  border:none; background:none; color:var(--faint); cursor:pointer;
+  padding:0 1rem; font-size:.8rem; transition:color .3s;
+}
+.searchbox button:hover{ color:var(--gold-hi); }
+.sortbox{ display:flex; align-items:center; gap:.7rem; }
+.sortbox label{
+  font-family:var(--f-mono); font-size:.6rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--faint);
+}
+.sortbox select{
+  background:rgba(255,255,255,.02); color:var(--text); cursor:pointer;
+  border:1px solid var(--line-1); border-radius:999px;
+  font-family:var(--f-mono); font-size:.62rem; letter-spacing:.1em;
+  padding:.75rem 1.1rem; outline:none; transition:border-color .3s;
+}
+.sortbox select:hover, .sortbox select:focus{ border-color:var(--gold); }
+.sortbox option{ background:#141416; color:var(--text); }
+
+.shop-grid-zone{ padding-bottom:clamp(4rem,8vw,6rem); }
+.count-line{
+  font-family:var(--f-mono); font-size:.62rem; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--faint); margin:0 0 2.2rem .2rem;
+}
+.count-line b{ color:var(--gold-hi); font-weight:400; }
+
+.empty{
+  text-align:center; padding:4rem 1rem; color:var(--muted); font-family:var(--f-mono);
+  font-size:.72rem; letter-spacing:.16em; text-transform:uppercase;
+}
+
+footer{ border-top:1px solid var(--line-soft); padding:3rem 0 2.4rem; }
+.foot{
+  display:flex; justify-content:space-between; align-items:center; gap:1.5rem; flex-wrap:wrap;
+  font-family:var(--f-mono); font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:var(--faint);
+}
+.foot a{ color:var(--muted); transition:color .3s; }
+.foot a:hover{ color:var(--gold-hi); }
+.foot .links{ display:flex; gap:2rem; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="index.html" class="logo">THE AIM<b>.</b></a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="shop.html">All Products</a>
+    </nav>
+    <div class="nav-right"><button class="cart-btn" data-cart-open aria-label="Open cart">Bag<span class="badge" data-cart-count>0</span></button></div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap shop-head">
+    <h1>All <em>products.</em></h1>
+    <div class="shop-tools">
+      <div class="searchbox">
+        <span class="si" aria-hidden="true">⌕</span>
+        <input id="searchInput" type="search" placeholder="Search products…" aria-label="Search products" autocomplete="off" />
+        <button id="searchClear" aria-label="Clear search" hidden>✕</button>
+      </div>
+      <div class="sortbox">
+        <label for="sortSelect">Sort</label>
+        <select id="sortSelect" aria-label="Sort products">
+          <option value="default">Featured</option>
+          <option value="price-asc">Price: low to high</option>
+          <option value="price-desc">Price: high to low</option>
+          <option value="name">Name: A–Z</option>
+        </select>
+      </div>
+    </div>
+    <div class="filters" id="filters" role="tablist" aria-label="Filter by category"></div>
+  </div>
+
+  <div class="wrap shop-grid-zone">
+    <p class="count-line" id="countLine"></p>
+    <div class="grid" id="shopGrid" data-plaque="All Products"></div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 The AIM</span>
+    <span class="links">
+      <a href="index.html">Home</a>
+      <a href="contact.html">Contact</a>
+      <a href="shipping.html">Shipping</a>
+      <a href="returns.html">Returns</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="curator.html">Curators</a>
+    </span>
+    <span>Ships across India</span>
+  </div>
+</footer>
+
+<script src="js/products-data.js"></script>
+<script src="js/shelf.js"></script>
+<script>
+(function(){
+  var grid = document.getElementById('shopGrid');
+  var countLine = document.getElementById('countLine');
+  var filtersEl = document.getElementById('filters');
+
+  /* build category counts */
+  var cats = {};
+  PRODUCTS.forEach(function(p){ cats[p.category] = (cats[p.category]||0) + 1; });
+  var catNames = Object.keys(cats).sort();
+
+  /* plaque names per category — the niche label changes with the filter */
+  var PLAQUES = {
+    'All':'All Products',
+    'Room':'Room',
+    'Desk':'Desk',
+    'Gadgets':'Gadgets',
+    'Storage':'Storage',
+    'Daily Essentials':'Daily Essentials'
+  };
+
+  var current = 'All';
+  var param = new URLSearchParams(location.search).get('category');
+  if(param && cats[param]) current = param;
+
+  function chipHTML(name, n){
+    return '<button class="fchip'+(name===current?' on':'')+'" data-cat="'+name+'" role="tab" ' +
+           'aria-selected="'+(name===current)+'">'+name+'<span class="n">'+n+'</span></button>';
+  }
+
+  function renderFilters(){
+    filtersEl.innerHTML =
+      chipHTML('All', PRODUCTS.length) +
+      catNames.map(function(c){ return chipHTML(c, cats[c]); }).join('');
+    Array.prototype.forEach.call(filtersEl.children, function(btn){
+      btn.addEventListener('click', function(){
+        current = btn.dataset.cat;
+        var url = new URL(location.href);
+        if(current === 'All') url.searchParams.delete('category');
+        else url.searchParams.set('category', current);
+        history.replaceState(null, '', url);
+        renderFilters(); renderGrid();
+      });
+    });
+  }
+
+  var query = '', sortBy = 'default';
+
+  function renderGrid(){
+    var items = current === 'All'
+      ? PRODUCTS.slice()
+      : PRODUCTS.filter(function(p){ return p.category === current; });
+
+    if(query){
+      var q = query.toLowerCase();
+      items = items.filter(function(p){
+        return (p.name + ' ' + p.category + ' ' + (p.desc||'')).toLowerCase().indexOf(q) > -1;
+      });
+    }
+    if(sortBy === 'price-asc')  items.sort(function(a,b){ return a.price - b.price; });
+    if(sortBy === 'price-desc') items.sort(function(a,b){ return b.price - a.price; });
+    if(sortBy === 'name')       items.sort(function(a,b){ return a.name.localeCompare(b.name); });
+    grid.setAttribute('data-plaque', PLAQUES[current] || current);
+    if(!items.length){
+      grid.innerHTML = '<div class="empty" style="grid-column:1/-1">' +
+        (query ? 'No products match “' + query + '”.' : 'Nothing here right now.') + '</div>';
+    } else {
+      grid.innerHTML = items.map(shelfCard).join('');
+    }
+    countLine.innerHTML = 'Showing <b>' + items.length + '</b> of ' + PRODUCTS.length + ' products' +
+      (current !== 'All' ? ' · ' + current : '') +
+      (query ? ' · “' + query + '”' : '');
+  }
+
+  var si = document.getElementById('searchInput');
+  var sc = document.getElementById('searchClear');
+  var t;
+  si.addEventListener('input', function(){
+    clearTimeout(t);
+    t = setTimeout(function(){
+      query = si.value.trim();
+      sc.hidden = !query;
+      renderGrid();
+    }, 160);
+  });
+  sc.addEventListener('click', function(){
+    si.value = ''; query = ''; sc.hidden = true; renderGrid(); si.focus();
+  });
+  document.getElementById('sortSelect').addEventListener('change', function(e){
+    sortBy = e.target.value; renderGrid();
+  });
+
+  renderFilters();
+  renderGrid();
+})();
+</script>
+<script src="js/cart.js"></script>
+<script src="js/ambient.js"></script>
+</body>
+</html>

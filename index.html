@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The AIM — Things you didn't know you needed</title>
+<meta name="description" content="Useful everyday items at honest prices. Limited drops, delivered fast across India." />
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://ascentra.netlify.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The AIM">
+<meta property="og:title" content="The AIM — Things you didn't know you needed">
+<meta property="og:description" content="Useful everyday items at honest prices — hand-picked and delivered across India.">
+<meta property="og:image" content="https://ascentra.netlify.app/images/products/01_starry_sky_moon_lamp_hero.webp">
+<meta property="og:url" content="https://ascentra.netlify.app/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The AIM — Things you didn't know you needed">
+<meta name="twitter:description" content="Useful everyday items at honest prices — hand-picked and delivered across India.">
+<meta name="twitter:image" content="https://ascentra.netlify.app/images/products/01_starry_sky_moon_lamp_hero.webp">
+<meta name="theme-color" content="#0c0c0d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/cart.css">
+<link rel="stylesheet" href="css/living.css">
+<style>
+:root{
+  --ink:#0c0c0d; --ink-2:#111113; --ink-3:#1a1a1d;
+  --line-1:#2a2a2e; --line-soft:#1e1e21;
+  --text:#ececee; --muted:#9a9a9f; --faint:#6a6a70;
+  --gold:#c9a15f; --gold-hi:#e7c98a; --live:#6aa88f;
+  --cream:#efe8d9; --cream-2:#e0d5bd;
+  --f-display:"Fraunces",Georgia,serif;
+  --f-body:"Space Grotesk",system-ui,sans-serif;
+  --f-mono:"Space Mono",monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --maxw:1240px;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ background:var(--ink); scroll-behavior:smooth; }
+body{
+  background:radial-gradient(1400px 900px at 50% -25%, #1c1c22, var(--ink) 62%) fixed;
+  color:var(--text); font-family:var(--f-body);
+  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+img{ display:block; max-width:100%; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; color:inherit; background:none; border:none; cursor:pointer; }
+::selection{ background:var(--gold); color:var(--ink); }
+:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+
+.wrap{ max-width:var(--maxw); margin:0 auto; padding:0 clamp(1.25rem,4vw,2.5rem); }
+
+h1,h2{ font-family:var(--f-display); font-weight:400; line-height:1.05; letter-spacing:-.012em; }
+h1 em, h2 em{ font-style:italic; font-weight:300;
+  background:linear-gradient(100deg, #F3E2B3 0%, #D8B472 35%, #FBEDC2 50%, #D8B472 65%, #A97F3C 100%);
+  background-size:220% 100%;
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:foil 7s ease-in-out infinite; }
+@keyframes foil{ 0%,100%{ background-position:0% 0 } 50%{ background-position:100% 0 } }
+@media (prefers-reduced-motion:reduce){ h1 em, h2 em, .shop-head h1 em, .rhead h2 em{ animation:none } }
+
+
+.eyebrow{
+  font-family:var(--f-mono); font-size:.64rem; letter-spacing:.26em;
+  text-transform:uppercase; color:var(--gold);
+  display:inline-flex; align-items:center; gap:.7em;
+}
+.live-dot{
+  width:7px; height:7px; border-radius:50%; background:var(--live); display:inline-block;
+  box-shadow:0 0 0 0 rgba(106,168,143,.6); animation:pulse 2.2s infinite;
+}
+@keyframes pulse{
+  0%{ box-shadow:0 0 0 0 rgba(106,168,143,.5) }
+  70%{ box-shadow:0 0 0 9px rgba(106,168,143,0) }
+  100%{ box-shadow:0 0 0 0 rgba(106,168,143,0) }
+}
+
+.btn{
+  font-family:var(--f-mono); font-size:.7rem; letter-spacing:.16em; text-transform:uppercase;
+  display:inline-flex; align-items:center; gap:.7em; padding:1rem 1.9rem;
+  border:1px solid var(--gold); transition:all .35s var(--ease); white-space:nowrap;
+}
+.btn-solid{
+  position:relative; overflow:hidden;
+  background:linear-gradient(180deg, #E9CD8D, var(--gold)); color:#141006; font-weight:700;
+}
+.btn-solid::after{
+  content:""; position:absolute; top:-4px; bottom:-4px; left:-70%; width:42%;
+  background:linear-gradient(100deg, transparent, rgba(255,255,255,.6), transparent);
+  transform:skewX(-20deg); transition:left .55s var(--ease); pointer-events:none;
+}
+.btn-solid:hover::after{ left:135%; }
+.btn-solid:hover{ background:var(--gold-hi); border-color:var(--gold-hi); transform:translateY(-2px); box-shadow:0 16px 36px -16px rgba(201,161,95,.55); }
+.btn-line{ background:transparent; color:var(--text); border-color:var(--line-1); }
+.btn-line:hover{ border-color:var(--gold); color:var(--gold-hi); }
+
+/* header */
+header{
+  position:sticky; top:0; z-index:50;
+  background:rgba(11,10,8,.82); backdrop-filter:blur(12px);
+  border-bottom:1px solid transparent; transition:border-color .4s;
+}
+header.scrolled{ border-bottom-color:var(--line-soft); }
+.nav{ display:flex; align-items:center; justify-content:space-between; gap:2rem; height:76px; }
+.logo{ font-family:var(--f-display); font-size:1.2rem; letter-spacing:.3em; text-transform:uppercase; }
+.logo b{ color:var(--gold); font-weight:400; }
+.nav-links{ display:flex; gap:2.4rem; }
+.nav-links a{
+  font-family:var(--f-mono); font-size:.66rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--muted); padding:.4rem 0; position:relative; transition:color .3s;
+}
+.nav-links a::after{ content:""; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--gold); transition:width .35s var(--ease); }
+.nav-links a:hover{ color:var(--text); }
+.nav-links a:hover::after{ width:100%; }
+.nav-right{ display:flex; align-items:center; gap:1.6rem; }
+@media (max-width:880px){ .nav-links{ display:none } }
+
+/* hero / stage */
+.hero{ position:relative; padding:clamp(3.5rem,7vw,6rem) 0 clamp(3.5rem,6vw,5.5rem); overflow:hidden; }
+.hero-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(2rem,5vw,4rem); align-items:center; }
+@media (max-width:960px){ .hero-grid{ grid-template-columns:1fr; gap:3.5rem; } }
+.hero h1{ font-size:clamp(2.8rem,5.4vw,4.6rem); margin-top:1.5rem; }
+.hero h1 .ln{ display:block; overflow:hidden; }
+.hero h1 .ln span{ display:block; transform:translateY(112%); animation:rise .95s var(--ease) forwards; }
+.hero h1 .ln:nth-child(2) span{ animation-delay:.09s }
+.hero h1 .ln:nth-child(3) span{ animation-delay:.18s }
+@keyframes rise{ to{ transform:translateY(0) } }
+.hero-sub{ color:var(--muted); max-width:28rem; margin-top:1.6rem; }
+.hero-actions{ display:flex; flex-wrap:wrap; gap:1rem; margin-top:2.4rem; }
+.proof{ display:flex; gap:2.2rem; margin-top:3rem; padding-top:1.7rem; border-top:1px solid var(--line-soft); flex-wrap:wrap; }
+.proof .n{ font-family:var(--f-mono); font-size:1.4rem; }
+.proof .n em{ color:var(--gold); font-style:normal; }
+.proof .l{ font-family:var(--f-mono); font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); margin-top:.3rem; }
+
+.stage{ position:relative; height:min(620px,72vw); display:flex; align-items:center; justify-content:center; }
+.stage::before{
+  content:""; position:absolute; top:-12%; left:50%; transform:translateX(-50%);
+  width:78%; height:118%;
+  background:
+    radial-gradient(closest-side at 50% 26%, rgba(231,201,138,.14), transparent 72%),
+    linear-gradient(180deg, rgba(201,161,95,.10), transparent 62%);
+  clip-path:polygon(38% 0, 62% 0, 96% 100%, 4% 100%);
+  pointer-events:none;
+}
+.stage::after{
+  content:""; position:absolute; bottom:6%; left:50%; transform:translateX(-50%);
+  width:64%; height:34px; border-radius:50%;
+  background:radial-gradient(closest-side, rgba(201,161,95,.22), transparent 70%);
+  filter:blur(6px); pointer-events:none;
+}
+.ghost{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--f-display); font-style:italic; font-weight:300;
+  font-size:clamp(9rem,22vw,17rem); line-height:1;
+  color:transparent; -webkit-text-stroke:1px rgba(201,161,95,.22);
+  pointer-events:none; user-select:none;
+}
+.slides{ position:relative; width:min(340px,64%); aspect-ratio:4/5; z-index:2; perspective:900px; }
+.slide{
+  position:absolute; inset:0; opacity:0; transform:translateY(26px) scale(.96);
+  transition:opacity .7s var(--ease), transform .7s var(--ease); pointer-events:none;
+}
+.slide.on{ opacity:1; transform:none; pointer-events:auto; }
+.slide-card{
+  width:100%; height:100%;
+  background:linear-gradient(168deg, var(--cream), var(--cream-2)); padding:10px;
+  box-shadow:0 50px 100px -40px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.55);
+  animation:bob 6s ease-in-out infinite; transition:transform .25s ease-out; will-change:transform;
+}
+@keyframes bob{ 0%,100%{ translate:0 0 } 50%{ translate:0 -10px } }
+.slide-card img{ width:100%; height:100%; object-fit:cover; }
+.slide .tag{
+  position:absolute; top:20px; left:-14px; z-index:3;
+  font-family:var(--f-mono); font-size:.58rem; letter-spacing:.2em; text-transform:uppercase;
+  background:var(--ink); color:var(--gold-hi); border:1px solid var(--gold); padding:.5em 1em;
+}
+.stage-foot{ position:absolute; left:0; right:0; bottom:0; z-index:3; display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; }
+.stage-cap .cat{ font-family:var(--f-mono); font-size:.6rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); }
+.stage-cap .nm{ font-family:var(--f-display); font-size:1.35rem; margin-top:.3rem; }
+.stage-cap .pr{ font-family:var(--f-mono); color:var(--gold); margin-top:.25rem; }
+.stage-nav{ display:flex; align-items:center; gap:.6rem; }
+.snav{
+  width:42px; height:42px; border:1px solid var(--line-1);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--f-mono); color:var(--muted); transition:all .3s;
+}
+.snav:hover{ border-color:var(--gold); color:var(--gold-hi); }
+.sbar{ display:flex; gap:6px; margin-left:.6rem; }
+.sbar i{ width:26px; height:2px; background:var(--line-1); position:relative; overflow:hidden; display:block; }
+.sbar i.on::after{
+  content:""; position:absolute; inset:0; background:var(--gold);
+  transform-origin:left; animation:fill 4.6s linear forwards;
+}
+@keyframes fill{ from{ transform:scaleX(0) } to{ transform:scaleX(1) } }
+.stage.paused .sbar i.on::after{ animation-play-state:paused; }
+
+/* sections */
+section{ padding:clamp(4rem,8vw,6.5rem) 0; }
+.sec-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:1.5rem; flex-wrap:wrap; margin-bottom:2.8rem; }
+.sec-head h2{ font-size:clamp(1.9rem,3.8vw,2.7rem); margin-top:.9rem; }
+.sec-head p{ color:var(--muted); font-size:.9rem; margin-top:.7rem; max-width:26rem; }
+.link-ghost{
+  font-family:var(--f-mono); font-size:.66rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--muted); border-bottom:1px solid var(--line-1); padding-bottom:.35rem; transition:all .3s;
+}
+.link-ghost:hover{ color:var(--gold-hi); border-color:var(--gold); }
+
+/* ── ASCENTRA SHELF SYSTEM · LIVING EDITION (shared) ──
+   The warm niche + shelf + ticket system, alive: lights brighten
+   on hover, products glint, tickets swing on their clips.
+   Pages must define: --f-mono, --f-display, --gold-hi. */
+
+.grid{
+  --ledge-hi:#E7C878; --ledge:#B58F3E; --ledge-lo:#5C4419;
+  position:relative;
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:3.8rem 2.6rem;
+  padding:3rem 1.9rem 3.2rem;
+  border-radius:20px;
+  border:1px solid rgba(231,200,120,.24);
+  background:
+    radial-gradient(ellipse 70% 48% at 50% -6%, rgba(231,200,120,.18), transparent 62%),
+    linear-gradient(180deg, #1C1710 0%, #12100B 100%);
+  box-shadow:
+    inset 0 14px 28px rgba(0,0,0,.55),
+    inset 0 3px 7px rgba(0,0,0,.5),
+    inset 8px 0 20px rgba(0,0,0,.32),
+    inset -8px 0 20px rgba(0,0,0,.32),
+    inset 0 -2px 6px rgba(231,200,120,.06);
+}
+/* velvet nap + satin sheen on the case wall */
+.grid::before{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:0;
+  background:
+    linear-gradient(115deg,
+      rgba(255,255,255,.05) 0%, transparent 28%,
+      rgba(255,255,255,.02) 47%, transparent 66%,
+      rgba(255,255,255,.04) 100%),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.08) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.08) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse 72% 22% at 50% 0%, rgba(255,255,255,.05), transparent 72%);
+}
+/* engraved brass plaque */
+.grid::after{
+  content:attr(data-plaque);
+  position:absolute; top:-13px; left:50%; transform:translateX(-50%); z-index:2;
+  font-family:var(--f-mono); font-size:.58rem; font-weight:700;
+  letter-spacing:.3em; text-transform:uppercase; white-space:nowrap;
+  padding:.4rem 1.5rem; border-radius:6px;
+  color:rgba(20,12,4,.72);
+  background:linear-gradient(180deg, var(--ledge-hi) 0%, var(--ledge) 55%, var(--ledge-lo) 100%);
+  box-shadow:0 3px 10px rgba(0,0,0,.55), 0 0 20px rgba(231,200,120,.14),
+    inset 0 1px 0 rgba(255,255,255,.55), inset 0 -1px 2px rgba(0,0,0,.3);
+  text-shadow:0 1px 0 rgba(255,255,255,.35);
+}
+@media (max-width:1020px){ .grid{ grid-template-columns:repeat(2,1fr) } }
+@media (max-width:560px){ .grid{ grid-template-columns:1fr } }
+
+.pcase{
+  position:relative; overflow:visible;
+  display:flex; flex-direction:column; height:100%;
+  animation:shelfIn .5s cubic-bezier(.22,.9,.3,1) backwards;
+  color:inherit; text-decoration:none;
+}
+@keyframes shelfIn{ from{ opacity:0; translate:0 -14px; } to{ opacity:1; translate:0 0; } }
+.grid .pcase:nth-child(1){ animation-delay:.03s }
+.grid .pcase:nth-child(2){ animation-delay:.09s }
+.grid .pcase:nth-child(3){ animation-delay:.15s }
+.grid .pcase:nth-child(4){ animation-delay:.21s }
+.grid .pcase:nth-child(5){ animation-delay:.27s }
+.grid .pcase:nth-child(6){ animation-delay:.33s }
+.grid .pcase:nth-child(7){ animation-delay:.39s }
+.grid .pcase:nth-child(8){ animation-delay:.45s }
+.grid .pcase:nth-child(n+9){ animation-delay:.5s }
+
+/* THE COMPARTMENT — velvet-lined box under its own warm light,
+   brass shelf board at the base, contact shadow under the product */
+.pcase::before{
+  content:""; position:absolute; z-index:0;
+  top:-18px; left:-8px; right:-8px;
+  padding-top:calc(100% + 18px);
+  border-radius:12px 12px 6px 6px;
+  background:
+    radial-gradient(ellipse 62% 16px at 50% calc(100% - 22px), rgba(0,0,0,.30), transparent 72%),
+    radial-gradient(ellipse 80% 26% at 50% 0%, rgba(255,255,255,.20), transparent 70%),
+    linear-gradient(90deg, rgba(0,0,0,.08) 0%, transparent 8%, transparent 92%, rgba(0,0,0,.08) 100%),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--ledge-hi) 24%, #F8F4EA) 0%,
+      color-mix(in srgb, var(--ledge) 32%, #EFE8D9) calc(100% - 18px),
+      color-mix(in srgb, var(--ledge-lo) 60%, #000) calc(100% - 18px),
+      color-mix(in srgb, var(--ledge-lo) 60%, #000) calc(100% - 16px),
+      var(--ledge-hi) calc(100% - 16px),
+      var(--ledge) calc(100% - 6px),
+      var(--ledge-lo) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(231,200,120,.13),
+    inset 0 9px 15px rgba(0,0,0,.4),
+    inset 0 -2px 4px rgba(0,0,0,.4),
+    0 1px 0 rgba(231,200,120,.10),
+    0 12px 22px -8px rgba(0,0,0,.6);
+  transition:filter .4s ease;
+}
+/* the compartment light brightens when the customer reaches in */
+.pcase:hover::before{ filter:brightness(1.09) saturate(1.04); }
+
+/* the product under its light; hover lifts only the photo */
+.pimg{
+  position:relative; z-index:1; overflow:hidden; border-radius:10px;
+  margin:0 13px; aspect-ratio:1/1;
+  border:1px solid rgba(231,200,120,.26);
+  box-shadow:0 9px 16px rgba(10,8,4,.4), 0 2px 4px rgba(10,8,4,.25);
+  transition:transform .35s cubic-bezier(.22,.9,.3,1), box-shadow .35s ease, border-color .35s ease;
+}
+.pimg img{ display:block; width:100%; height:100%; object-fit:cover; transition:transform .45s cubic-bezier(.22,.9,.3,1); }
+/* a glint of light catches the product */
+.pimg::before{
+  content:""; position:absolute; z-index:3; top:9%; right:11%;
+  width:15px; height:15px; pointer-events:none;
+  clip-path:polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
+  background:linear-gradient(180deg, #FFF6DC, #EFCE8C);
+  opacity:0; transform:scale(.3);
+}
+.pcase:hover .pimg::before{ animation:twinkle 1.5s ease-in-out infinite; }
+@keyframes twinkle{
+  0%, 100%{ opacity:0; transform:scale(.3) rotate(0deg); }
+  35%{ opacity:1; transform:scale(1) rotate(28deg); }
+  65%{ opacity:.35; transform:scale(.65) rotate(50deg); }
+}
+.pimg::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.14) 0%, transparent 30%),
+    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(255,244,214,.12), transparent 70%);
+}
+.pcase:hover .pimg{
+  transform:translateY(-9px);
+  border-color:rgba(231,200,120,.55);
+  box-shadow:0 22px 32px rgba(10,8,4,.5), 0 0 22px rgba(231,200,120,.12), 0 4px 9px rgba(10,8,4,.3);
+}
+.pcase:hover .pimg img{ transform:scale(1.05); }
+
+.pimg .sku{
+  position:absolute; top:8px; right:8px; z-index:2;
+  font-family:var(--f-mono); font-size:.52rem; letter-spacing:.18em;
+  color:#8a8a90; background:rgba(246,241,230,.9); padding:.3em .7em; border-radius:3px;
+}
+.pimg .off{
+  position:absolute; left:8px; bottom:8px; z-index:2;
+  font-family:var(--f-mono); font-size:.52rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--gold-hi); background:rgba(11,10,8,.85); backdrop-filter:blur(4px);
+  border:1px solid rgba(231,200,120,.3);
+  padding:.4em .75em; border-radius:3px;
+}
+
+/* THE TICKET — cream card, brass clip (jewellery-tag style) */
+.ticket{
+  position:relative; z-index:1;
+  margin:34px -8px 0;
+  background:linear-gradient(180deg, #FFFDF6 0%, #F5EFE0 100%);
+  border-radius:10px;
+  padding:.75rem .5rem .8rem; text-align:center;
+  box-shadow:0 8px 18px rgba(0,0,0,.45), 0 1px 3px rgba(0,0,0,.3);
+  flex:1; display:flex; flex-direction:column; gap:.3rem;
+  transition:box-shadow .35s ease;
+  transform-origin:50% -11px;
+}
+.pcase:hover .ticket{ animation:ticketSwing .9s cubic-bezier(.34,1.4,.64,1) 1; }
+@keyframes ticketSwing{
+  0%{ rotate:0deg } 30%{ rotate:1.5deg } 62%{ rotate:-1deg } 100%{ rotate:0deg }
+}
+.pcase:hover .ticket{
+  box-shadow:0 12px 24px rgba(0,0,0,.55), 0 0 20px rgba(231,200,120,.10), 0 2px 4px rgba(0,0,0,.3);
+}
+.ticket::before{
+  content:""; position:absolute; top:-11px; left:50%; transform:translateX(-50%);
+  width:30px; height:16px; border-radius:0 0 4px 4px;
+  background:linear-gradient(180deg, var(--ledge-hi), var(--ledge) 55%, var(--ledge-lo));
+  box-shadow:0 2px 5px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.5);
+}
+.ticket .cat{
+  font-family:var(--f-mono); font-size:.52rem; letter-spacing:.26em;
+  text-transform:uppercase; color:#9C9484;
+}
+.ticket .nm{
+  font-family:var(--f-display); font-size:1.05rem; line-height:1.22; color:#1E1A10;
+}
+.ticket .pr{
+  font-family:var(--f-mono); font-size:.82rem; font-weight:700; color:#8A7536; margin-top:.1rem;
+}
+.ticket .pr s{ font-weight:400; color:#B8AE9A; font-size:.82em; margin-left:.5em; }
+.ticket .go{
+  font-family:var(--f-mono); font-size:.52rem; letter-spacing:.22em; text-transform:uppercase;
+  color:#8A7536; margin-top:auto; padding-top:.35rem;
+  opacity:0; transition:opacity .35s ease;
+}
+.pcase:hover .ticket .go{ opacity:1; }
+
+@media (prefers-reduced-motion:reduce){
+  .pcase{ animation:none; }
+  .pcase:hover .ticket, .pcase:hover .pimg::before{ animation:none; }
+}
+
+
+
+
+
+/* ── brass ribbon ticker ── */
+.ribbon{
+  overflow:hidden; position:relative;
+  border-top:1px solid rgba(231,200,120,.35); border-bottom:1px solid rgba(90,66,26,.8);
+  background:linear-gradient(180deg, #E7C878 0%, #C49D5C 55%, #96742F 100%);
+  box-shadow:0 6px 18px -8px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.5);
+}
+.ribbon-track{ display:flex; width:max-content; animation:rib 32s linear infinite; }
+.ribbon:hover .ribbon-track{ animation-play-state:paused; }
+.ribbon span{
+  font-family:var(--f-mono); font-size:.6rem; font-weight:700;
+  letter-spacing:.3em; text-transform:uppercase; color:#241a08;
+  padding:.85rem 2.4rem; white-space:nowrap;
+  text-shadow:0 1px 0 rgba(255,255,255,.3);
+}
+@keyframes rib{ to{ transform:translateX(-50%) } }
+@media (prefers-reduced-motion:reduce){ .ribbon-track{ animation:none } }
+
+/* categories */
+
+
+.cat-row:last-child{ border-bottom:none; }
+.cat-row:hover{ padding-left:1.4rem; }
+.cat-row .ix{ font-family:var(--f-mono); font-size:.62rem; color:var(--faint); letter-spacing:.14em; width:3.4rem; flex:none; }
+.cat-row:hover .ix{ color:var(--gold); }
+.cat-row .ttl{ font-family:var(--f-display); font-size:clamp(1.9rem,4.6vw,3.2rem); line-height:1; color:var(--muted); transition:color .35s; flex:1; }
+.cat-row:hover .ttl{ color:var(--text); font-style:italic; }
+.cat-row .ct{ font-family:var(--f-mono); font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; color:var(--faint); }
+.cat-row .ar{ font-family:var(--f-mono); color:var(--faint); transition:all .35s var(--ease); }
+.cat-row:hover .ar{ color:var(--gold-hi); transform:translateX(6px); }
+@media (hover:none){  }
+
+/* cta + footer */
+.cta{ text-align:center; border-top:1px solid var(--line-soft); background:var(--ink-2); }
+.cta h2{ font-size:clamp(2.2rem,5vw,3.6rem); margin-top:1.3rem; }
+.cta p{ color:var(--muted); max-width:26rem; margin:1.4rem auto 2.4rem; }
+.cta .fine{ font-family:var(--f-mono); font-size:.6rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); margin-top:1.4rem; }
+footer{ border-top:1px solid var(--line-soft); padding:3rem 0 2.4rem; }
+.foot{
+  display:flex; justify-content:space-between; align-items:center; gap:1.5rem; flex-wrap:wrap;
+  font-family:var(--f-mono); font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:var(--faint);
+}
+.foot a{ color:var(--muted); transition:color .3s; }
+.foot a:hover{ color:var(--gold-hi); }
+.foot .links{ display:flex; gap:2rem; flex-wrap:wrap; }
+
+.reveal{ opacity:0; transform:translateY(24px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
+.reveal.in{ opacity:1; transform:none; }
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+  .hero h1 .ln span{ transform:none; }
+  .reveal{ opacity:1; transform:none; }
+  .slide-card{ animation:none; }
+}
+</style>
+</head>
+<body>
+
+<header id="hd">
+  <div class="wrap nav">
+    <a href="index.html" class="logo">THE AIM<b>.</b></a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="shop.html">All Products</a>
+      <a href="shop.html?category=Room">Room</a>
+      <a href="shop.html?category=Desk">Desk</a>
+      <a href="shop.html?category=Gadgets">Gadgets</a>
+      <a href="shop.html?category=Storage">Storage</a>
+    </nav>
+    <div class="nav-right"><button class="watch-btn" id="watchOpen" aria-label="Your watchlist">Watchlist<span class="wc" data-watch-count>0</span></button><button class="cart-btn" data-cart-open aria-label="Open cart">Bag<span class="badge" data-cart-count>0</span></button></div>
+  </div>
+</header>
+
+<main>
+
+<!-- HERO / STAGE -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>
+        <span class="ln"><span>Things you didn't</span></span>
+        <span class="ln"><span>know you needed</span></span>
+        <span class="ln"><span><em>— until now.</em></span></span>
+      </h1>
+      <p class="hero-sub">
+        Useful everyday items at honest prices — hand-picked, limited,
+        delivered fast across India.
+      </p>
+      <div class="hero-actions">
+        <a href="shop.html" class="btn btn-solid">Shop All Products</a>
+      </div>
+    </div>
+
+    <div class="stage" id="stage" aria-label="Featured products">
+      <div class="ghost" id="ghost">01</div>
+      <div class="slides" id="slides"></div>
+      <div class="stage-foot">
+        <div class="stage-cap">
+          <div class="cat" id="cap-cat"></div>
+          <div class="nm" id="cap-nm"></div>
+          <div class="pr" id="cap-pr"></div>
+        </div>
+        <div class="stage-nav">
+          <button class="snav" id="prev" aria-label="Previous product">←</button>
+          <button class="snav" id="next" aria-label="Next product">→</button>
+          <div class="sbar" id="sbar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE FEED -->
+<section class="feed-sec">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:1.6rem">
+      <div>
+        <span class="eyebrow">See it move</span>
+        <h2>Watch before you <em>buy</em></h2>
+        <p style="color:var(--muted);font-size:.9rem;margin-top:.7rem;max-width:26rem">Every product, filmed in real life. Tap a clip — see exactly how it works before it reaches your door.</p>
+      </div>
+    </div>
+    <div class="feed-rail">
+      <button class="feed-arrow fa-prev" id="feedPrev" aria-label="Scroll left">←</button>
+      <div class="feed-scroll" id="feed"></div>
+      <button class="feed-arrow fa-next" id="feedNext" aria-label="Scroll right">→</button>
+    </div>
+  </div>
+</section>
+
+<!-- NEW ARRIVALS -->
+<section style="padding-top:1rem">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <h2>Just <em>landed</em></h2>
+      </div>
+      <a href="shop.html" class="link-ghost">See everything →</a>
+    </div>
+    <div class="grid" id="arrivals" data-plaque="New In"></div>
+  </div>
+</section>
+
+<!-- DROPPING NEXT -->
+<section class="poll-sec">
+  <div class="wrap">
+    <div class="poll-lead reveal">
+      <span class="eyebrow">You pick what we stock</span>
+      <h2>Vote the next <em>drop</em></h2>
+      <p>None of these are in stock — yet. Tap <b>I want this</b> on the ones you'd buy, and save the rest to your watchlist. We order what wins.</p>
+    </div>
+    <div class="up-grid" id="upcoming"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 The AIM</span>
+    <span class="links">
+      <a href="shop.html">All Products</a>
+      <a href="contact.html">Contact</a>
+      <a href="shipping.html">Shipping</a>
+      <a href="returns.html">Returns</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="curator.html">Curators</a>
+    </span>
+    <span>Ships across India</span>
+  </div>
+</footer>
+
+<script src="js/video.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/ascentra-db.js"></script>
+<script src="js/referral.js"></script>
+<script src="js/products-data.js"></script>
+<script src="js/upcoming-data.js"></script>
+<script>
+var fmt = function(n){ return '₹' + n.toLocaleString('en-IN'); };
+var byId = function(id){ return PRODUCTS.find(function(p){ return p.id===id; }); };
+
+
+/* which products star on the stage — edit these ids to change the reel */
+var FEATURED = [
+  '22_butterfly_phone_stand',
+  '01_starry_sky_moon_lamp',
+  '20_magnetic_neck_fan',
+  '26_foldable_bluetooth_keyboard'
+].map(byId).filter(Boolean);
+
+/* build stage slides + bars */
+var slidesEl = document.getElementById('slides');
+var sbarEl = document.getElementById('sbar');
+FEATURED.forEach(function(p,i){
+  var a = document.createElement('a');
+  a.className = 'slide' + (i===0?' on':'');
+  a.href = 'product.html?id=' + p.id;
+  a.innerHTML = '<span class="tag">Featured</span><div class="slide-card"><img src="'+p.hero+'" alt="'+p.name+'" '+(i>0?'loading="lazy"':'')+' /></div>';
+  slidesEl.appendChild(a);
+  var bar = document.createElement('i'); if(i===0) bar.className='on';
+  sbarEl.appendChild(bar);
+});
+
+/* stage logic */
+(function(){
+  var stage  = document.getElementById('stage');
+  var slides = Array.prototype.slice.call(slidesEl.children);
+  var bars   = Array.prototype.slice.call(sbarEl.children);
+  var ghost  = document.getElementById('ghost');
+  var capCat = document.getElementById('cap-cat');
+  var capNm  = document.getElementById('cap-nm');
+  var capPr  = document.getElementById('cap-pr');
+  var idx = 0, timer;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function show(i){
+    idx = (i + slides.length) % slides.length;
+    slides.forEach(function(s,k){ s.classList.toggle('on', k===idx); });
+    bars.forEach(function(b,k){
+      b.classList.remove('on');
+      if(k===idx){ void b.offsetWidth; b.classList.add('on'); }
+    });
+    var p = FEATURED[idx];
+    ghost.textContent  = String(idx+1).padStart(2,'0');
+    capCat.textContent = p.category;
+    capNm.textContent  = p.name;
+    capPr.textContent  = fmt(p.price);
+  }
+  function play(){
+    if(reduce) return;
+    clearInterval(timer);
+    timer = setInterval(function(){ show(idx+1); }, 4600);
+  }
+  document.getElementById('next').addEventListener('click', function(){ show(idx+1); play(); });
+  document.getElementById('prev').addEventListener('click', function(){ show(idx-1); play(); });
+  stage.addEventListener('pointerenter', function(){ clearInterval(timer); stage.classList.add('paused'); });
+  stage.addEventListener('pointerleave', function(){ stage.classList.remove('paused'); show(idx); play(); });
+  if(!reduce){
+    stage.addEventListener('pointermove', function(e){
+      var r = stage.getBoundingClientRect();
+      var x = (e.clientX - r.left)/r.width - .5;
+      var y = (e.clientY - r.top)/r.height - .5;
+      slides[idx].querySelector('.slide-card').style.transform =
+        'rotateY('+(x*7)+'deg) rotateX('+(-y*6)+'deg)';
+    });
+    stage.addEventListener('pointerleave', function(){
+      slides.forEach(function(s){ s.querySelector('.slide-card').style.transform=''; });
+    });
+  }
+  show(0); play();
+})();
+
+/* card renderer — each product stands in a lit compartment on the shelf,
+   with its price ticket clipped below */
+function cardHTML(p){
+  return '<a href="product.html?id='+p.id+'" class="pcase">' +
+    '<div class="pimg">' +
+      '<img src="'+(p.thumb||p.hero)+'" alt="'+p.name+'" loading="lazy" width="500" height="500" />' +
+      (p.video ? '<span class="vbadge">▶ Video</span>' : '') +
+    '</div>' +
+    '<div class="ticket">' +
+      '<span class="cat">'+p.category+'</span>' +
+      '<span class="nm">'+p.name+'</span>' +
+      '<span class="pr">'+fmt(p.price)+'</span>' +
+      '<span class="go">Buy now →</span>' +
+    '</div>' +
+    '<button class="quick-add" data-add="'+p.id+'" aria-label="Add '+p.name+' to cart">+ Bag</button>' +
+    '</a>';
+}
+
+/* new arrivals — first 8; edit the slice or reorder PRODUCTS to change */
+document.getElementById('arrivals').innerHTML =
+  PRODUCTS.slice(0,8).map(cardHTML).join('');
+
+
+/* header + reveal */
+var hd = document.getElementById('hd');
+window.addEventListener('scroll', function(){
+  hd.classList.toggle('scrolled', window.scrollY > 10);
+}, {passive:true});
+var io = new IntersectionObserver(function(es){
+  es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+</script>
+<script src="js/cart.js"></script>
+<script src="js/feed.js"></script>
+<script src="js/poll.js"></script>
+<script>
+  // Watchlist button -> quick view of hearted upcoming items
+  document.getElementById('watchOpen') && document.getElementById('watchOpen').addEventListener('click', function(){
+    var ids = (window.AscentraWatch ? AscentraWatch.list() : []);
+    if(!ids.length){ document.getElementById('upcoming').scrollIntoView({behavior:'smooth'}); return; }
+    var names = ids.map(function(id){ var u=(typeof UPCOMING!=='undefined')&&UPCOMING.find(function(x){return x.id===id;}); return u?u.name:id; });
+    document.getElementById('upcoming').scrollIntoView({behavior:'smooth'});
+  });
+</script>
+<script src="js/ambient.js"></script>
+</body>
+</html>

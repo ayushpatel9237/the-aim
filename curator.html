@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Curator Portal — The AIM</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0c0c0d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0c0c0d; --ink-2:#111113; --ink-3:#16161a;
+  --line-1:#2a2a2e; --line-soft:#1e1e21;
+  --text:#ececee; --muted:#9a9a9f; --faint:#6a6a70;
+  --gold:#c9a15f; --gold-hi:#e7c98a; --live:#6aa88f; --err:#e0866a;
+  --f-display:"Fraunces",Georgia,serif; --f-body:"Space Grotesk",system-ui,sans-serif; --f-mono:"Space Mono",monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ background:radial-gradient(1400px 900px at 50% -25%, #1c1c22, var(--ink) 62%) fixed; color:var(--text); font-family:var(--f-body); line-height:1.6; -webkit-font-smoothing:antialiased; }
+a{ color:inherit; text-decoration:none; } img{ display:block; max-width:100%; }
+button,input{ font:inherit; } button{ cursor:pointer; }
+:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+::selection{ background:var(--gold); color:var(--ink); }
+
+header{ border-bottom:1px solid var(--line-soft); }
+.nav{ max-width:1000px; margin:0 auto; padding:0 1.4rem; height:72px; display:flex; align-items:center; justify-content:space-between; }
+.logo{ font-family:var(--f-display); font-size:1.15rem; letter-spacing:.3em; text-transform:uppercase; }
+.logo b{ color:var(--gold); font-weight:400; }
+.logo small{ font-family:var(--f-mono); font-size:.55rem; letter-spacing:.24em; color:var(--muted); display:block; margin-top:2px; }
+.nav-right{ display:flex; align-items:center; gap:1.2rem; font-family:var(--f-mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
+.nav-right a:hover, .nav-right button:hover{ color:var(--gold-hi); }
+.nav-right button{ background:none; border:none; color:var(--muted); }
+
+.wrap{ max-width:1000px; margin:0 auto; padding:clamp(2rem,5vw,3.5rem) 1.4rem 5rem; }
+.eyebrow{ font-family:var(--f-mono); font-size:.62rem; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); }
+h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,2.8rem); letter-spacing:-.01em; margin-top:.8rem; }
+h1 em{ font-style:italic; font-weight:300; color:var(--gold-hi); }
+.sub{ color:var(--muted); margin-top:.8rem; max-width:34rem; }
+
+/* auth card */
+.auth-card{ max-width:420px; margin:2.5rem auto 0; background:var(--ink-2); border:1px solid var(--line-soft); border-radius:16px; padding:2rem; }
+.tabs{ display:flex; gap:.5rem; margin-bottom:1.6rem; }
+.tab{ flex:1; text-align:center; padding:.7rem; border-radius:9px; font-family:var(--f-mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); border:1px solid var(--line-1); background:transparent; transition:all .3s; }
+.tab.on{ background:linear-gradient(180deg,#E9CD8D,var(--gold)); color:#141006; border-color:transparent; font-weight:700; }
+.field{ margin-bottom:1rem; }
+label{ display:block; font-family:var(--f-mono); font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:.4rem; }
+input{ width:100%; background:var(--ink-3); border:1px solid var(--line-1); border-radius:9px; color:var(--text); font-size:.92rem; padding:.8rem 1rem; outline:none; transition:border-color .3s; }
+input:focus{ border-color:var(--gold); }
+.primary-btn{ width:100%; margin-top:.5rem; padding:1rem; border:none; border-radius:999px; font-family:var(--f-mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:#141006; background:linear-gradient(180deg,#E9CD8D,var(--gold)); transition:transform .3s; }
+.primary-btn:hover{ transform:translateY(-2px); }
+.primary-btn:disabled{ opacity:.6; transform:none; }
+.msg{ font-family:var(--f-mono); font-size:.68rem; text-align:center; margin-top:1rem; min-height:1em; }
+.msg.err{ color:var(--err); } .msg.ok{ color:var(--live); }
+
+/* dashboard */
+.stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-top:2.5rem; }
+@media (max-width:700px){ .stats{ grid-template-columns:repeat(2,1fr); } }
+.stat{ background:var(--ink-2); border:1px solid var(--line-soft); border-radius:14px; padding:1.3rem; }
+.stat .l{ font-family:var(--f-mono); font-size:.56rem; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); }
+.stat .v{ font-family:var(--f-display); font-size:1.9rem; margin-top:.5rem; color:var(--gold-hi); }
+.stat .v small{ font-size:1rem; color:var(--muted); }
+
+.panel{ background:var(--ink-2); border:1px solid var(--line-soft); border-radius:16px; padding:1.6rem; margin-top:1.5rem; }
+.panel h2{ font-family:var(--f-display); font-weight:400; font-size:1.25rem; margin-bottom:1.1rem; }
+.share{ display:flex; gap:.8rem; flex-wrap:wrap; }
+.share-box{ flex:1; min-width:200px; background:var(--ink-3); border:1px solid var(--line-1); border-radius:11px; padding:1rem; }
+.share-box .k{ font-family:var(--f-mono); font-size:.54rem; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); }
+.share-box .val{ font-family:var(--f-mono); font-size:.9rem; color:var(--gold-hi); margin-top:.4rem; word-break:break-all; }
+.copy-btn{ margin-top:.7rem; font-family:var(--f-mono); font-size:.56rem; letter-spacing:.14em; text-transform:uppercase; color:var(--text); background:transparent; border:1px solid var(--line-1); border-radius:999px; padding:.45rem .9rem; transition:all .3s; }
+.copy-btn:hover{ border-color:var(--gold); color:var(--gold-hi); }
+
+table{ width:100%; border-collapse:collapse; }
+th{ text-align:left; font-family:var(--f-mono); font-size:.55rem; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); padding:.6rem .5rem; border-bottom:1px solid var(--line-1); }
+td{ padding:.75rem .5rem; border-bottom:1px solid var(--line-soft); font-size:.85rem; }
+td.mono{ font-family:var(--f-mono); }
+.pill{ font-family:var(--f-mono); font-size:.52rem; letter-spacing:.1em; text-transform:uppercase; padding:.3em .7em; border-radius:999px; }
+.pill-live{ color:var(--live); border:1px solid rgba(106,168,143,.4); }
+.pill-wait{ color:var(--gold-hi); border:1px solid rgba(201,161,95,.4); }
+.empty-note{ text-align:center; color:var(--faint); font-family:var(--f-mono); font-size:.66rem; padding:2rem; }
+
+.status-banner{ background:var(--ink-2); border:1px solid var(--line-soft); border-radius:16px; padding:2.5rem; text-align:center; margin-top:2.5rem; max-width:520px; margin-left:auto; margin-right:auto; }
+.status-banner .icon{ font-size:2rem; margin-bottom:1rem; }
+.status-banner h2{ font-family:var(--f-display); font-weight:400; font-size:1.4rem; }
+.status-banner p{ color:var(--muted); margin-top:.8rem; font-size:.9rem; }
+
+.not-setup{ max-width:560px; margin:3rem auto; background:var(--ink-2); border:1px solid var(--err); border-radius:16px; padding:2rem; }
+.not-setup h2{ font-family:var(--f-display); font-weight:400; color:var(--err); }
+.not-setup code{ font-family:var(--f-mono); font-size:.8rem; background:var(--ink-3); padding:.2em .5em; border-radius:4px; color:var(--gold-hi); }
+.not-setup ol{ margin:1rem 0 0 1.2rem; color:var(--muted); font-size:.88rem; line-height:1.9; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="index.html" class="logo">THE AIM<b>.</b><small>Curator Portal</small></a>
+    <div class="nav-right" id="navRight">
+      <a href="index.html">← Store</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap" id="page">
+  <div class="empty-note">Loading…</div>
+</div>
+
+<!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/ascentra-db.js"></script>
+<script src="js/curator.js"></script>
+</body>
+</html>

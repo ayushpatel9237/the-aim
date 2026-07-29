@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Order confirmed — The AIM</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0c0c0d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0c0c0d; --ink-2:#111113; --line-1:#2a2a2e; --line-soft:#1e1e21;
+  --text:#ececee; --muted:#9a9a9f; --faint:#6a6a70;
+  --gold:#c9a15f; --gold-hi:#e7c98a; --live:#6aa88f;
+  --f-display:"Fraunces",Georgia,serif; --f-body:"Space Grotesk",system-ui,sans-serif; --f-mono:"Space Mono",monospace;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ background:radial-gradient(1400px 900px at 50% -25%, #1c1c22, var(--ink) 62%) fixed; color:var(--text); font-family:var(--f-body); line-height:1.6; -webkit-font-smoothing:antialiased; }
+a{ color:inherit; text-decoration:none; }
+img{ display:block; max-width:100%; }
+header{ border-bottom:1px solid var(--line-soft); }
+.nav{ max-width:760px; margin:0 auto; padding:0 1.4rem; height:72px; display:flex; align-items:center; }
+.logo{ font-family:var(--f-display); font-size:1.15rem; letter-spacing:.3em; text-transform:uppercase; }
+.logo b{ color:var(--gold); font-weight:400; }
+.wrap{ max-width:640px; margin:0 auto; padding:clamp(2.5rem,6vw,4.5rem) 1.4rem 5rem; }
+.tick{ width:72px; height:72px; border-radius:50%; border:2px solid var(--live); display:flex; align-items:center; justify-content:center; font-size:2rem; color:var(--live); margin-bottom:1.6rem; animation:pop .5s cubic-bezier(.34,1.4,.64,1); }
+@keyframes pop{ from{ transform:scale(.4); opacity:0 } to{ transform:scale(1); opacity:1 } }
+h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,2.8rem); letter-spacing:-.01em; }
+.lead{ color:var(--muted); margin-top:.9rem; font-size:1rem; }
+.ordno{ font-family:var(--f-mono); font-size:.72rem; letter-spacing:.14em; color:var(--gold-hi); margin-top:1.4rem; background:var(--ink-2); border:1px solid var(--line-1); border-radius:999px; padding:.6rem 1.2rem; display:inline-block; }
+.card{ background:var(--ink-2); border:1px solid var(--line-soft); border-radius:16px; padding:1.5rem; margin-top:2rem; }
+.card h2{ font-family:var(--f-display); font-weight:400; font-size:1.15rem; margin-bottom:1.1rem; }
+.o-row{ display:grid; grid-template-columns:48px 1fr auto; gap:.8rem; align-items:center; padding:.65rem 0; border-bottom:1px solid var(--line-soft); }
+.o-row img{ width:48px; height:48px; border-radius:6px; object-fit:cover; background:#f4f4f6; }
+.o-nm{ font-size:.85rem; } .o-q{ font-family:var(--f-mono); font-size:.6rem; color:var(--muted); margin-top:.15rem; }
+.o-pr{ font-family:var(--f-mono); font-size:.8rem; color:var(--gold-hi); }
+.o-total{ display:flex; justify-content:space-between; margin-top:1rem; padding-top:.9rem; border-top:1px solid var(--line-1); font-family:var(--f-mono); }
+.o-total span:last-child{ color:var(--gold-hi); font-weight:700; font-size:1.1rem; }
+.addr{ font-size:.85rem; color:var(--muted); line-height:1.7; }
+.addr b{ color:var(--text); font-weight:500; }
+.steps{ display:flex; flex-direction:column; gap:.9rem; margin-top:.4rem; }
+.step{ display:flex; gap:.9rem; align-items:flex-start; font-size:.86rem; color:var(--muted); }
+.step .n{ font-family:var(--f-mono); font-size:.6rem; color:var(--gold); border:1px solid var(--line-1); border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex:none; }
+.step b{ color:var(--text); font-weight:500; }
+.cta{ display:flex; gap:1rem; flex-wrap:wrap; margin-top:2.2rem; }
+.btn{ font-family:var(--f-mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; padding:.95rem 1.8rem; border-radius:999px; transition:all .3s; }
+.btn-solid{ background:linear-gradient(180deg,#E9CD8D,var(--gold)); color:#141006; font-weight:700; }
+.btn-solid:hover{ transform:translateY(-2px); }
+.btn-line{ border:1px solid var(--line-1); color:var(--text); }
+.btn-line:hover{ border-color:var(--gold); color:var(--gold-hi); }
+.note{ font-family:var(--f-mono); font-size:.62rem; letter-spacing:.1em; color:var(--faint); margin-top:1.6rem; }
+</style>
+</head>
+<body>
+<header><div class="nav"><a href="index.html" class="logo">THE AIM<b>.</b></a></div></header>
+<div class="wrap" id="page"></div>
+<script src="js/products-data.js"></script>
+<script>
+(function(){
+  var fmt = function(n){ return '₹' + Number(n).toLocaleString('en-IN'); };
+  var order = null;
+  try{ order = JSON.parse(localStorage.getItem('ascentra_last_order')); }catch(e){}
+
+  var page = document.getElementById('page');
+  if(!order){
+    page.innerHTML = '<div class="tick">✓</div><h1>Thank you</h1>' +
+      '<p class="lead">Your order has been placed.</p>' +
+      '<div class="cta"><a href="shop.html" class="btn btn-solid">Continue shopping</a></div>';
+    return;
+  }
+
+  var c = order.customer;
+  var payLabel = order.payment === 'cod' ? 'Cash on Delivery' :
+                 order.status === 'paid' ? 'Paid online' : 'Online payment';
+
+  page.innerHTML =
+    '<div class="tick">✓</div>' +
+    '<h1>Order confirmed</h1>' +
+    '<p class="lead">Thank you, '+c.name.split(' ')[0]+'. We\'ve got your order and we\'re on it.</p>' +
+    '<div class="ordno">Order '+order.id+'</div>' +
+
+    '<div class="card"><h2>What happens next</h2><div class="steps">' +
+      '<div class="step"><span class="n">1</span><div><b>Confirmation</b> — you\'ll get an update on '+c.phone+(c.email?' and '+c.email:'')+'.</div></div>' +
+      '<div class="step"><span class="n">2</span><div><b>Packed & shipped</b> — we dispatch your order and send you tracking.</div></div>' +
+      '<div class="step"><span class="n">3</span><div><b>Delivered</b> — '+payLabel+(order.payment==='cod'?' — keep the amount ready.':'.')+'</div></div>' +
+    '</div></div>' +
+
+    '<div class="card"><h2>Order summary</h2>' +
+      order.items.map(function(i){ var p=PRODUCTS.find(function(x){return x.id===i.id;});
+        return '<div class="o-row"><img src="'+(p?(p.thumb||p.hero):'')+'" alt="" />' +
+          '<div><div class="o-nm">'+i.name+'</div><div class="o-q">Qty '+i.qty+'</div></div>' +
+          '<div class="o-pr">'+fmt(i.line)+'</div></div>';
+      }).join('') +
+      '<div class="o-total"><span>Total ('+payLabel+')</span><span>'+fmt(order.total)+'</span></div>' +
+    '</div>' +
+
+    '<div class="card"><h2>Delivering to</h2><p class="addr">' +
+      '<b>'+c.name+'</b><br/>'+c.address+'<br/>'+
+      (c.landmark?c.landmark+'<br/>':'')+c.city+', '+c.state+' — '+c.pincode+'<br/>'+
+      'Phone: '+c.phone+'</p></div>' +
+
+    '<div class="cta">' +
+      '<a href="shop.html" class="btn btn-solid">Continue shopping</a>' +
+      '<a href="index.html" class="btn btn-line">Back to home</a>' +
+    '</div>' +
+    '<p class="note">A copy of this order is saved to your device. Questions? See our Contact page.</p>';
+})();
+</script>
+</body>
+</html>
