@@ -33,6 +33,27 @@ h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.8rem,4vw,2.
 h1 em{ font-style:italic; font-weight:300; color:var(--gold-hi); }
 .panel{ background:var(--ink-2); border:1px solid var(--line-soft); border-radius:16px; padding:1.6rem; margin-top:1.8rem; }
 .panel h2{ font-family:var(--f-display); font-weight:400; font-size:1.25rem; margin-bottom:1.1rem; }
+.tabs{ display:flex; gap:.5rem; flex-wrap:wrap; margin:1.8rem 0 .5rem; border-bottom:1px solid var(--line-soft); }
+.tab{ padding:.7rem 1.2rem; cursor:pointer; background:none; border:none; border-bottom:2px solid transparent; font-family:var(--f-mono); font-size:.64rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); transition:all .3s; }
+.tab:hover{ color:var(--text); }
+.tab.on{ color:var(--gold-hi); border-bottom-color:var(--gold); }
+.tab .badge{ display:inline-block; margin-left:.5em; min-width:16px; padding:0 5px; border-radius:999px; font-size:.55rem; background:var(--gold); color:#141006; font-weight:700; }
+.tabview{ display:none; } .tabview.on{ display:block; }
+.stat-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-top:1.5rem; }
+@media (max-width:700px){ .stat-row{ grid-template-columns:repeat(2,1fr); } }
+.scard{ background:var(--ink-2); border:1px solid var(--line-soft); border-radius:14px; padding:1.3rem; }
+.scard .l{ font-family:var(--f-mono); font-size:.56rem; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); }
+.scard .v{ font-family:var(--f-display); font-size:1.9rem; margin-top:.5rem; color:var(--gold-hi); }
+.form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+@media (max-width:600px){ .form-grid{ grid-template-columns:1fr; } }
+.fld label{ display:block; font-family:var(--f-mono); font-size:.56rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:.4rem; }
+.fld input, .fld textarea, .fld select{ width:100%; background:var(--ink-3); border:1px solid var(--line-1); border-radius:9px; color:var(--text); font-size:.9rem; padding:.75rem 1rem; outline:none; transition:border-color .3s; font-family:var(--f-body); }
+.fld input:focus, .fld textarea:focus{ border-color:var(--gold); }
+.save-btn{ padding:.85rem 1.8rem; border:none; border-radius:999px; font-family:var(--f-mono); font-size:.64rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#141006; background:linear-gradient(180deg,#E9CD8D,var(--gold)); cursor:pointer; }
+.mini{ font-family:var(--f-mono); font-size:.54rem; letter-spacing:.1em; text-transform:uppercase; border:1px solid var(--line-1); background:transparent; color:var(--text); border-radius:999px; padding:.35rem .8rem; cursor:pointer; margin-right:.3rem; }
+.mini:hover{ border-color:var(--gold); color:var(--gold-hi); }
+.mini.danger:hover{ border-color:var(--err); color:var(--err); }
+.status-sel{ background:var(--ink-3); border:1px solid var(--line-1); color:var(--text); border-radius:999px; padding:.3rem .7rem; font-family:var(--f-mono); font-size:.58rem; cursor:pointer; }
 table{ width:100%; border-collapse:collapse; }
 th{ text-align:left; font-family:var(--f-mono); font-size:.55rem; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); padding:.6rem .5rem; border-bottom:1px solid var(--line-1); }
 td{ padding:.75rem .5rem; border-bottom:1px solid var(--line-soft); font-size:.85rem; vertical-align:middle; }
@@ -118,10 +139,139 @@ td.mono{ font-family:var(--f-mono); }
   }
 
   async function renderAdmin(){
-    page.innerHTML = '<h1>Admin <em>dashboard</em></h1>' +
-      '<div class="panel"><h2>Curators</h2><div id="curWrap"><div class="empty-note">Loading…</div></div></div>' +
-      '<div class="panel"><h2>Payout requests</h2><div id="payWrap"><div class="empty-note">Loading…</div></div></div>';
-    loadCurators(); loadPayouts();
+    page.innerHTML = '<h1>Your <em>control centre</em></h1>' +
+      '<div class="tabs">' +
+        '<button class="tab on" data-t="dash">Dashboard</button>' +
+        '<button class="tab" data-t="products">Products</button>' +
+        '<button class="tab" data-t="orders">Orders</button>' +
+        '<button class="tab" data-t="curators">Curators</button>' +
+        '<button class="tab" data-t="payouts">Payouts</button>' +
+      '</div>' +
+      '<div class="tabview on" id="v-dash"><div class="stat-row" id="statRow"></div>' +
+        '<div class="panel" style="margin-top:1.5rem"><h2>Recent orders</h2><div id="recentOrders"><div class="empty-note">Loading…</div></div></div></div>' +
+      '<div class="tabview" id="v-products">' +
+        '<div class="panel"><h2 id="pfTitle">Add a product</h2>' +
+          '<div class="form-grid">' +
+            '<div class="fld"><label>Product ID (no spaces)</label><input id="pf-id" placeholder="e.g. moon_lamp" /></div>' +
+            '<div class="fld"><label>Name</label><input id="pf-name" placeholder="Starry Sky Moon Lamp" /></div>' +
+            '<div class="fld"><label>Price (INR)</label><input id="pf-price" type="number" placeholder="1299" /></div>' +
+            '<div class="fld"><label>Stock</label><input id="pf-stock" type="number" placeholder="100" /></div>' +
+          '</div>' +
+          '<button class="save-btn" id="pf-save">Save product</button> ' +
+          '<button class="mini" id="pf-clear" style="margin-left:.5rem">Clear</button>' +
+          '<div class="msg" id="pf-msg"></div>' +
+        '</div>' +
+        '<div class="panel"><h2>All products</h2><div id="prodWrap"><div class="empty-note">Loading…</div></div></div></div>' +
+      '<div class="tabview" id="v-orders"><div class="panel"><h2>Orders</h2><div id="ordWrap"><div class="empty-note">Loading…</div></div></div></div>' +
+      '<div class="tabview" id="v-curators"><div class="panel"><h2>Curators</h2><div id="curWrap"><div class="empty-note">Loading…</div></div></div></div>' +
+      '<div class="tabview" id="v-payouts"><div class="panel"><h2>Payout requests</h2><div id="payWrap"><div class="empty-note">Loading…</div></div></div></div>';
+
+    document.querySelectorAll('.tab').forEach(function(t){
+      t.addEventListener('click', function(){
+        document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('on'); });
+        document.querySelectorAll('.tabview').forEach(function(x){ x.classList.remove('on'); });
+        t.classList.add('on');
+        document.getElementById('v-'+t.dataset.t).classList.add('on');
+      });
+    });
+
+    loadDashboard(); loadProducts(); loadOrders(); loadCurators(); loadPayouts();
+    wireProductForm();
+  }
+
+  async function loadDashboard(){
+    var orders = await A.allOrders();
+    var curators = await A.allCurators();
+    var paidOrders = orders.filter(function(o){ return ['paid','confirmed','shipped','delivered'].indexOf(o.status)>-1; });
+    var revenue = paidOrders.reduce(function(s,o){ return s + Number(o.total||0); }, 0);
+    var pendingCur = curators.filter(function(c){ return c.status==='pending'; }).length;
+    document.getElementById('statRow').innerHTML =
+      '<div class="scard"><div class="l">Total orders</div><div class="v">'+orders.length+'</div></div>' +
+      '<div class="scard"><div class="l">Revenue</div><div class="v">'+fmt(revenue)+'</div></div>' +
+      '<div class="scard"><div class="l">Curators</div><div class="v">'+curators.length+'</div></div>' +
+      '<div class="scard"><div class="l">Pending approvals</div><div class="v">'+pendingCur+'</div></div>';
+    if(pendingCur){
+      var ct = document.querySelector('[data-t="curators"]');
+      if(ct && !ct.querySelector('.badge')) ct.innerHTML += '<span class="badge">'+pendingCur+'</span>';
+    }
+    var recent = orders.slice(0,5);
+    document.getElementById('recentOrders').innerHTML = recent.length
+      ? '<table><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody>' +
+        recent.map(function(o){ return '<tr><td class="mono">'+o.id+'</td>' +
+          '<td>'+((o.customer&&o.customer.name)||'—')+'</td>' +
+          '<td class="mono" style="color:var(--gold-hi)">'+fmt(o.total)+'</td>' +
+          '<td><span class="pill pill-wait">'+o.status+'</span></td></tr>'; }).join('') + '</tbody></table>'
+      : '<div class="empty-note">No orders yet.</div>';
+  }
+
+  function wireProductForm(){
+    document.getElementById('pf-save').addEventListener('click', async function(){
+      var id = document.getElementById('pf-id').value.trim().toLowerCase().replace(/\s+/g,'_');
+      var name = document.getElementById('pf-name').value.trim();
+      var price = parseFloat(document.getElementById('pf-price').value);
+      var stock = parseInt(document.getElementById('pf-stock').value) || 0;
+      var msg = document.getElementById('pf-msg');
+      if(!id || !name || !(price>0)){ msg.style.color='var(--err)'; msg.textContent='Fill ID, name and a valid price.'; return; }
+      var res = await A.saveProduct({ id:id, name:name, price:price, stock:stock, active:true });
+      if(res.error){ msg.style.color='var(--err)'; msg.textContent=res.error.message; return; }
+      msg.style.color='var(--live)'; msg.textContent='Saved';
+      document.getElementById('pf-clear').click();
+      loadProducts(); loadDashboard();
+    });
+    document.getElementById('pf-clear').addEventListener('click', function(){
+      ['pf-id','pf-name','pf-price','pf-stock'].forEach(function(i){ document.getElementById(i).value=''; });
+      document.getElementById('pfTitle').textContent='Add a product';
+      document.getElementById('pf-id').disabled=false;
+    });
+  }
+  async function loadProducts(){
+    var rows = await A.allProducts();
+    var wrap = document.getElementById('prodWrap');
+    if(!rows.length){ wrap.innerHTML = '<div class="empty-note">No products in the database yet. Add one above, or run seed-products.sql.</div>'; return; }
+    wrap.innerHTML = '<table><thead><tr><th>ID</th><th>Name</th><th>Price</th><th>Stock</th><th>Active</th><th>Actions</th></tr></thead><tbody>' +
+      rows.map(function(p){ return '<tr><td class="mono" style="font-size:.72rem">'+p.id+'</td><td>'+p.name+'</td>' +
+        '<td class="mono" style="color:var(--gold-hi)">'+fmt(p.price)+'</td><td class="mono">'+p.stock+'</td>' +
+        '<td>'+(p.active?'<span class="pill pill-live">Yes</span>':'<span class="pill pill-off">No</span>')+'</td>' +
+        '<td><button class="mini" data-edit="'+p.id+'">Edit</button><button class="mini danger" data-del="'+p.id+'">Delete</button></td></tr>'; }).join('') +
+      '</tbody></table>';
+    wrap.querySelectorAll('[data-edit]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var p = rows.find(function(x){ return x.id===b.dataset.edit; });
+        document.getElementById('pf-id').value=p.id; document.getElementById('pf-id').disabled=true;
+        document.getElementById('pf-name').value=p.name;
+        document.getElementById('pf-price').value=p.price;
+        document.getElementById('pf-stock').value=p.stock;
+        document.getElementById('pfTitle').textContent='Edit: '+p.name;
+        window.scrollTo({top:0,behavior:'smooth'});
+      });
+    });
+    wrap.querySelectorAll('[data-del]').forEach(function(b){
+      b.addEventListener('click', async function(){
+        if(!confirm('Delete this product?')) return;
+        await A.deleteProduct(b.dataset.del); loadProducts(); loadDashboard();
+      });
+    });
+  }
+  async function loadOrders(){
+    var rows = await A.allOrders();
+    var wrap = document.getElementById('ordWrap');
+    if(!rows.length){ wrap.innerHTML = '<div class="empty-note">No orders yet.</div>'; return; }
+    var statuses = ['pending_payment','paid','confirmed','shipped','delivered','cancelled'];
+    wrap.innerHTML = '<table><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th></tr></thead><tbody>' +
+      rows.map(function(o){
+        var items = (o.items||[]).map(function(i){ return i.qty+'x '+i.name; }).join(', ');
+        var opts = statuses.map(function(s){ return '<option'+(o.status===s?' selected':'')+'>'+s+'</option>'; }).join('');
+        return '<tr><td class="mono" style="font-size:.72rem">'+o.id+'<br><span style="color:var(--faint)">'+new Date(o.created_at).toLocaleDateString('en-IN')+'</span></td>' +
+          '<td>'+((o.customer&&o.customer.name)||'—')+'<br><span style="color:var(--faint);font-size:.7rem">'+((o.customer&&o.customer.phone)||'')+'</span></td>' +
+          '<td style="font-size:.75rem;max-width:200px">'+items+'</td>' +
+          '<td class="mono" style="color:var(--gold-hi)">'+fmt(o.total)+'</td>' +
+          '<td><select class="status-sel" data-order="'+o.id+'">'+opts+'</select></td></tr>';
+      }).join('') + '</tbody></table>';
+    wrap.querySelectorAll('[data-order]').forEach(function(sel){
+      sel.addEventListener('change', async function(){
+        await A.setOrderStatus(sel.dataset.order, sel.value); loadDashboard();
+      });
+    });
   }
 
   async function loadCurators(){
