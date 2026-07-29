@@ -90,6 +90,18 @@ td.mono{ font-family:var(--f-mono); }
 .not-setup h2{ font-family:var(--f-display); font-weight:400; color:var(--err); }
 .not-setup code{ font-family:var(--f-mono); font-size:.8rem; background:var(--ink-3); padding:.2em .5em; border-radius:4px; color:var(--gold-hi); }
 .not-setup ol{ margin:1rem 0 0 1.2rem; color:var(--muted); font-size:.88rem; line-height:1.9; }
+
+.or-divider{ display:flex; align-items:center; gap:1rem; margin:1.2rem 0; }
+.or-divider::before, .or-divider::after{ content:""; flex:1; height:1px; background:var(--line-1); }
+.or-divider span{ font-family:var(--f-mono); font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
+.google-btn{
+  width:100%; display:flex; align-items:center; justify-content:center; gap:.7rem;
+  padding:.9rem; border-radius:999px; cursor:pointer;
+  background:#fff; color:#1a1a1a; border:none;
+  font-family:var(--f-body); font-size:.9rem; font-weight:500; transition:transform .3s, box-shadow .3s;
+}
+.google-btn:hover{ transform:translateY(-2px); box-shadow:0 10px 24px -10px rgba(0,0,0,.5); }
+.google-btn svg{ flex:none; }
 </style>
 </head>
 <body>
