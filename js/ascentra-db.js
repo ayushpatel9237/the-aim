@@ -64,12 +64,35 @@ window.Ascentra = (function(){
   async function setCuratorStatus(id, status){ return sb.from('curators').update({status:status}).eq('id',id); }
   async function markPayoutPaid(id){ return sb.from('curator_payouts').update({status:'paid', paid_at:new Date().toISOString()}).eq('id',id); }
 
+
+  /* ── admin: products ── */
+  async function allProducts(){
+    var { data } = await sb.from('products').select('*').order('id');
+    return data || [];
+  }
+  async function saveProduct(p){
+    return sb.from('products').upsert(p).select();
+  }
+  async function deleteProduct(id){ return sb.from('products').delete().eq('id', id); }
+
+  /* ── admin: orders ── */
+  async function allOrders(){
+    var { data } = await sb.from('orders').select('*').order('created_at', { ascending:false });
+    return data || [];
+  }
+  async function setOrderStatus(id, status){ return sb.from('orders').update({ status:status }).eq('id', id); }
+
+  /* ── admin: set curator commission ── */
+  async function setCommission(id, pct){ return sb.from('curators').update({ commission_pct:pct }).eq('id', id); }
+
   return {
     configured: configured, raw: sb,
     currentUser: currentUser, signUp: signUp, signIn: signIn, signOut: signOut, onAuth: onAuth,
     myCurator: myCurator, applyAsCurator: applyAsCurator, mySales: mySales,
     myPayouts: myPayouts, requestPayout: requestPayout,
     allCurators: allCurators, allPayouts: allPayouts,
-    setCuratorStatus: setCuratorStatus, markPayoutPaid: markPayoutPaid
+    setCuratorStatus: setCuratorStatus, markPayoutPaid: markPayoutPaid,
+    allProducts: allProducts, saveProduct: saveProduct, deleteProduct: deleteProduct,
+    allOrders: allOrders, setOrderStatus: setOrderStatus, setCommission: setCommission
   };
 })();
