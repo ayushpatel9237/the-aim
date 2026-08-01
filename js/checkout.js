@@ -131,8 +131,7 @@
 
     var btn = this; btn.disabled = true; btn.textContent = 'Processing…';
 
-    var refCode = null;
-    try{ var r = JSON.parse(localStorage.getItem('ascentra_ref')); if(r) refCode = r.code; }catch(e){}
+    var refCode = window.ascentraActiveRef ? window.ascentraActiveRef() : null;
 
     var A = window.Ascentra;
     var live = A && A.configured() && A.raw;
@@ -164,8 +163,7 @@
                   subtotal:subtotal, shipping:ship, total:total, payment:payMethod,
                   status: payMethod==='cod'?'confirmed':'demo_unpaid' };
     storeLocal(order);
-    if(window.ascentraSaveOrder) window.ascentraSaveOrder(order);
-    done();
+        done();
   });
 
   /* open Razorpay using the server-created order, then verify on the server */

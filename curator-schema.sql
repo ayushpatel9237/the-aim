@@ -156,3 +156,33 @@ create or replace function decrement_stock(pid text, qty int)
 returns void as $$
   update products set stock = greatest(0, stock - qty) where id = pid;
 $$ language sql security definer;
+
+
+-- ═══════════════════════════════════════════════════════════════
+--  PRODUCT IMAGES — storage bucket + richer product columns
+--  (added so the admin can upload/manage images like the parent seller)
+-- ═══════════════════════════════════════════════════════════════
+
+-- richer product columns
+alter table products add column if not exists short_desc text;
+alter table products add column if not exists description text;
+alter table products add column if not exists category   text;
+alter table products add column if not exists mrp        numeric;
+alter table products add column if not exists images     jsonb default '[]'::jsonb;  -- array of image URLs
+alter table products add column if not exists video      text;
+alter table products add column if not exists status     text default 'active';       -- active | draft | paused
+
+-- create a public storage bucket for product images
+insert into storage.buckets (id, name, public)
+values ('product-images', 'product-images', true)
+on conflict (id) do nothing;
+
+-- storage policies: anyone can view; only admin can upload/delete
+create policy "public view product images" on storage.objects
+  for select using ( bucket_id = 'product-images' );
+create policy "admin upload product images" on storage.objects
+  for insert with check ( bucket_id = 'product-images' and (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin' );
+create policy "admin update product images" on storage.objects
+  for update using ( bucket_id = 'product-images' and (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin' );
+create policy "admin delete product images" on storage.objects
+  for delete using ( bucket_id = 'product-images' and (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin' );

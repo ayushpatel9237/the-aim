@@ -54,6 +54,13 @@ h1 em{ font-style:italic; font-weight:300; color:var(--gold-hi); }
 .mini:hover{ border-color:var(--gold); color:var(--gold-hi); }
 .mini.danger:hover{ border-color:var(--err); color:var(--err); }
 .status-sel{ background:var(--ink-3); border:1px solid var(--line-1); color:var(--text); border-radius:999px; padding:.3rem .7rem; font-family:var(--f-mono); font-size:.58rem; cursor:pointer; }
+.up-drop{ border:1px dashed var(--line-1); border-radius:11px; padding:1.4rem; text-align:center; cursor:pointer; color:var(--muted); font-family:var(--f-mono); font-size:.66rem; letter-spacing:.1em; transition:border-color .3s,color .3s; }
+.up-drop:hover{ border-color:var(--gold); color:var(--gold-hi); }
+.up-thumbs{ display:flex; gap:.7rem; flex-wrap:wrap; margin-top:.9rem; }
+.up-thumb{ position:relative; width:70px; height:70px; border-radius:9px; overflow:hidden; border:1px solid var(--line-1); background:#f4f4f6; }
+.up-thumb img{ width:100%; height:100%; object-fit:cover; }
+.up-thumb .rm{ position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; background:rgba(12,12,13,.8); color:#fff; border:none; cursor:pointer; font-size:.7rem; line-height:1; }
+.up-thumb.main::after{ content:"MAIN"; position:absolute; bottom:0; left:0; right:0; background:var(--gold); color:#141006; font-family:var(--f-mono); font-size:.44rem; letter-spacing:.1em; text-align:center; padding:1px; }
 table{ width:100%; border-collapse:collapse; }
 th{ text-align:left; font-family:var(--f-mono); font-size:.55rem; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); padding:.6rem .5rem; border-bottom:1px solid var(--line-1); }
 td{ padding:.75rem .5rem; border-bottom:1px solid var(--line-soft); font-size:.85rem; vertical-align:middle; }
@@ -151,17 +158,36 @@ td.mono{ font-family:var(--f-mono); }
         '<div class="panel" style="margin-top:1.5rem"><h2>Recent orders</h2><div id="recentOrders"><div class="empty-note">Loading…</div></div></div></div>' +
       '<div class="tabview" id="v-products">' +
         '<div class="panel"><h2 id="pfTitle">Add a product</h2>' +
+          '<input type="hidden" id="pf-images" value="[]" />' +
           '<div class="form-grid">' +
             '<div class="fld"><label>Product ID (no spaces)</label><input id="pf-id" placeholder="e.g. moon_lamp" /></div>' +
             '<div class="fld"><label>Name</label><input id="pf-name" placeholder="Starry Sky Moon Lamp" /></div>' +
+          '</div>' +
+          '<div class="fld" style="margin-bottom:1rem"><label>Short description (one line)</label><input id="pf-short" placeholder="Moonlight in your room" /></div>' +
+          '<div class="fld" style="margin-bottom:1rem"><label>Full description</label><textarea id="pf-desc" rows="3" placeholder="Full product details customers see on the product page..."></textarea></div>' +
+          '<div class="form-grid">' +
             '<div class="fld"><label>Price (INR)</label><input id="pf-price" type="number" placeholder="1299" /></div>' +
+            '<div class="fld"><label>MRP (optional, for strike-through)</label><input id="pf-mrp" type="number" placeholder="2499" /></div>' +
             '<div class="fld"><label>Stock</label><input id="pf-stock" type="number" placeholder="100" /></div>' +
+            '<div class="fld"><label>Category</label><select id="pf-cat"><option>Room</option><option>Desk</option><option>Gadgets</option><option>Storage</option><option>Daily Essentials</option></select></div>' +
+          '</div>' +
+          '<div class="fld" style="margin-bottom:1rem"><label>Video link (Instagram / YouTube / mp4 — optional)</label><input id="pf-video" placeholder="https://..." /></div>' +
+          '<div class="fld" style="margin-bottom:1rem"><label>Product images</label>' +
+            '<div class="uploader" id="uploader"><input type="file" id="pf-file" accept="image/*" multiple hidden />' +
+              '<div class="up-drop" id="upDrop">＋ Click to upload images (first one is the main photo)</div>' +
+              '<div class="up-thumbs" id="upThumbs"></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="form-grid">' +
+            '<div class="fld"><label>Status</label><select id="pf-status"><option value="active">Active (live)</option><option value="draft">Draft (hidden)</option><option value="paused">Paused</option></select></div>' +
           '</div>' +
           '<button class="save-btn" id="pf-save">Save product</button> ' +
           '<button class="mini" id="pf-clear" style="margin-left:.5rem">Clear</button>' +
           '<div class="msg" id="pf-msg"></div>' +
         '</div>' +
-        '<div class="panel"><h2>All products</h2><div id="prodWrap"><div class="empty-note">Loading…</div></div></div></div>' +
+        '<div class="panel"><h2>All products</h2>' +
+          '<div style="margin-bottom:1rem"><input id="prodSearch" placeholder="Search products…" style="width:100%;max-width:320px;background:var(--ink-3);border:1px solid var(--line-1);border-radius:999px;color:var(--text);padding:.7rem 1.1rem;outline:none" /></div>' +
+          '<div id="prodWrap"><div class="empty-note">Loading…</div></div></div></div>' +
       '<div class="tabview" id="v-orders"><div class="panel"><h2>Orders</h2><div id="ordWrap"><div class="empty-note">Loading…</div></div></div></div>' +
       '<div class="tabview" id="v-curators"><div class="panel"><h2>Curators</h2><div id="curWrap"><div class="empty-note">Loading…</div></div></div></div>' +
       '<div class="tabview" id="v-payouts"><div class="panel"><h2>Payout requests</h2><div id="payWrap"><div class="empty-note">Loading…</div></div></div></div>';
@@ -205,42 +231,107 @@ td.mono{ font-family:var(--f-mono); }
   }
 
   function wireProductForm(){
+    var images = [];
+    function renderThumbs(){
+      document.getElementById('pf-images').value = JSON.stringify(images);
+      document.getElementById('upThumbs').innerHTML = images.map(function(url,i){
+        return '<div class="up-thumb'+(i===0?' main':'')+'"><img src="'+url+'" alt="" />' +
+          '<button class="rm" data-rm="'+i+'">×</button></div>';
+      }).join('');
+      document.querySelectorAll('[data-rm]').forEach(function(b){
+        b.addEventListener('click', function(){ images.splice(parseInt(b.dataset.rm),1); renderThumbs(); });
+      });
+    }
+    window._pfSetImages = function(arr){ images = arr||[]; renderThumbs(); };
+
+    document.getElementById('upDrop').addEventListener('click', function(){ document.getElementById('pf-file').click(); });
+    document.getElementById('pf-file').addEventListener('change', async function(e){
+      var files = Array.prototype.slice.call(e.target.files);
+      var drop = document.getElementById('upDrop');
+      drop.textContent = 'Uploading…';
+      for(var i=0;i<files.length;i++){
+        try{ var url = await A.uploadImage(files[i]); images.push(url); renderThumbs(); }
+        catch(err){ alert('Upload failed: ' + err.message); }
+      }
+      drop.textContent = '＋ Click to upload images (first one is the main photo)';
+      e.target.value='';
+    });
+
     document.getElementById('pf-save').addEventListener('click', async function(){
       var id = document.getElementById('pf-id').value.trim().toLowerCase().replace(/\s+/g,'_');
       var name = document.getElementById('pf-name').value.trim();
       var price = parseFloat(document.getElementById('pf-price').value);
-      var stock = parseInt(document.getElementById('pf-stock').value) || 0;
       var msg = document.getElementById('pf-msg');
       if(!id || !name || !(price>0)){ msg.style.color='var(--err)'; msg.textContent='Fill ID, name and a valid price.'; return; }
-      var res = await A.saveProduct({ id:id, name:name, price:price, stock:stock, active:true });
+      var prod = {
+        id:id, name:name, price:price,
+        mrp: parseFloat(document.getElementById('pf-mrp').value) || null,
+        stock: parseInt(document.getElementById('pf-stock').value) || 0,
+        short_desc: document.getElementById('pf-short').value.trim() || null,
+        description: document.getElementById('pf-desc').value.trim() || null,
+        category: document.getElementById('pf-cat').value,
+        video: document.getElementById('pf-video').value.trim() || null,
+        images: images,
+        status: document.getElementById('pf-status').value,
+        active: document.getElementById('pf-status').value === 'active'
+      };
+      msg.style.color='var(--muted)'; msg.textContent='Saving…';
+      var res = await A.saveProduct(prod);
       if(res.error){ msg.style.color='var(--err)'; msg.textContent=res.error.message; return; }
-      msg.style.color='var(--live)'; msg.textContent='Saved';
+      msg.style.color='var(--live)'; msg.textContent='Saved ✓';
       document.getElementById('pf-clear').click();
       loadProducts(); loadDashboard();
     });
     document.getElementById('pf-clear').addEventListener('click', function(){
-      ['pf-id','pf-name','pf-price','pf-stock'].forEach(function(i){ document.getElementById(i).value=''; });
+      ['pf-id','pf-name','pf-price','pf-mrp','pf-stock','pf-short','pf-desc','pf-video'].forEach(function(i){ var el=document.getElementById(i); if(el) el.value=''; });
       document.getElementById('pfTitle').textContent='Add a product';
       document.getElementById('pf-id').disabled=false;
+      images = []; renderThumbs();
     });
   }
   async function loadProducts(){
     var rows = await A.allProducts();
+    window._allProducts = rows;
+    renderProductList(rows);
+    var search = document.getElementById('prodSearch');
+    if(search && !search._wired){
+      search._wired = true;
+      search.addEventListener('input', function(){
+        var q = search.value.toLowerCase();
+        renderProductList((window._allProducts||[]).filter(function(p){
+          return (p.id+' '+p.name+' '+(p.category||'')).toLowerCase().indexOf(q) > -1;
+        }));
+      });
+    }
+  }
+  function renderProductList(rows){
     var wrap = document.getElementById('prodWrap');
-    if(!rows.length){ wrap.innerHTML = '<div class="empty-note">No products in the database yet. Add one above, or run seed-products.sql.</div>'; return; }
-    wrap.innerHTML = '<table><thead><tr><th>ID</th><th>Name</th><th>Price</th><th>Stock</th><th>Active</th><th>Actions</th></tr></thead><tbody>' +
-      rows.map(function(p){ return '<tr><td class="mono" style="font-size:.72rem">'+p.id+'</td><td>'+p.name+'</td>' +
-        '<td class="mono" style="color:var(--gold-hi)">'+fmt(p.price)+'</td><td class="mono">'+p.stock+'</td>' +
-        '<td>'+(p.active?'<span class="pill pill-live">Yes</span>':'<span class="pill pill-off">No</span>')+'</td>' +
-        '<td><button class="mini" data-edit="'+p.id+'">Edit</button><button class="mini danger" data-del="'+p.id+'">Delete</button></td></tr>'; }).join('') +
-      '</tbody></table>';
+    if(!rows.length){ wrap.innerHTML = '<div class="empty-note">No products. Add one above, or run seed-products.sql.</div>'; return; }
+    wrap.innerHTML = '<table><thead><tr><th></th><th>Name</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead><tbody>' +
+      rows.map(function(p){
+        var img = (p.images && p.images.length) ? p.images[0] : '';
+        var thumb = img ? '<img src="'+img+'" style="width:40px;height:40px;border-radius:6px;object-fit:cover;background:#f4f4f6" />' : '<div style="width:40px;height:40px;border-radius:6px;background:var(--ink-3)"></div>';
+        var st = p.status || (p.active?'active':'draft');
+        var pill = st==='active'?'<span class="pill pill-live">Live</span>':st==='draft'?'<span class="pill pill-off">Draft</span>':'<span class="pill pill-wait">Paused</span>';
+        return '<tr><td>'+thumb+'</td><td>'+p.name+'<br><span style="color:var(--faint);font-size:.68rem">'+p.id+'</span></td>' +
+          '<td class="mono" style="color:var(--gold-hi)">'+fmt(p.price)+'</td><td class="mono">'+p.stock+'</td>' +
+          '<td>'+pill+'</td>' +
+          '<td><button class="mini" data-edit="'+p.id+'">Edit</button><button class="mini danger" data-del="'+p.id+'">Delete</button></td></tr>';
+      }).join('') + '</tbody></table>';
     wrap.querySelectorAll('[data-edit]').forEach(function(b){
       b.addEventListener('click', function(){
-        var p = rows.find(function(x){ return x.id===b.dataset.edit; });
+        var p = (window._allProducts||[]).find(function(x){ return x.id===b.dataset.edit; });
         document.getElementById('pf-id').value=p.id; document.getElementById('pf-id').disabled=true;
         document.getElementById('pf-name').value=p.name;
         document.getElementById('pf-price').value=p.price;
+        document.getElementById('pf-mrp').value=p.mrp||'';
         document.getElementById('pf-stock').value=p.stock;
+        document.getElementById('pf-short').value=p.short_desc||'';
+        document.getElementById('pf-desc').value=p.description||'';
+        document.getElementById('pf-cat').value=p.category||'Gadgets';
+        document.getElementById('pf-video').value=p.video||'';
+        document.getElementById('pf-status').value=p.status||(p.active?'active':'draft');
+        if(window._pfSetImages) window._pfSetImages(p.images||[]);
         document.getElementById('pfTitle').textContent='Edit: '+p.name;
         window.scrollTo({top:0,behavior:'smooth'});
       });

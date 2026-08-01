@@ -1,14 +1,45 @@
 [build]
   publish = "."
 
+# ── long cache for images (they never change once uploaded) ──
 [[headers]]
   for = "/images/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# ── security headers on every page ──
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # stop your site being embedded in someone else's page (clickjacking)
+    X-Frame-Options = "SAMEORIGIN"
+    # stop browsers guessing file types (MIME sniffing attacks)
+    X-Content-Type-Options = "nosniff"
+    # don't leak your URLs to other sites
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # force HTTPS for a year
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    # lock down what the page is allowed to use
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), payment=(self)"
+    # Content Security Policy — only load code/data from trusted sources
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://checkout.razorpay.com https://www.youtube-nocookie.com https://www.youtube.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' https:; connect-src 'self' https://*.supabase.co https://api.razorpay.com; frame-src https://www.youtube-nocookie.com https://www.youtube.com https://www.instagram.com https://www.facebook.com https://api.razorpay.com https://checkout.razorpay.com; object-src 'none'; base-uri 'self'; form-action 'self'"
+
+# ── never cache HTML, so updates show immediately ──
 [[headers]]
   for = "/*.html"
   [headers.values]
-    X-Frame-Options = "SAMEORIGIN"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# ── block access to source/config files ──
+[[redirects]]
+  from = "/*.sql"
+  to = "/404.html"
+  status = 404
+[[redirects]]
+  from = "/supabase/*"
+  to = "/404.html"
+  status = 404
+[[redirects]]
+  from = "/*.md"
+  to = "/404.html"
+  status = 404
