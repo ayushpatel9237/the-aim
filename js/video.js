@@ -49,7 +49,7 @@ window.AscentraVideo = (function(){
     }
     /* fallback: just open the link */
     return '<a href="'+url+'" target="_blank" rel="noopener" ' +
-           'style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;background:#000;color:#8FCBFF;font-family:monospace;letter-spacing:.1em">▶ Watch video</a>';
+           'style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;background:#000;color:#E0D2B4;font-family:monospace;letter-spacing:.1em">▶ Watch video</a>';
   }
 
   function frame(src){

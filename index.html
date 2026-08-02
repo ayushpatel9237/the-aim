@@ -17,7 +17,7 @@
 <meta name="twitter:title" content="The AIM — Things you didn't know you needed">
 <meta name="twitter:description" content="Useful everyday items at honest prices — hand-picked and delivered across India.">
 <meta name="twitter:image" content="https://ascentra.netlify.app/images/products/01_starry_sky_moon_lamp_hero.webp">
-<meta name="theme-color" content="#071320">
+<meta name="theme-color" content="#0D1B30"
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -25,11 +25,11 @@
 <link rel="stylesheet" href="css/living.css">
 <style>
 :root{
-  --ink:#071320; --ink-2:#0C1E30; --ink-3:#1a1a1d;
-  --line-1:#204264; --line-soft:#16293D;
-  --text:#F4ECDC; --muted:#9FB3C7; --faint:#64809B;
-  --gold:#4FA8FF; --gold-hi:#8FCBFF; --live:#6aa88f;
-  --cream:#EAF3FF; --cream-2:#CFE4FA;
+  --ink:#0D1B30; --ink-2:#12243D; --ink-3:#12243D;
+  --line-1:#243C5C; --line-soft:#1A2E49;
+  --text:#F7F4EE; --muted:#93A0B2; --faint:#5C6B7E;
+  --gold:#C9B893; --gold-hi:#E0D2B4; --live:#5FA88C;
+  --cream:#F7F4EE; --cream-2:#DCCDB0;
   --f-display:"Fraunces",Georgia,serif;
   --f-body:"Space Grotesk",system-ui,sans-serif;
   --f-mono:"Space Mono",monospace;
@@ -39,7 +39,7 @@
 *{ box-sizing:border-box; margin:0; padding:0; }
 html{ background:var(--ink); scroll-behavior:smooth; }
 body{
-  background:radial-gradient(1400px 900px at 50% -25%, #0E2135, var(--ink) 62%) fixed;
+  background:radial-gradient(1400px 900px at 50% -25%, #0F1E35, var(--ink) 62%) fixed;
   color:var(--text); font-family:var(--f-body);
   font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;
 }
@@ -53,7 +53,7 @@ button{ font:inherit; color:inherit; background:none; border:none; cursor:pointe
 
 h1,h2{ font-family:var(--f-display); font-weight:400; line-height:1.05; letter-spacing:-.012em; }
 h1 em, h2 em{ font-style:italic; font-weight:300;
-  background:linear-gradient(100deg, #F3E2B3 0%, #4FA8FF 35%, #E7DCC4 50%, #4FA8FF 65%, #A97F3C 100%);
+  background:linear-gradient(100deg, #F7F4EE 0%, #C9B893 35%, #DCCDB0 50%, #C9B893 65%, #8A7B5C 100%);
   background-size:220% 100%;
   -webkit-background-clip:text; background-clip:text; color:transparent;
   animation:foil 7s ease-in-out infinite; }
@@ -63,7 +63,7 @@ h1 em, h2 em{ font-style:italic; font-weight:300;
 
 .eyebrow{
   font-family:var(--f-mono); font-size:.64rem; letter-spacing:.26em;
-  text-transform:uppercase; color:var(--gold);
+  text-transform:uppercase; color:var(--faint);
   display:inline-flex; align-items:center; gap:.7em;
 }
 .live-dot{
@@ -83,7 +83,7 @@ h1 em, h2 em{ font-style:italic; font-weight:300;
 }
 .btn-solid{
   position:relative; overflow:hidden;
-  background:linear-gradient(180deg, #FBF6EA, var(--gold)); color:#0A1A2B; font-weight:700;
+  background:#DCCDB0; color:#0D1B30; font-weight:700;
 }
 .btn-solid::after{
   content:""; position:absolute; top:-4px; bottom:-4px; left:-70%; width:42%;
@@ -212,7 +212,7 @@ section{ padding:clamp(4rem,8vw,6.5rem) 0; }
    Pages must define: --f-mono, --f-display, --gold-hi. */
 
 .grid{
-  --ledge-hi:#7FC2FF; --ledge:#B58F3E; --ledge-lo:#5C4419;
+  --ledge-hi:#C9B893; --ledge:#8A7B5C; --ledge-lo:#3E4A63;
   position:relative;
   display:grid; grid-template-columns:repeat(4,1fr);
   gap:3.8rem 2.6rem;
@@ -221,7 +221,7 @@ section{ padding:clamp(4rem,8vw,6.5rem) 0; }
   border:1px solid rgba(231,200,120,.24);
   background:
     radial-gradient(ellipse 70% 48% at 50% -6%, rgba(231,200,120,.18), transparent 62%),
-    linear-gradient(180deg, #1C1710 0%, #12100B 100%);
+    linear-gradient(180deg, #12243D 0%, #0F1E35 100%);
   box-shadow:
     inset 0 14px 28px rgba(0,0,0,.55),
     inset 0 3px 7px rgba(0,0,0,.5),
@@ -286,8 +286,8 @@ section{ padding:clamp(4rem,8vw,6.5rem) 0; }
     radial-gradient(ellipse 80% 26% at 50% 0%, rgba(255,255,255,.20), transparent 70%),
     linear-gradient(90deg, rgba(0,0,0,.08) 0%, transparent 8%, transparent 92%, rgba(0,0,0,.08) 100%),
     linear-gradient(180deg,
-      color-mix(in srgb, var(--ledge-hi) 24%, #FBF6EA) 0%,
-      color-mix(in srgb, var(--ledge) 32%, #EFE8D9) calc(100% - 18px),
+      color-mix(in srgb, var(--ledge-hi) 24%, #EFE7D6) 0%,
+      color-mix(in srgb, var(--ledge) 32%, #F7F4EE) calc(100% - 18px),
       color-mix(in srgb, var(--ledge-lo) 60%, #000) calc(100% - 18px),
       color-mix(in srgb, var(--ledge-lo) 60%, #000) calc(100% - 16px),
       var(--ledge-hi) calc(100% - 16px),
@@ -318,7 +318,7 @@ section{ padding:clamp(4rem,8vw,6.5rem) 0; }
   content:""; position:absolute; z-index:3; top:9%; right:11%;
   width:15px; height:15px; pointer-events:none;
   clip-path:polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
-  background:linear-gradient(180deg, #F4ECDC, #EFCE8C);
+  background:linear-gradient(180deg, #F7F4EE, #EFE7D6);
   opacity:0; transform:scale(.3);
 }
 .pcase:hover .pimg::before{ animation:twinkle 1.5s ease-in-out infinite; }
@@ -343,7 +343,7 @@ section{ padding:clamp(4rem,8vw,6.5rem) 0; }
 .pimg .sku{
   position:absolute; top:8px; right:8px; z-index:2;
   font-family:var(--f-mono); font-size:.52rem; letter-spacing:.18em;
-  color:#8a8a90; background:rgba(246,241,230,.9); padding:.3em .7em; border-radius:3px;
+  color:#93A0B2; background:rgba(246,241,230,.9); padding:.3em .7em; border-radius:3px;
 }
 .pimg .off{
   position:absolute; left:8px; bottom:8px; z-index:2;
@@ -357,7 +357,7 @@ section{ padding:clamp(4rem,8vw,6.5rem) 0; }
 .ticket{
   position:relative; z-index:1;
   margin:34px -8px 0;
-  background:linear-gradient(180deg, #FBF6EA 0%, #F4ECDC 100%);
+  background:linear-gradient(180deg, #EFE7D6 0%, #F7F4EE 100%);
   border-radius:10px;
   padding:.75rem .5rem .8rem; text-align:center;
   box-shadow:0 8px 18px rgba(0,0,0,.45), 0 1px 3px rgba(0,0,0,.3);
@@ -380,18 +380,18 @@ section{ padding:clamp(4rem,8vw,6.5rem) 0; }
 }
 .ticket .cat{
   font-family:var(--f-mono); font-size:.52rem; letter-spacing:.26em;
-  text-transform:uppercase; color:#9C9484;
+  text-transform:uppercase; color:#93A0B2;
 }
 .ticket .nm{
-  font-family:var(--f-display); font-size:1.05rem; line-height:1.22; color:#1E1A10;
+  font-family:var(--f-display); font-size:1.05rem; line-height:1.22; color:#12243D;
 }
 .ticket .pr{
-  font-family:var(--f-mono); font-size:.82rem; font-weight:700; color:#1E5C99; margin-top:.1rem;
+  font-family:var(--f-mono); font-size:.82rem; font-weight:700; color:#8A7B5C; margin-top:.1rem;
 }
-.ticket .pr s{ font-weight:400; color:#B8AE9A; font-size:.82em; margin-left:.5em; }
+.ticket .pr s{ font-weight:400; color:#C9B893; font-size:.82em; margin-left:.5em; }
 .ticket .go{
   font-family:var(--f-mono); font-size:.52rem; letter-spacing:.22em; text-transform:uppercase;
-  color:#1E5C99; margin-top:auto; padding-top:.35rem;
+  color:#8A7B5C; margin-top:auto; padding-top:.35rem;
   opacity:0; transition:opacity .35s ease;
 }
 .pcase:hover .ticket .go{ opacity:1; }
@@ -409,14 +409,14 @@ section{ padding:clamp(4rem,8vw,6.5rem) 0; }
 .ribbon{
   overflow:hidden; position:relative;
   border-top:1px solid rgba(231,200,120,.35); border-bottom:1px solid rgba(90,66,26,.8);
-  background:linear-gradient(180deg, #7FC2FF 0%, #C49D5C 55%, #96742F 100%);
+  background:linear-gradient(180deg, #C9B893 0%, #C9B893 55%, #8A7B5C 100%);
   box-shadow:0 6px 18px -8px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.5);
 }
 .ribbon-track{ display:flex; width:max-content; animation:rib 32s linear infinite; }
 .ribbon:hover .ribbon-track{ animation-play-state:paused; }
 .ribbon span{
   font-family:var(--f-mono); font-size:.6rem; font-weight:700;
-  letter-spacing:.3em; text-transform:uppercase; color:#241a08;
+  letter-spacing:.3em; text-transform:uppercase; color:#12243D;
   padding:.85rem 2.4rem; white-space:nowrap;
   text-shadow:0 1px 0 rgba(255,255,255,.3);
 }
@@ -462,6 +462,7 @@ footer{ border-top:1px solid var(--line-soft); padding:3rem 0 2.4rem; }
 }
 </style>
 <script src="js/transitions.js"></script>
+<script src="js/expand.js"></script>
 <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>

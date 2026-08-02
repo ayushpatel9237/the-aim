@@ -15,7 +15,7 @@
 .reel{
   flex:0 0 auto; width:clamp(210px,44vw,272px); aspect-ratio:9/16;
   scroll-snap-align:center; position:relative; overflow:hidden;
-  border-radius:18px; background:#000; border:1px solid #204264;
+  border-radius:18px; background:#000; border:1px solid #243C5C;
   transition:border-color .45s, transform .45s cubic-bezier(.16,1,.3,1), box-shadow .45s;
 }
 .reel:hover{
@@ -51,7 +51,7 @@
 .reel .rname{ font-family:var(--f-body); font-size:.82rem; font-weight:500; color:#fff; line-height:1.25; }
 .reel .rbtn{
   font-family:var(--f-mono); font-size:.54rem; letter-spacing:.14em; text-transform:uppercase;
-  color:#0A1A2B; background:linear-gradient(180deg,#FBF6EA,#4FA8FF);
+  color:#0D1B30; background:linear-gradient(180deg,#EFE7D6,#C9B893);
   padding:.55em .95em; border-radius:999px; white-space:nowrap; transition:transform .3s;
 }
 .reel .rbtn:hover{ transform:translateY(-2px); }
@@ -73,7 +73,7 @@
   border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);
   background:
     radial-gradient(900px 400px at 15% 0%, rgba(201,161,95,.05), transparent 60%),
-    linear-gradient(180deg, #101012, #050E18);
+    linear-gradient(180deg, #0F1E35, #091425);
 }
 .poll-lead{ max-width:36rem; }
 .poll-lead p{ color:var(--muted); font-size:.95rem; margin-top:.9rem; line-height:1.6; }
@@ -93,10 +93,10 @@
   border:1px solid var(--line-soft);
   transition:border-color .4s, background .4s;
 }
-.up-card:hover{ border-color:#3a3a40; background:rgba(255,255,255,.035); }
+.up-card:hover{ border-color:#243C5C; background:rgba(255,255,255,.035); }
 .up-img{
   position:relative; width:82px; height:82px; border-radius:10px; overflow:hidden;
-  background:#f4f4f6; align-self:start;
+  background:#EFE7D6; align-self:start;
 }
 .up-img img{ width:100%; height:100%; object-fit:cover; }
 .up-heart{
@@ -106,7 +106,7 @@
   color:#fff; font-size:.85rem; line-height:1; transition:all .3s cubic-bezier(.34,1.4,.64,1);
 }
 .up-heart:hover{ border-color:var(--gold); transform:scale(1.12); }
-.up-heart.on{ color:#e06a7a; border-color:#e06a7a; background:rgba(224,106,122,.14); }
+.up-heart.on{ color:#E0697A; border-color:#E0697A; background:rgba(224,106,122,.14); }
 .up-body{ display:flex; flex-direction:column; gap:.3rem; min-width:0; }
 .up-cat{ font-family:var(--f-mono); font-size:.54rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); }
 .up-nm{ font-family:var(--f-display); font-size:1.02rem; line-height:1.2; }
@@ -115,11 +115,11 @@
 /* the vote line: thin progress + votes + button, all inline */
 .up-barwrap{
   position:relative; height:5px; margin:.55rem 0 .1rem;
-  background:#1c1c1f; border-radius:999px; overflow:hidden;
+  background:#12243D; border-radius:999px; overflow:hidden;
 }
 .up-bar{
   position:absolute; inset:0 auto 0 0; height:100%; border-radius:999px;
-  background:linear-gradient(90deg,#4FA8FF,#FBF6EA);
+  background:linear-gradient(90deg,#C9B893,#EFE7D6);
   transition:width .7s cubic-bezier(.16,1,.3,1);
 }
 .up-stat{
@@ -134,7 +134,7 @@
 }
 .up-vote:hover{ border-color:var(--gold); color:var(--gold-hi); }
 .up-vote.voted{
-  background:linear-gradient(180deg,#FBF6EA,#4FA8FF); border-color:transparent; color:#0A1A2B; font-weight:700;
+  background:linear-gradient(180deg,#EFE7D6,#C9B893); border-color:transparent; color:#0D1B30; font-weight:700;
 }
 
 /* header watchlist link */
@@ -146,8 +146,8 @@
 .watch-btn:hover{ color:var(--gold-hi); }
 .watch-btn .wc{
   min-width:17px; height:17px; padding:0 5px; border-radius:999px; font-size:.58rem; font-weight:700;
-  display:inline-flex; align-items:center; justify-content:center; color:#0A1A2B;
-  background:linear-gradient(180deg,#FBF6EA,#4FA8FF);
+  display:inline-flex; align-items:center; justify-content:center; color:#0D1B30;
+  background:linear-gradient(180deg,#EFE7D6,#C9B893);
   opacity:0; transform:scale(.6); transition:all .3s cubic-bezier(.34,1.4,.64,1);
 }
 .watch-btn .wc.has{ opacity:1; transform:scale(1); }
