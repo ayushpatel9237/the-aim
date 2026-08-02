@@ -44,6 +44,22 @@ const FEED = [
   var mount = document.getElementById('feed');
   if(!mount || typeof FEED === 'undefined') return;
 
+  /* if the admin has added reels in the database, use those instead */
+  var A = window.Ascentra;
+  if(A && A.configured && A.configured() && A.raw){
+    A.raw.from('feed_items').select('*').eq('active',true).order('sort_order')
+      .then(function(res){
+        if(res.data && res.data.length){
+          FEED.length = 0;
+          res.data.forEach(function(r){
+            FEED.push({ video:r.video||'', poster:r.poster||'', name:r.name, shop:r.shop_id||'' });
+          });
+          render();
+        }
+      }).catch(function(){});
+  }
+
+  function render(){
   mount.innerHTML = FEED.map(function(f, i){
     var shopBtn = f.shop
       ? '<a class="rbtn" href="product.html?id='+f.shop+'">Shop this →</a>' : '';
@@ -54,6 +70,8 @@ const FEED = [
       '<div class="rshop">'+name+shopBtn+'</div>' +
     '</div>';
   }).join('');
+  }
+  render();
 
   mount.addEventListener('click', function(e){
     var btn = e.target.closest('[data-play]'); if(!btn) return;

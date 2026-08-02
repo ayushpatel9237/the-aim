@@ -121,6 +121,33 @@ window.Ascentra = (function(){
   /* ── admin: set curator commission ── */
   async function setCommission(id, pct){ return sb.from('curators').update({ commission_pct:pct }).eq('id', id); }
 
+
+  /* ── admin: homepage content (feed reels + poll items) ── */
+  async function allFeed(){
+    var { data } = await sb.from('feed_items').select('*').order('sort_order');
+    return data || [];
+  }
+  async function saveFeed(item){
+    if(!(await isAdmin())) throw new Error('Admins only');
+    return sb.from('feed_items').upsert(item).select();
+  }
+  async function deleteFeed(id){
+    if(!(await isAdmin())) throw new Error('Admins only');
+    return sb.from('feed_items').delete().eq('id', id);
+  }
+  async function allUpcoming(){
+    var { data } = await sb.from('upcoming_items').select('*').order('sort_order');
+    return data || [];
+  }
+  async function saveUpcoming(item){
+    if(!(await isAdmin())) throw new Error('Admins only');
+    return sb.from('upcoming_items').upsert(item).select();
+  }
+  async function deleteUpcoming(id){
+    if(!(await isAdmin())) throw new Error('Admins only');
+    return sb.from('upcoming_items').delete().eq('id', id);
+  }
+
   return {
     configured: configured, raw: sb, isAdmin: isAdmin,
     currentUser: currentUser, signUp: signUp, signIn: signIn, signOut: signOut, onAuth: onAuth,
@@ -129,6 +156,8 @@ window.Ascentra = (function(){
     allCurators: allCurators, allPayouts: allPayouts,
     setCuratorStatus: setCuratorStatus, markPayoutPaid: markPayoutPaid,
     allProducts: allProducts, saveProduct: saveProduct, deleteProduct: deleteProduct, uploadImage: uploadImage,
-    allOrders: allOrders, setOrderStatus: setOrderStatus, setCommission: setCommission
+    allOrders: allOrders, setOrderStatus: setOrderStatus, setCommission: setCommission,
+    allFeed: allFeed, saveFeed: saveFeed, deleteFeed: deleteFeed,
+    allUpcoming: allUpcoming, saveUpcoming: saveUpcoming, deleteUpcoming: deleteUpcoming
   };
 })();

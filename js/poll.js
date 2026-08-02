@@ -34,6 +34,24 @@
   var mount = document.getElementById('upcoming');
   if(!mount) return;
 
+  /* admin-managed items from the database take priority */
+  var A = window.Ascentra;
+  if(A && A.configured && A.configured() && A.raw){
+    A.raw.from('upcoming_items').select('*').eq('active',true).order('sort_order')
+      .then(function(res){
+        if(res.data && res.data.length){
+          UPCOMING.length = 0;
+          res.data.forEach(function(r){
+            UPCOMING.push({ id:r.id, name:r.name, category:r.category||'', img:r.img||'',
+                            teaser:r.teaser||'', est:r.est_price||'' });
+            if(counts[r.id] == null) counts[r.id] = r.votes || 0;
+          });
+          save(CKEY, counts);
+          render();
+        }
+      }).catch(function(){});
+  }
+
   function totalVotes(){
     return UPCOMING.reduce(function(s,u){ return s + (counts[u.id]||0); }, 0) || 1;
   }

@@ -102,6 +102,22 @@ td.mono{ font-family:var(--f-mono); }
 }
 .google-btn:hover{ transform:translateY(-2px); box-shadow:0 10px 24px -10px rgba(0,0,0,.5); }
 .google-btn svg{ flex:none; }
+
+.dash-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:1.5rem; flex-wrap:wrap; }
+.dash-head .sub{ color:var(--muted); font-size:.86rem; margin-top:.6rem; }
+.tier-badge{ text-align:right; border:1px solid var(--gold); border-radius:14px; padding:.9rem 1.3rem; background:rgba(201,161,95,.07); }
+.tier-badge .t{ display:block; font-family:var(--f-display); font-size:1.3rem; color:var(--gold-hi); }
+.tier-badge .s{ display:block; font-family:var(--f-mono); font-size:.52rem; letter-spacing:.2em; text-transform:uppercase; color:var(--faint); margin-top:.25rem; }
+.how-card{ background:var(--ink-2); border:1px solid var(--line-soft); border-radius:16px; padding:1.5rem; margin-top:1.5rem; }
+.how-t{ font-family:var(--f-mono); font-size:.58rem; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem; }
+.how-steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+@media (max-width:800px){ .how-steps{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:480px){ .how-steps{ grid-template-columns:1fr; } }
+.how-s{ font-size:.82rem; color:var(--muted); line-height:1.5; }
+.how-s b{ display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; border:1px solid var(--gold); color:var(--gold-hi); font-family:var(--f-mono); font-size:.6rem; margin-right:.5rem; }
+.empty-state{ text-align:center; padding:2.5rem 1rem; }
+.empty-state .ico{ font-size:1.8rem; opacity:.35; margin-bottom:.7rem; }
+.empty-state p{ color:var(--faint); font-family:var(--f-mono); font-size:.66rem; letter-spacing:.1em; }
 </style>
 </head>
 <body>

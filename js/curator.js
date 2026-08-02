@@ -138,14 +138,31 @@
     var refLink = site + 'index.html?ref=' + cur.ref_code;
     var available = cur.total_earned; // (minus already-paid — simplified; admin tracks payouts)
 
+    var hour = new Date().getHours();
+    var greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    var tier = cur.total_sales >= 100 ? 'Elite' : cur.total_sales >= 21 ? 'Pro Partner' : 'Starter';
+    var nextAt = cur.total_sales >= 100 ? null : cur.total_sales >= 21 ? 100 : 21;
+    var toNext = nextAt ? (nextAt - cur.total_sales) : 0;
+
     page.innerHTML =
-      '<div><span class="eyebrow">Welcome back</span><h1>'+cur.name.split(' ')[0]+'\'s <em>dashboard</em></h1></div>' +
+      '<div class="dash-head">' +
+        '<div><span class="eyebrow">'+greet+'</span>' +
+        '<h1>'+cur.name.split(' ')[0]+'\'s <em>dashboard</em></h1>' +
+        '<p class="sub">'+(nextAt ? toNext+' more sales to reach '+(nextAt===21?'Pro Partner':'Elite') : 'You\'ve reached the top tier.')+'</p></div>' +
+        '<div class="tier-badge"><span class="t">'+tier+'</span><span class="s">Your tier</span></div>' +
+      '</div>' +
       '<div class="stats">' +
-        '<div class="stat"><div class="l">Status</div><div class="v" style="font-size:1.2rem;color:var(--live)">● Active</div></div>' +
+        '<div class="stat"><div class="l">Status</div><div class="v" style="font-size:1.15rem;color:var(--live)">● Active</div></div>' +
         '<div class="stat"><div class="l">Sales brought</div><div class="v">'+cur.total_sales+'</div></div>' +
         '<div class="stat"><div class="l">Total earned</div><div class="v">'+fmt(cur.total_earned)+'</div></div>' +
         '<div class="stat"><div class="l">Commission</div><div class="v">'+cur.commission_pct+'<small>%</small></div></div>' +
       '</div>' +
+      '<div class="how-card"><div class="how-t">How you earn</div><div class="how-steps">' +
+        '<div class="how-s"><b>1</b> Share your link or code with your audience</div>' +
+        '<div class="how-s"><b>2</b> They shop at THE AIM through it</div>' +
+        '<div class="how-s"><b>3</b> You earn '+cur.commission_pct+'% of every sale, automatically</div>' +
+        '<div class="how-s"><b>4</b> Request a payout any time</div>' +
+      '</div></div>' +
 
       '<div class="panel"><h2>Your link & code</h2><div class="share">' +
         '<div class="share-box"><div class="k">Share this link</div><div class="val" id="refLink">'+refLink+'</div>' +
@@ -181,7 +198,7 @@
           '<td class="mono">'+fmt(s.order_total)+'</td>' +
           '<td class="mono" style="color:var(--gold-hi)">'+fmt(s.commission)+'</td></tr>'; }).join('') +
         '</tbody></table>'
-      : '<div class="empty-note">No sales yet. Share your link to start earning.</div>';
+      : '<div class="empty-state"><div class="ico">◈</div><p>No sales yet — share your link to start earning</p></div>';
 
     /* payouts table */
     async function loadPayouts(){
@@ -192,7 +209,7 @@
             return '<tr><td class="mono">'+new Date(p.requested_at).toLocaleDateString('en-IN')+'</td>' +
             '<td class="mono">'+fmt(p.amount)+'</td><td>'+pill+'</td></tr>'; }).join('') +
           '</tbody></table>'
-        : '<div class="empty-note">No payout requests yet.</div>';
+        : '<div class="empty-state"><div class="ico">◇</div><p>No payout requests yet</p></div>';
     }
     loadPayouts();
 
