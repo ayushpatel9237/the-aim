@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Checkout — The AIM</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#0c0c0d">
+<meta name="theme-color" content="#071320">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#0c0c0d; --ink-2:#111113; --ink-3:#16161a;
-  --line-1:#2a2a2e; --line-soft:#1e1e21;
-  --text:#ececee; --muted:#9a9a9f; --faint:#6a6a70;
-  --gold:#c9a15f; --gold-hi:#e7c98a; --live:#6aa88f; --err:#e0866a;
+  --ink:#071320; --ink-2:#0C1E30; --ink-3:#16161a;
+  --line-1:#204264; --line-soft:#16293D;
+  --text:#F4ECDC; --muted:#9FB3C7; --faint:#64809B;
+  --gold:#4FA8FF; --gold-hi:#8FCBFF; --live:#6aa88f; --err:#e0866a;
   --f-display:"Fraunces",Georgia,serif;
   --f-body:"Space Grotesk",system-ui,sans-serif;
   --f-mono:"Space Mono",monospace;
@@ -22,7 +22,7 @@
 }
 *{ box-sizing:border-box; margin:0; padding:0; }
 body{
-  background:radial-gradient(1400px 900px at 50% -25%, #1c1c22, var(--ink) 62%) fixed;
+  background:radial-gradient(1400px 900px at 50% -25%, #0E2135, var(--ink) 62%) fixed;
   color:var(--text); font-family:var(--f-body); line-height:1.6; -webkit-font-smoothing:antialiased;
 }
 img{ display:block; max-width:100%; }
@@ -94,7 +94,7 @@ textarea{ resize:vertical; min-height:70px; }
 .place-btn{
   width:100%; margin-top:1.4rem; padding:1.05rem; border:none; border-radius:999px;
   font-family:var(--f-mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700;
-  color:#141006; background:linear-gradient(180deg,#E9CD8D,var(--gold));
+  color:#0A1A2B; background:linear-gradient(180deg,#FBF6EA,#E9DCC0);
   position:relative; overflow:hidden; transition:transform .3s, box-shadow .3s;
 }
 .place-btn:hover{ transform:translateY(-2px); box-shadow:0 16px 34px -14px rgba(201,161,95,.6); }
@@ -110,6 +110,8 @@ textarea{ resize:vertical; min-height:70px; }
 .back-link{ font-family:var(--f-mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:1.5rem; display:inline-block; }
 .back-link:hover{ color:var(--gold-hi); }
 </style>
+<script src="js/transitions.js"></script>
+<link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
 

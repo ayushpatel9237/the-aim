@@ -15,7 +15,7 @@
 .reel{
   flex:0 0 auto; width:clamp(210px,44vw,272px); aspect-ratio:9/16;
   scroll-snap-align:center; position:relative; overflow:hidden;
-  border-radius:18px; background:#000; border:1px solid #2a2a2e;
+  border-radius:18px; background:#000; border:1px solid #204264;
   transition:border-color .45s, transform .45s cubic-bezier(.16,1,.3,1), box-shadow .45s;
 }
 .reel:hover{
@@ -51,7 +51,7 @@
 .reel .rname{ font-family:var(--f-body); font-size:.82rem; font-weight:500; color:#fff; line-height:1.25; }
 .reel .rbtn{
   font-family:var(--f-mono); font-size:.54rem; letter-spacing:.14em; text-transform:uppercase;
-  color:#141006; background:linear-gradient(180deg,#E9CD8D,#C9A15F);
+  color:#0A1A2B; background:linear-gradient(180deg,#FBF6EA,#4FA8FF);
   padding:.55em .95em; border-radius:999px; white-space:nowrap; transition:transform .3s;
 }
 .reel .rbtn:hover{ transform:translateY(-2px); }
@@ -73,7 +73,7 @@
   border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);
   background:
     radial-gradient(900px 400px at 15% 0%, rgba(201,161,95,.05), transparent 60%),
-    linear-gradient(180deg, #101012, #0a0a0b);
+    linear-gradient(180deg, #101012, #050E18);
 }
 .poll-lead{ max-width:36rem; }
 .poll-lead p{ color:var(--muted); font-size:.95rem; margin-top:.9rem; line-height:1.6; }
@@ -119,7 +119,7 @@
 }
 .up-bar{
   position:absolute; inset:0 auto 0 0; height:100%; border-radius:999px;
-  background:linear-gradient(90deg,#C9A15F,#E9CD8D);
+  background:linear-gradient(90deg,#4FA8FF,#FBF6EA);
   transition:width .7s cubic-bezier(.16,1,.3,1);
 }
 .up-stat{
@@ -134,7 +134,7 @@
 }
 .up-vote:hover{ border-color:var(--gold); color:var(--gold-hi); }
 .up-vote.voted{
-  background:linear-gradient(180deg,#E9CD8D,#C9A15F); border-color:transparent; color:#141006; font-weight:700;
+  background:linear-gradient(180deg,#FBF6EA,#4FA8FF); border-color:transparent; color:#0A1A2B; font-weight:700;
 }
 
 /* header watchlist link */
@@ -146,8 +146,8 @@
 .watch-btn:hover{ color:var(--gold-hi); }
 .watch-btn .wc{
   min-width:17px; height:17px; padding:0 5px; border-radius:999px; font-size:.58rem; font-weight:700;
-  display:inline-flex; align-items:center; justify-content:center; color:#141006;
-  background:linear-gradient(180deg,#E9CD8D,#C9A15F);
+  display:inline-flex; align-items:center; justify-content:center; color:#0A1A2B;
+  background:linear-gradient(180deg,#FBF6EA,#4FA8FF);
   opacity:0; transform:scale(.6); transition:all .3s cubic-bezier(.34,1.4,.64,1);
 }
 .watch-btn .wc.has{ opacity:1; transform:scale(1); }

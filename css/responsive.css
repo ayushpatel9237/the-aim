@@ -1,0 +1,81 @@
+/* ═══════════════════════════════════════════════════════════
+   THE AIM — GLOBAL RESPONSIVE LAYER
+
+   Loaded last on every page so it can correct anything that
+   would break on a small screen. Covers phones from 320px
+   (iPhone SE / small Android) up to tablets.
+═══════════════════════════════════════════════════════════ */
+
+/* ── never allow sideways scrolling ── */
+html, body{ max-width:100%; overflow-x:hidden; }
+img, video, iframe, canvas{ max-width:100%; height:auto; }
+
+/* ── comfortable tap targets everywhere ── */
+button, .btn, a.btn, input[type="submit"]{ min-height:44px; }
+input, select, textarea{ font-size:16px; }   /* stops iOS zooming on focus */
+
+/* ── tables scroll instead of breaking the layout ── */
+table{ width:100%; }
+@media (max-width:760px){
+  table{ display:block; overflow-x:auto; -webkit-overflow-scrolling:touch; white-space:nowrap; }
+  table th, table td{ white-space:nowrap; }
+}
+
+/* ═══════════ TABLET ═══════════ */
+@media (max-width:900px){
+  .wrap, .nav, .content{ padding-left:1.1rem; padding-right:1.1rem; }
+  .stat-row{ grid-template-columns:repeat(2,1fr) !important; }
+  .form-grid{ grid-template-columns:1fr !important; }
+}
+
+/* ═══════════ PHONE ═══════════ */
+@media (max-width:640px){
+  h1{ font-size:clamp(1.6rem,7vw,2.2rem) !important; line-height:1.15; }
+  h2{ font-size:clamp(1.2rem,5.5vw,1.6rem) !important; }
+
+  .wrap, .content, .nav{ padding-left:1rem; padding-right:1rem; }
+
+  /* stacked layouts */
+  .stat-row, .stats{ grid-template-columns:repeat(2,1fr) !important; gap:.7rem !important; }
+  .grid, .shelf-grid, .prod-grid{ grid-template-columns:repeat(2,1fr) !important; gap:.8rem !important; }
+
+  /* product page: image above info, full width */
+  .viewer, .info{ width:100% !important; }
+  .actions{ flex-wrap:wrap; gap:.6rem; }
+  .actions .buy, .actions .cart{ flex:1 1 100%; }
+  .qty{ flex:1 1 100%; justify-content:center; }
+
+  /* cards + panels breathe less */
+  .card, .panel{ padding:1.1rem !important; border-radius:13px !important; }
+
+  /* checkout / forms single column */
+  .checkout-grid, .co-grid, .two-col{ grid-template-columns:1fr !important; }
+
+  /* footers stack */
+  footer .cols, .foot-grid{ grid-template-columns:1fr !important; gap:1.4rem !important; }
+}
+
+/* ═══════════ SMALL PHONE (320–400px) ═══════════ */
+@media (max-width:400px){
+  .stat-row, .stats{ grid-template-columns:1fr !important; }
+  .grid, .shelf-grid, .prod-grid{ grid-template-columns:1fr !important; }
+  .price-main{ font-size:1.6rem !important; }
+  .chip, .pill{ font-size:.52rem !important; }
+  .crumb{ font-size:.55rem !important; }
+}
+
+/* ── landscape phones: keep hero from eating the screen ── */
+@media (max-height:520px) and (orientation:landscape){
+  .hero{ min-height:auto !important; padding:2.5rem 0 !important; }
+}
+
+/* ── respect reduced motion ── */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
+
+/* ── safe area for notched phones ── */
+@supports (padding: max(0px)){
+  body{ padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right); }
+  .buybar{ padding-bottom:max(.8rem, env(safe-area-inset-bottom)); }
+}
