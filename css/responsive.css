@@ -136,3 +136,49 @@ h1, h2, h3, p, ul, ol{ overflow-wrap:break-word; }
   /* filters / chips scroll rather than stack awkwardly */
   .filters, .chips, .cats{ overflow-x:auto; flex-wrap:nowrap; padding-bottom:.4rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   FLOAT — everything sits above the page, never flat on it
+═══════════════════════════════════════════════════════════ */
+.card, .panel, .scard, .stat, .prod-card, .shelf-card, .clip, .reel,
+[class*="card"]{
+  box-shadow:0 22px 55px -26px rgba(0,0,0,.8);
+  transition:transform .42s cubic-bezier(.2,.7,.24,1), box-shadow .42s ease;
+}
+.prod-card:hover, .shelf-card:hover, [class*="card"]:hover{
+  transform:translateY(-6px);
+  box-shadow:0 34px 75px -26px rgba(0,0,0,.9);
+}
+
+/* buttons lift on hover */
+button, .btn, .save-btn, .buy, .cart, .sh-buy{
+  transition:transform .3s cubic-bezier(.2,.7,.24,1), box-shadow .3s ease,
+             background .3s ease, border-color .3s ease, color .3s ease;
+}
+button:hover, .btn:hover, .save-btn:hover, .buy:hover{ transform:translateY(-2px); }
+button:active, .btn:active{ transform:translateY(0); }
+
+/* arrows: quiet circles, not heavy blocks */
+[class*="arrow"], [class*="prev"], [class*="next"], .nav-btn{
+  background:rgba(13,19,48,.7) !important;
+  border:1px solid rgba(230,203,168,.16) !important;
+  border-radius:50% !important;
+  backdrop-filter:blur(10px);
+  color:#F2EDE3 !important;
+  width:40px; height:40px;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+[class*="arrow"]:hover, [class*="prev"]:hover, [class*="next"]:hover{
+  background:#E6CBA8 !important; color:#050818 !important;
+}
+
+/* small label chips float too */
+.pill, .chip, .cat-tag, .badge{
+  background:rgba(13,19,48,.6);
+  border:1px solid rgba(230,203,168,.13);
+  backdrop-filter:blur(8px);
+  border-radius:999px;
+}
+
+/* focus states stay visible and on-brand */
+:focus-visible{ outline:2px solid #E6CBA8; outline-offset:3px; border-radius:6px; }

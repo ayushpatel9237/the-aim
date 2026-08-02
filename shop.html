@@ -17,7 +17,7 @@
 <meta name="twitter:title" content="All Products — The AIM">
 <meta name="twitter:description" content="Browse every product at The AIM — room, desk, gadgets, storage and daily essentials.">
 <meta name="twitter:image" content="https://ascentra.netlify.app/images/products/22_butterfly_phone_stand_hero.webp">
-<meta name="theme-color" content="#0A0F2C"
+<meta name="theme-color" content="#050818"
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -25,9 +25,9 @@
 <link rel="stylesheet" href="css/cart.css">
 <style>
 :root{
-  --ink:#0A0F2C; --ink-2:#131A42;
-  --line-1:#252E63; --line-soft:#1A2250;
-  --text:#FFF1E2; --muted:#9AA0C4; --faint:#6B72A0;
+  --ink:#050818; --ink-2:#0A0F26;
+  --line-1:#1A2142; --line-soft:#111735;
+  --text:#FFF1E2; --muted:#8E96B8; --faint:#5F678E;
   --gold:#E6CBA8; --gold-hi:#F0DCC0; --live:#5FA88C;
   --f-display:"Fraunces",Georgia,serif;
   --f-body:"Space Grotesk",system-ui,sans-serif;
@@ -38,7 +38,7 @@
 *{ box-sizing:border-box; margin:0; padding:0; }
 html{ background:var(--ink); scroll-behavior:smooth; }
 body{
-  background:#0A0F2C; background-image:radial-gradient(1200px 700px at 50% -20%, rgba(37,46,99,.55), transparent 70%); background-attachment:fixed;
+  background:#050818; background-image:radial-gradient(1200px 700px at 50% -20%, rgba(26,33,66,.42), transparent 70%); background-attachment:fixed;
   color:var(--text); font-family:var(--f-body);
   font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;
 }
@@ -50,7 +50,7 @@ button{ font:inherit; color:inherit; background:none; border:none; cursor:pointe
 
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 clamp(1.25rem,4vw,2.5rem); }
 
-header{ position:sticky; top:0; z-index:50; background:transparent; transition:background .35s ease, border-color .35s ease, backdrop-filter .35s ease; border-bottom:1px solid transparent; }header.stuck{ background:rgba(10,15,44,.72); backdrop-filter:saturate(160%) blur(16px); -webkit-backdrop-filter:saturate(160%) blur(16px); border-bottom-color:rgba(230,203,168,.12); }
+header{ position:sticky; top:0; z-index:50; background:transparent; transition:background .35s ease, border-color .35s ease, backdrop-filter .35s ease; border-bottom:1px solid transparent; }header.stuck{ background:rgba(5,8,24,.72); backdrop-filter:saturate(160%) blur(16px); -webkit-backdrop-filter:saturate(160%) blur(16px); border-bottom-color:rgba(230,203,168,.12); }
 .nav{ display:flex; align-items:center; justify-content:space-between; gap:2rem; height:76px; }
 .logo{ font-family:var(--f-display); font-size:1.2rem; letter-spacing:.3em; text-transform:uppercase; }
 .logo b{ color:var(--gold); font-weight:400; }
@@ -68,7 +68,7 @@ header{ position:sticky; top:0; z-index:50; background:transparent; transition:b
   font-family:var(--f-mono); font-size:.7rem; letter-spacing:.16em; text-transform:uppercase;
   display:inline-flex; align-items:center; padding:.8rem 1.5rem;
   border:1px solid var(--gold); background:#E6CBA8;
-  color:#0A0F2C; font-weight:700;
+  color:#050818; font-weight:700;
   position:relative; overflow:hidden;
   transition:all .35s var(--ease); white-space:nowrap;
 }
@@ -120,7 +120,7 @@ header{ position:sticky; top:0; z-index:50; background:transparent; transition:b
 }
 .fchip:hover{ border-color:var(--gold); color:var(--gold-hi); }
 .fchip.on{
-  background:#E6CBA8; border-color:var(--gold); color:#0A0F2C; font-weight:700;
+  background:#E6CBA8; border-color:var(--gold); color:#050818; font-weight:700;
 }
 .fchip .n{ opacity:.6; margin-left:.5em; }
 
@@ -157,7 +157,7 @@ header{ position:sticky; top:0; z-index:50; background:transparent; transition:b
   padding:.75rem 1.1rem; outline:none; transition:border-color .3s;
 }
 .sortbox select:hover, .sortbox select:focus{ border-color:var(--gold); }
-.sortbox option{ background:#0C1233; color:var(--text); }
+.sortbox option{ background:#080C1F; color:var(--text); }
 
 .shop-grid-zone{ padding-bottom:clamp(4rem,8vw,6rem); }
 .count-line{

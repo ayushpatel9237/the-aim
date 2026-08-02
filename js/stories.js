@@ -9,11 +9,11 @@
 (function(){
   var css = document.createElement('style');
   css.textContent = [
-    '.st-wrap{position:fixed;inset:0;z-index:9500;background:#070B21;opacity:0;',
+    '.st-wrap{position:fixed;inset:0;z-index:9500;background:#030510;opacity:0;',
       'transition:opacity .3s ease;display:flex;align-items:center;justify-content:center;}',
     '.st-wrap.on{opacity:1;}',
     '.st-stage{position:relative;width:min(430px,100vw);height:100%;max-height:100vh;',
-      'background:#0A0F2C;overflow:hidden;display:flex;align-items:center;justify-content:center;}',
+      'background:#050818;overflow:hidden;display:flex;align-items:center;justify-content:center;}',
     '.st-stage img,.st-stage video,.st-stage iframe{width:100%;height:100%;object-fit:cover;border:0;display:block;}',
     '.st-bars{position:absolute;top:10px;left:10px;right:10px;z-index:4;display:flex;gap:4px;}',
     '.st-bar{flex:1;height:2.5px;border-radius:2px;background:rgba(255,241,226,.28);overflow:hidden;}',
@@ -23,14 +23,14 @@
     '@keyframes stfill{from{width:0}to{width:100%}}',
     '.st-head{position:absolute;top:26px;left:14px;right:14px;z-index:4;display:flex;align-items:center;gap:.7rem;}',
     '.st-title{flex:1;font-size:.82rem;color:#FFF1E2;text-shadow:0 1px 8px rgba(0,0,0,.6);}',
-    '.st-x{background:rgba(10,15,44,.55);border:none;color:#FFF1E2;width:32px;height:32px;',
+    '.st-x{background:rgba(5,8,24,.55);border:none;color:#FFF1E2;width:32px;height:32px;',
       'border-radius:50%;cursor:pointer;font-size:.95rem;backdrop-filter:blur(6px);}',
     '.st-nav{position:absolute;inset:0;z-index:3;display:flex;}',
     '.st-nav button{flex:1;background:none;border:none;cursor:pointer;}',
     '.st-foot{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:1.4rem 1.1rem;',
-      'background:linear-gradient(to top,rgba(7,11,33,.92),transparent);}',
+      'background:linear-gradient(to top,rgba(3,5,16,.92),transparent);}',
     '.st-name{font-family:var(--f-display,serif);font-size:1.15rem;color:#FFF1E2;margin-bottom:.7rem;}',
-    '.st-shop{display:inline-block;background:#E6CBA8;color:#0A0F2C;border:none;border-radius:999px;',
+    '.st-shop{display:inline-block;background:#E6CBA8;color:#050818;border:none;border-radius:999px;',
       'padding:.7rem 1.5rem;cursor:pointer;font-family:var(--f-mono,monospace);font-size:.6rem;',
       'letter-spacing:.16em;text-transform:uppercase;font-weight:700;text-decoration:none;}',
     'body.st-open{overflow:hidden;}'
