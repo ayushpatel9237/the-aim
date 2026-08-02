@@ -17,7 +17,7 @@
 <meta name="twitter:title" content="All Products — The AIM">
 <meta name="twitter:description" content="Browse every product at The AIM — room, desk, gadgets, storage and daily essentials.">
 <meta name="twitter:image" content="https://ascentra.netlify.app/images/products/22_butterfly_phone_stand_hero.webp">
-<meta name="theme-color" content="#0D1B30"
+<meta name="theme-color" content="#0A0F2C"
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -25,10 +25,10 @@
 <link rel="stylesheet" href="css/cart.css">
 <style>
 :root{
-  --ink:#0D1B30; --ink-2:#12243D;
-  --line-1:#243C5C; --line-soft:#1A2E49;
-  --text:#F7F4EE; --muted:#93A0B2; --faint:#5C6B7E;
-  --gold:#C9B893; --gold-hi:#E0D2B4; --live:#5FA88C;
+  --ink:#0A0F2C; --ink-2:#131A42;
+  --line-1:#252E63; --line-soft:#1A2250;
+  --text:#FFF1E2; --muted:#9AA0C4; --faint:#6B72A0;
+  --gold:#E6CBA8; --gold-hi:#F0DCC0; --live:#5FA88C;
   --f-display:"Fraunces",Georgia,serif;
   --f-body:"Space Grotesk",system-ui,sans-serif;
   --f-mono:"Space Mono",monospace;
@@ -38,7 +38,7 @@
 *{ box-sizing:border-box; margin:0; padding:0; }
 html{ background:var(--ink); scroll-behavior:smooth; }
 body{
-  background:radial-gradient(1400px 900px at 50% -25%, #0F1E35, var(--ink) 62%) fixed;
+  background:#0A0F2C; background-image:radial-gradient(1200px 700px at 50% -20%, rgba(37,46,99,.55), transparent 70%); background-attachment:fixed;
   color:var(--text); font-family:var(--f-body);
   font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;
 }
@@ -50,11 +50,7 @@ button{ font:inherit; color:inherit; background:none; border:none; cursor:pointe
 
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 clamp(1.25rem,4vw,2.5rem); }
 
-header{
-  position:sticky; top:0; z-index:50;
-  background:rgba(11,10,8,.85); backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--line-soft);
-}
+header{ position:sticky; top:0; z-index:50; background:transparent; transition:background .35s ease, border-color .35s ease, backdrop-filter .35s ease; border-bottom:1px solid transparent; }header.stuck{ background:rgba(10,15,44,.72); backdrop-filter:saturate(160%) blur(16px); -webkit-backdrop-filter:saturate(160%) blur(16px); border-bottom-color:rgba(230,203,168,.12); }
 .nav{ display:flex; align-items:center; justify-content:space-between; gap:2rem; height:76px; }
 .logo{ font-family:var(--f-display); font-size:1.2rem; letter-spacing:.3em; text-transform:uppercase; }
 .logo b{ color:var(--gold); font-weight:400; }
@@ -71,8 +67,8 @@ header{
 .btn-solid{
   font-family:var(--f-mono); font-size:.7rem; letter-spacing:.16em; text-transform:uppercase;
   display:inline-flex; align-items:center; padding:.8rem 1.5rem;
-  border:1px solid var(--gold); background:#DCCDB0;
-  color:#0D1B30; font-weight:700;
+  border:1px solid var(--gold); background:#E6CBA8;
+  color:#0A0F2C; font-weight:700;
   position:relative; overflow:hidden;
   transition:all .35s var(--ease); white-space:nowrap;
 }
@@ -105,7 +101,7 @@ header{
   font-size:clamp(2.4rem,5.5vw,4rem); margin-top:1.2rem;
 }
 .shop-head h1 em{ font-style:italic; font-weight:300;
-  background:linear-gradient(100deg, #F7F4EE 0%, #C9B893 35%, #DCCDB0 50%, #C9B893 65%, #8A7B5C 100%);
+  background:linear-gradient(100deg, #FFF1E2 0%, #E6CBA8 35%, #E6CBA8 50%, #E6CBA8 65%, #A98F6B 100%);
   background-size:220% 100%;
   -webkit-background-clip:text; background-clip:text; color:transparent;
   animation:foil 7s ease-in-out infinite; }
@@ -124,7 +120,7 @@ header{
 }
 .fchip:hover{ border-color:var(--gold); color:var(--gold-hi); }
 .fchip.on{
-  background:#DCCDB0; border-color:var(--gold); color:#0D1B30; font-weight:700;
+  background:#E6CBA8; border-color:var(--gold); color:#0A0F2C; font-weight:700;
 }
 .fchip .n{ opacity:.6; margin-left:.5em; }
 
@@ -132,7 +128,7 @@ header{
 /* ── search + sort ── */
 .shop-tools{ display:flex; gap:1rem; flex-wrap:wrap; align-items:center; margin-top:2rem; }
 .searchbox{
-  position:relative; flex:1; min-width:230px; max-width:380px;
+  position:relative; flex:1 1 200px; min-width:0; max-width:380px;
   display:flex; align-items:center;
   border:1px solid var(--line-1); border-radius:999px;
   background:rgba(255,255,255,.02); transition:border-color .3s;
@@ -161,7 +157,7 @@ header{
   padding:.75rem 1.1rem; outline:none; transition:border-color .3s;
 }
 .sortbox select:hover, .sortbox select:focus{ border-color:var(--gold); }
-.sortbox option{ background:#0F1E35; color:var(--text); }
+.sortbox option{ background:#0C1233; color:var(--text); }
 
 .shop-grid-zone{ padding-bottom:clamp(4rem,8vw,6rem); }
 .count-line{
@@ -185,7 +181,6 @@ footer{ border-top:1px solid var(--line-soft); padding:3rem 0 2.4rem; }
 .foot .links{ display:flex; gap:2rem; flex-wrap:wrap; }
 </style>
 <script src="js/transitions.js"></script>
-<script src="js/expand.js"></script>
 <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
@@ -349,5 +344,6 @@ footer{ border-top:1px solid var(--line-soft); padding:3rem 0 2.4rem; }
 </script>
 <script src="js/cart.js"></script>
 <script src="js/ambient.js"></script>
+<script src="js/sheet.js"></script>
 </body>
 </html>

@@ -18,7 +18,7 @@
     '.xp-ghost{position:fixed;z-index:9999;margin:0;border-radius:14px;object-fit:cover;' +
       'will-change:transform,opacity;pointer-events:none;' +
       'transition:transform .52s cubic-bezier(.22,.68,.24,1), opacity .52s ease, border-radius .52s ease;}' +
-    '.xp-veil{position:fixed;inset:0;z-index:9998;background:var(--ink,#0D1B30);opacity:0;' +
+    '.xp-veil{position:fixed;inset:0;z-index:9998;background:var(--ink,#0A0F2C);opacity:0;' +
       'pointer-events:none;transition:opacity .42s ease;}' +
     '.xp-veil.on{opacity:1;}';
   document.head.appendChild(css);

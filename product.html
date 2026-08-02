@@ -16,7 +16,7 @@
 <meta name="twitter:title" content="The AIM">
 <meta name="twitter:description" content="Useful everyday items at honest prices.">
 <meta name="twitter:image" content="https://ascentra.netlify.app/images/products/22_butterfly_phone_stand_hero.webp">
-<meta name="theme-color" content="#0D1B30"
+<meta name="theme-color" content="#0A0F2C"
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -24,10 +24,10 @@
 <link rel="stylesheet" href="css/cart.css">
 <style>
 :root{
-  --ink:#0D1B30; --ink-2:#0F1E35; --ink-3:#12243D;
-  --line:#243C5C; --line-soft:#1A2E49;
-  --text:#F7F4EE; --muted:#93A0B2; --faint:#5C6B7E;
-  --gold:#C9B893; --gold-hi:#E0D2B4; --live:#5FA88C;
+  --ink:#0A0F2C; --ink-2:#0C1233; --ink-3:#131A42;
+  --line:#252E63; --line-soft:#1A2250;
+  --text:#FFF1E2; --muted:#9AA0C4; --faint:#6B72A0;
+  --gold:#E6CBA8; --gold-hi:#F0DCC0; --live:#5FA88C;
   --f-display:"Fraunces",Georgia,serif;
   --f-body:"Space Grotesk",system-ui,sans-serif;
   --f-mono:"Space Mono",monospace;
@@ -35,7 +35,7 @@
 }
 *{ box-sizing:border-box; margin:0; padding:0; }
 html{ background:var(--ink); }
-body{ background:radial-gradient(1400px 900px at 50% -25%, #0F1E35, var(--ink) 62%) fixed; color:var(--text); font-family:var(--f-body); line-height:1.6; -webkit-font-smoothing:antialiased; }
+body{ background:#0A0F2C; background-image:radial-gradient(1200px 700px at 50% -20%, rgba(37,46,99,.55), transparent 70%); background-attachment:fixed; color:var(--text); font-family:var(--f-body); line-height:1.6; -webkit-font-smoothing:antialiased; }
 img{ display:block; max-width:100%; }
 a{ color:inherit; text-decoration:none; }
 button{ font:inherit; color:inherit; background:none; border:none; cursor:pointer; }
@@ -53,7 +53,7 @@ button{ font:inherit; color:inherit; background:none; border:none; cursor:pointe
 }
 
 /* header */
-header{ position:sticky; top:0; z-index:40; background:rgba(11,10,8,.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--line-soft); }
+header{ position:sticky; top:0; z-index:50; background:transparent; transition:background .35s ease, border-color .35s ease, backdrop-filter .35s ease; border-bottom:1px solid transparent; }header.stuck{ background:rgba(10,15,44,.72); backdrop-filter:saturate(160%) blur(16px); -webkit-backdrop-filter:saturate(160%) blur(16px); border-bottom-color:rgba(230,203,168,.12); }
 .nav{ max-width:1240px; margin:0 auto; padding:0 clamp(1.25rem,4vw,2.5rem); display:flex; align-items:center; justify-content:space-between; height:70px; }
 .logo{ font-family:var(--f-display); font-size:1.15rem; letter-spacing:.3em; text-transform:uppercase; }
 .logo b{ color:var(--gold); font-weight:400; }
@@ -75,7 +75,7 @@ header{ position:sticky; top:0; z-index:40; background:rgba(11,10,8,.85); backdr
 .viewer .ck.br{ bottom:14px; right:14px; border-left:none; border-top:none; }
 
 .photo{
-  position:relative; aspect-ratio:1/1; overflow:hidden; background:#F7F4EE;
+  position:relative; aspect-ratio:1/1; overflow:hidden; background:#FFF1E2;
   cursor:zoom-in; border-radius:4px;
 }
 .photo img{ width:100%; height:100%; object-fit:cover; transition:opacity .35s var(--ease); }
@@ -108,7 +108,7 @@ header{ position:sticky; top:0; z-index:40; background:rgba(11,10,8,.85); backdr
   text-shadow:0 2px 8px rgba(0,0,0,.6); transition:background .3s;
 }
 .thumb-video:hover .vplay{ background:rgba(11,10,8,.25); }
-.thumb-video .tn{ background:var(--gold); color:#0D1B30; }
+.thumb-video .tn{ background:var(--gold); color:#0A0F2C; }
 #counter{ top:14px; left:14px; pointer-events:none; color:var(--muted); }
 .pnav{
   position:absolute; top:50%; transform:translateY(-50%); z-index:3;
@@ -129,7 +129,7 @@ header{ position:sticky; top:0; z-index:40; background:rgba(11,10,8,.85); backdr
 .thumb{
   flex:none; width:78px; height:78px; border-radius:10px; overflow:hidden;
   border:1.5px solid var(--line-soft); opacity:.65; position:relative;
-  transition:all .3s var(--ease); background:#F7F4EE;
+  transition:all .3s var(--ease); background:#FFF1E2;
 }
 .thumb img{ width:100%; height:100%; object-fit:cover; }
 .thumb:hover{ opacity:1; }
@@ -137,7 +137,7 @@ header{ position:sticky; top:0; z-index:40; background:rgba(11,10,8,.85); backdr
 .thumb .tn{
   position:absolute; bottom:3px; right:5px;
   font-family:var(--f-mono); font-size:.5rem; letter-spacing:.1em;
-  color:#93A0B2; background:rgba(246,241,230,.9); padding:.1em .45em; border-radius:3px;
+  color:#9AA0C4; background:rgba(246,241,230,.9); padding:.1em .45em; border-radius:3px;
 }
 
 /* ── info ── */
@@ -184,8 +184,8 @@ h1{ font-family:var(--f-body); font-weight:600; font-size:clamp(1.6rem,4vw,2.1re
 .qty .q{ width:34px; text-align:center; font-family:var(--f-mono); }
 .buy{
   flex:1; min-width:180px; border-radius:999px;
-  background:linear-gradient(180deg, #E0D2B4, var(--gold));
-  color:#0F1E35; font-weight:600; letter-spacing:.02em;
+  background:linear-gradient(180deg, #F0DCC0, var(--gold));
+  color:#0C1233; font-weight:600; letter-spacing:.02em;
   display:flex; align-items:center; justify-content:center; gap:.5em;
   transition:all .3s var(--ease); padding:0 1.6rem;
 }
@@ -228,7 +228,7 @@ h1{ font-family:var(--f-body); font-weight:600; font-size:clamp(1.6rem,4vw,2.1re
   font-size:clamp(1.6rem,3.4vw,2.3rem);
 }
 .rhead h2 em{ font-style:italic; font-weight:300;
-  background:linear-gradient(100deg, #F7F4EE 0%, #C9B893 35%, #DCCDB0 50%, #C9B893 65%, #8A7B5C 100%);
+  background:linear-gradient(100deg, #FFF1E2 0%, #E6CBA8 35%, #E6CBA8 50%, #E6CBA8 65%, #A98F6B 100%);
   background-size:220% 100%;
   -webkit-background-clip:text; background-clip:text; color:transparent;
   animation:foil 7s ease-in-out infinite; }
@@ -251,9 +251,9 @@ h1{ font-family:var(--f-body); font-weight:600; font-size:clamp(1.6rem,4vw,2.1re
 .pricebox{ display:flex; align-items:baseline; gap:.85rem; flex-wrap:wrap; margin:1.1rem 0 .5rem; }
 .price-main{ font-family:var(--f-display); font-size:2rem; color:var(--gold-hi); }
 .mrp{ font-family:var(--f-mono); font-size:.95rem; color:var(--faint); text-decoration:line-through; }
-.save{ font-family:var(--f-mono); font-size:.58rem; letter-spacing:.12em; text-transform:uppercase; background:var(--gold); color:#0D1B30; border-radius:999px; padding:.25rem .7rem; font-weight:700; }
+.save{ font-family:var(--f-mono); font-size:.58rem; letter-spacing:.12em; text-transform:uppercase; background:var(--gold); color:#0A0F2C; border-radius:999px; padding:.25rem .7rem; font-weight:700; }
 .stockline{ font-family:var(--f-mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; margin-bottom:1.2rem; min-height:1em; }
-.stockline.low{ color:#E0D2B4; } .stockline.ok{ color:var(--live); } .stockline.out{ color:var(--err); }
+.stockline.low{ color:#F0DCC0; } .stockline.ok{ color:var(--live); } .stockline.out{ color:var(--err); }
 .info .desc{ color:var(--muted); line-height:1.75; margin:0 0 1.4rem; }
 .trust{ list-style:none; padding:0; margin:0 0 1.5rem; display:grid; gap:.6rem; }
 .trust li{ display:flex; align-items:flex-start; gap:.7rem; font-size:.86rem; color:var(--muted); }
@@ -274,8 +274,8 @@ h1{ font-family:var(--f-body); font-weight:600; font-size:clamp(1.6rem,4vw,2.1re
 .bb-name{ display:block; font-size:.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .bb-price{ display:block; font-family:var(--f-display); color:var(--gold-hi); font-size:1.05rem; }
 .bb-btn{ flex:none; border:none; border-radius:999px; padding:.8rem 1.6rem; cursor:pointer; font-family:var(--f-mono);
-  font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#0D1B30;
-  background:#DCCDB0; }
+  font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#0A0F2C;
+  background:#E6CBA8; }
 @media (max-width:820px){ .buybar{ display:flex; } body{ padding-bottom:4.5rem; } }
 </style>
 <script src="js/transitions.js"></script>

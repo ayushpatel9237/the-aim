@@ -79,3 +79,60 @@ table{ width:100%; }
   body{ padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right); }
   .buybar{ padding-bottom:max(.8rem, env(safe-area-inset-bottom)); }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   TYPOGRAPHY — one consistent voice across every page
+═══════════════════════════════════════════════════════════ */
+body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      letter-spacing:.005em; }
+
+/* headings: light weight display serif, tight leading, no cramping */
+h1, h2, h3{ font-weight:300; line-height:1.14; letter-spacing:-.012em; }
+h1{ margin-bottom:.5em; }
+h2{ letter-spacing:-.008em; }
+
+/* body copy: comfortable measure and rhythm */
+p{ line-height:1.75; }
+p + p{ margin-top:.9em; }
+.desc, .sub, .lede{ max-width:62ch; }
+
+/* small-caps labels: the mono voice, always spaced */
+.eyebrow, .cat-tag, .sb-section, .l, label,
+.crumb, .mini, .pill, .chip, .stat .l{
+  font-feature-settings:"tnum" 1;
+  letter-spacing:.18em;
+}
+
+/* numbers align properly in tables and prices */
+.price-main, .sh-price, .v, .mono, table td, table th{
+  font-variant-numeric:tabular-nums;
+}
+
+/* links: quiet until touched */
+a{ text-underline-offset:.22em; }
+
+/* stop text ever touching the screen edge */
+h1, h2, h3, p, ul, ol{ overflow-wrap:break-word; }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE ZOOM FIX — nothing may be wider than the screen
+   (a single over-wide element makes the browser zoom out and
+    the page then feels "stuck zoomed in")
+═══════════════════════════════════════════════════════════ */
+*{ min-width:0; }                        /* flex/grid children may shrink */
+.wrap, main, section, header, footer{ max-width:100%; }
+
+/* horizontal rails scroll themselves instead of stretching the page */
+[class*="rail"], [class*="strip"], .feed-row, .thumbs, .sh-thumbs{
+  overflow-x:auto; -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+[class*="rail"]::-webkit-scrollbar, [class*="strip"]::-webkit-scrollbar,
+.feed-row::-webkit-scrollbar, .thumbs::-webkit-scrollbar, .sh-thumbs::-webkit-scrollbar{ display:none; }
+
+@media (max-width:640px){
+  /* any flex row of cards wraps instead of overflowing */
+  [class*="grid"], [class*="row"]{ flex-wrap:wrap; }
+  /* filters / chips scroll rather than stack awkwardly */
+  .filters, .chips, .cats{ overflow-x:auto; flex-wrap:nowrap; padding-bottom:.4rem; }
+}

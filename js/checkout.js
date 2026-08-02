@@ -178,7 +178,7 @@
       name: 'The AIM',
       description: 'Order ' + d.order.id,
       prefill: { name: customer.name, email: customer.email, contact: customer.phone },
-      theme: { color: '#C9B893' },
+      theme: { color: '#E6CBA8' },
       handler: function(resp){
         // verify the signature on the server before trusting the payment
         A.raw.functions.invoke('verify-payment', {

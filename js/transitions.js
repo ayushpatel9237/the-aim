@@ -61,3 +61,12 @@
     if(ev.persisted){ document.body.classList.remove('tout'); reveal(); }
   });
 })();
+
+/* header only gains its tint once you scroll — at rest it melts into the page */
+(function(){
+  var h = document.querySelector('header');
+  if(!h) return;
+  function onScroll(){ h.classList.toggle('stuck', window.scrollY > 12); }
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive:true });
+})();
