@@ -67,7 +67,7 @@ const FEED = [
     return '<div data-story="'+i+'" class="reel" data-i="'+i+'">' +
       '<img class="poster" src="'+f.poster+'" alt="'+f.name+'" loading="lazy" />' +
       (f.video ? '<button class="rplay" data-play aria-label="Play video">▶</button>' : '') +
-      '<div class="rshop">'+name+shopBtn+'</div>' +
+      '<div class="rmeta">'+name+shopBtn+'</div>' +
     '</div>';
   }).join('');
   }

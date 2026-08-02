@@ -182,3 +182,45 @@ button:active, .btn:active{ transform:translateY(0); }
 
 /* focus states stay visible and on-brand */
 :focus-visible{ outline:2px solid #E6CBA8; outline-offset:3px; border-radius:6px; }
+
+/* ═══════════════════════════════════════════════════════════
+   IMAGES — always show the WHOLE image; the frame adapts
+═══════════════════════════════════════════════════════════ */
+.prod-card img, .shelf-card img, .card img, .thumb img, .tile img,
+[class*="card"] img, [class*="grid"] img, .sh-t img, .sh-hero img{
+  object-fit:contain !important;
+  background:#FFF;
+}
+/* frames give the image room instead of cropping it */
+.prod-card .ph, .shelf-card .ph, [class*="card"] .ph{
+  display:flex; align-items:center; justify-content:center;
+  background:#FFF; padding:6px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REELS — a complete section: video, caption, action, slide
+═══════════════════════════════════════════════════════════ */
+.reel{
+  position:relative; display:flex; flex-direction:column;
+  background:rgba(242,237,227,.95); border-radius:10px; overflow:hidden;
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:0 22px 55px -22px rgba(0,0,0,.8);
+}
+.reel .poster, .reel video, .reel iframe{
+  width:100%; aspect-ratio:9/16; object-fit:cover; display:block; background:#fff;
+}
+/* caption + action live in their own strip beneath the clip */
+.reel .rmeta{
+  padding:.7rem .8rem; display:flex; align-items:center; justify-content:space-between;
+  gap:.6rem; background:#F2EDE3;
+}
+.reel .rname{
+  background:none !important; border:none !important; padding:0 !important;
+  color:#0A0F26 !important; font-size:.8rem !important; line-height:1.3;
+  backdrop-filter:none !important;
+}
+.reel .rbtn{
+  flex:none; background:#0A0F26 !important; color:#F2EDE3 !important;
+  border-radius:6px !important; padding:.45rem .8rem !important;
+  font-size:.53rem !important; letter-spacing:.14em;
+}
