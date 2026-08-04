@@ -224,3 +224,45 @@ button:active, .btn:active{ transform:translateY(0); }
   border-radius:6px !important; padding:.45rem .8rem !important;
   font-size:.53rem !important; letter-spacing:.14em;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE OVERLAP FIX — cards must never collide or overhang
+═══════════════════════════════════════════════════════════ */
+@media (max-width:640px){
+  /* product cards: contained, no absolute overhangs */
+  .prod-card, .shelf-card, [class*="card"]{
+    position:relative; overflow:visible; margin-bottom:0;
+  }
+  /* the "+ Bag" strip sits inside flow, not floating over the next card */
+  .prod-card .add, .shelf-card .add, [class*="add-btn"], .card-add{
+    position:static !important;
+    transform:none !important;
+    margin-top:.5rem;
+    width:100%;
+    display:block;
+    text-align:center;
+  }
+  /* grids get real gaps so nothing touches */
+  .grid, .shelf-grid, .prod-grid, [class*="grid"]{
+    gap:1.4rem !important;
+    align-items:start;
+  }
+  /* card text blocks shrink to fit */
+  .prod-card h3, .shelf-card h3, [class*="card"] h3{
+    font-size:.92rem !important; line-height:1.25;
+    overflow-wrap:anywhere;
+  }
+  .prod-card .price, [class*="card"] .price{ font-size:.9rem !important; }
+  /* images sized sensibly on small screens */
+  .prod-card img, .shelf-card img, [class*="card"] img{
+    max-height:180px;
+  }
+  /* nothing may stick out of its card */
+  [class*="card"] > *{ max-width:100%; }
+}
+
+/* very small phones */
+@media (max-width:390px){
+  .prod-card img, .shelf-card img, [class*="card"] img{ max-height:150px; }
+  .grid, .shelf-grid, .prod-grid, [class*="grid"]{ gap:1.1rem !important; }
+}
