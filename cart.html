@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Your bag — The AIM</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#050818"
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#050818; --ink-2:#0A0F26; --line-1:#1A2142; --line-soft:#111735;
+  --text:#FFF1E2; --muted:#8E96B8; --faint:#5F678E;
+  --gold:#E6CBA8; --gold-hi:#F0DCC0; --live:#5FA88C;
+  --f-display:"Fraunces",Georgia,serif; --f-body:"Space Grotesk",system-ui,sans-serif; --f-mono:"Space Mono",monospace;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ background:#050818; background-image:radial-gradient(1200px 700px at 50% -20%, rgba(26,33,66,.42), transparent 70%); background-attachment:fixed; color:var(--text); font-family:var(--f-body); line-height:1.6; -webkit-font-smoothing:antialiased; }
+a{ color:inherit; text-decoration:none; }
+img{ display:block; max-width:100%; }
+header{ position:sticky; top:0; z-index:50; background:transparent; transition:background .35s ease, border-color .35s ease, backdrop-filter .35s ease; border-bottom:1px solid transparent; }header.stuck{ background:rgba(5,8,24,.72); backdrop-filter:saturate(160%) blur(16px); -webkit-backdrop-filter:saturate(160%) blur(16px); border-bottom-color:rgba(230,203,168,.12); }
+.nav{ max-width:760px; margin:0 auto; padding:0 1.4rem; height:72px; display:flex; align-items:center; }
+.logo{ font-family:var(--f-display); font-size:1.15rem; letter-spacing:.3em; text-transform:uppercase; }
+.logo b{ color:var(--gold); font-weight:400; }
+.wrap{ max-width:640px; margin:0 auto; padding:clamp(2.5rem,6vw,4.5rem) 1.4rem 5rem; }
+.tick{ width:72px; height:72px; border-radius:50%; border:2px solid var(--live); display:flex; align-items:center; justify-content:center; font-size:2rem; color:var(--live); margin-bottom:1.6rem; animation:pop .5s cubic-bezier(.34,1.4,.64,1); }
+@keyframes pop{ from{ transform:scale(.4); opacity:0 } to{ transform:scale(1); opacity:1 } }
+h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,2.8rem); letter-spacing:-.01em; }
+.lead{ color:var(--muted); margin-top:.9rem; font-size:1rem; }
+.ordno{ font-family:var(--f-mono); font-size:.72rem; letter-spacing:.14em; color:var(--gold-hi); margin-top:1.4rem; background:var(--ink-2); border:1px solid var(--line-1); border-radius:999px; padding:.6rem 1.2rem; display:inline-block; }
+.card{ background:var(--ink-2); border:1px solid var(--line-soft); border-radius:16px; padding:1.5rem; margin-top:2rem; }
+.card h2{ font-family:var(--f-display); font-weight:400; font-size:1.15rem; margin-bottom:1.1rem; }
+.o-row{ display:grid; grid-template-columns:48px 1fr auto; gap:.8rem; align-items:center; padding:.65rem 0; border-bottom:1px solid var(--line-soft); }
+.o-row img{ width:48px; height:48px; border-radius:6px; object-fit:cover; background:#FFF1E2; }
+.o-nm{ font-size:.85rem; } .o-q{ font-family:var(--f-mono); font-size:.6rem; color:var(--muted); margin-top:.15rem; }
+.o-pr{ font-family:var(--f-mono); font-size:.8rem; color:var(--gold-hi); }
+.o-total{ display:flex; justify-content:space-between; margin-top:1rem; padding-top:.9rem; border-top:1px solid var(--line-1); font-family:var(--f-mono); }
+.o-total span:last-child{ color:var(--gold-hi); font-weight:700; font-size:1.1rem; }
+.addr{ font-size:.85rem; color:var(--muted); line-height:1.7; }
+.addr b{ color:var(--text); font-weight:500; }
+.steps{ display:flex; flex-direction:column; gap:.9rem; margin-top:.4rem; }
+.step{ display:flex; gap:.9rem; align-items:flex-start; font-size:.86rem; color:var(--muted); }
+.step .n{ font-family:var(--f-mono); font-size:.6rem; color:var(--gold); border:1px solid var(--line-1); border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex:none; }
+.step b{ color:var(--text); font-weight:500; }
+.cta{ display:flex; gap:1rem; flex-wrap:wrap; margin-top:2.2rem; }
+.btn{ font-family:var(--f-mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; padding:.95rem 1.8rem; border-radius:999px; transition:all .3s; }
+.btn-solid{ background:#E6CBA8; color:#050818; font-weight:700; }
+.btn-solid:hover{ transform:translateY(-2px); }
+.btn-line{ border:1px solid var(--line-1); color:var(--text); }
+.btn-line:hover{ border-color:var(--gold); color:var(--gold-hi); }
+.note{ font-family:var(--f-mono); font-size:.62rem; letter-spacing:.1em; color:var(--faint); margin-top:1.6rem; }
+</style>
+<script src="js/transitions.js"></script>
+<link rel="stylesheet" href="css/responsive.css">
+</head><body>
+<header><div class="nav"><a href="index.html" class="logo">THE AIM<b>.</b></a>
+  <a href="shop.html" class="back">← Keep shopping</a><span data-account style="margin-left:auto"></span></div></header>
+
+<main class="wrap" style="max-width:900px;padding:clamp(2rem,6vw,4rem) 1.25rem">
+  <span class="eyebrow">Your bag</span>
+  <h1>Review your <em>order</em></h1>
+  <div id="bagWrap"><p class="lede">Loading…</p></div>
+</main>
+
+<script src="js/products-data.js"></script>
+<script src="js/cart.js"></script>
+<script>
+(function(){
+  var wrap = document.getElementById('bagWrap');
+  function money(n){ return '\u20B9' + Number(n||0).toLocaleString('en-IN'); }
+  function find(id){ return PRODUCTS.filter(function(p){ return p.id===id; })[0]; }
+
+  function render(){
+    var items = (window.Cart ? Cart.read() : []).filter(function(i){ return find(i.id); });
+    if(!items.length){
+      wrap.innerHTML =
+        '<div class="tcard" style="text-align:center;padding:3rem 1.4rem">' +
+          '<p style="font-size:1.05rem;margin:0 0 .6rem">Your bag is empty.</p>' +
+          '<p style="color:var(--faint);font-size:.88rem;margin:0 0 1.4rem">Add something you didn\u2019t know you needed.</p>' +
+          '<a href="shop.html" class="tbtn" style="display:inline-block;width:auto;padding:.85rem 1.8rem;text-decoration:none">Browse all products</a>' +
+        '</div>';
+      return;
+    }
+
+    var subtotal = 0;
+    var rows = items.map(function(i){
+      var p = find(i.id);
+      var line = p.price * i.qty; subtotal += line;
+      var img = (p.gallery && p.gallery[0]) || p.hero || '';
+      return '<div class="brow">' +
+        '<a href="product.html?id='+p.id+'" class="bimg"><img src="'+img+'" alt="'+p.name+'" /></a>' +
+        '<div class="binfo">' +
+          '<span class="bcat">'+(p.category||'')+'</span>' +
+          '<a href="product.html?id='+p.id+'" class="bname">'+p.name+'</a>' +
+          '<span class="bunit">'+money(p.price)+' each</span>' +
+        '</div>' +
+        '<div class="bqty"><button data-dec="'+p.id+'">\u2212</button>' +
+          '<span>'+i.qty+'</span><button data-inc="'+p.id+'">+</button></div>' +
+        '<div class="bline">'+money(line)+'</div>' +
+        '<button class="brm" data-rm="'+p.id+'" aria-label="Remove">\u2715</button>' +
+      '</div>';
+    }).join('');
+
+    var ship = subtotal >= 999 ? 0 : 49;
+    var total = subtotal + ship;
+
+    wrap.innerHTML =
+      '<div class="bag-grid">' +
+        '<div class="tcard blist">' + rows + '</div>' +
+        '<div class="tcard bsum">' +
+          '<h2 class="bsum-t">Summary</h2>' +
+          '<div class="brow2"><span>Subtotal</span><b>'+money(subtotal)+'</b></div>' +
+          '<div class="brow2"><span>Shipping</span><b>'+(ship? money(ship) : 'Free')+'</b></div>' +
+          (ship ? '<p class="bfree">Add '+money(999-subtotal)+' more for free shipping</p>' : '') +
+          '<div class="brow2 btot"><span>Total</span><b>'+money(total)+'</b></div>' +
+          '<a href="checkout.html" class="tbtn" style="display:block;text-align:center;text-decoration:none;margin-top:1rem">Checkout</a>' +
+          '<a href="shop.html" class="bcont">Keep shopping</a>' +
+        '</div>' +
+      '</div>';
+
+    wrap.querySelectorAll('[data-inc]').forEach(function(b){
+      b.addEventListener('click', function(){ Cart.add(b.dataset.inc, 1); render(); }); });
+    wrap.querySelectorAll('[data-dec]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var cur = Cart.read().filter(function(x){ return x.id===b.dataset.dec; })[0];
+        if(cur && cur.qty > 1){ Cart.setQty(b.dataset.dec, cur.qty-1); }
+        else { Cart.remove(b.dataset.dec); }
+        render();
+      }); });
+    wrap.querySelectorAll('[data-rm]').forEach(function(b){
+      b.addEventListener('click', function(){ Cart.remove(b.dataset.rm); render(); }); });
+  }
+  render();
+})();
+</script>
+<style>
+.bag-grid{ display:grid; grid-template-columns:1fr; gap:1rem; }
+@media (min-width:860px){ .bag-grid{ grid-template-columns:1.6fr .9fr; align-items:start; } }
+.blist{ padding:.4rem 1rem; }
+.brow{ display:grid; grid-template-columns:64px 1fr auto auto auto; gap:.9rem; align-items:center;
+  padding:1rem 0; border-bottom:1px solid rgba(255,255,255,.10); }
+.brow:last-child{ border-bottom:none; }
+.bimg{ width:64px; height:64px; border-radius:9px; overflow:hidden; background:rgba(255,255,255,.9);
+  display:flex; align-items:center; justify-content:center; padding:3px; }
+.bimg img{ width:100%; height:100%; object-fit:contain; }
+.binfo{ min-width:0; }
+.bcat{ display:block; font-family:var(--f-mono); font-size:.5rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--faint); margin-bottom:.2rem; }
+.bname{ display:block; font-size:.92rem; color:var(--text); text-decoration:none; line-height:1.25;
+  overflow-wrap:anywhere; }
+.bname:hover{ color:var(--gold-hi); }
+.bunit{ display:block; font-family:var(--f-mono); font-size:.66rem; color:var(--faint); margin-top:.25rem; }
+.bqty{ display:flex; align-items:center; gap:.2rem; border:1px solid rgba(255,255,255,.2);
+  border-radius:8px; padding:.15rem .25rem; }
+.bqty button{ background:none; border:none; color:var(--text); cursor:pointer; width:28px; height:28px;
+  border-radius:6px; font-size:.95rem; }
+.bqty button:hover{ background:rgba(255,255,255,.12); }
+.bqty span{ min-width:22px; text-align:center; font-family:var(--f-mono); font-size:.82rem; }
+.bline{ font-family:var(--f-display); font-size:1rem; color:var(--gold-hi); white-space:nowrap; }
+.brm{ background:none; border:none; color:var(--faint); cursor:pointer; font-size:.8rem; padding:.3rem; }
+.brm:hover{ color:var(--err); }
+.bsum{ padding:1.3rem; position:sticky; top:5.5rem; }
+.bsum-t{ font-family:var(--f-display); font-weight:400; font-size:1.1rem; margin:0 0 1rem; }
+.brow2{ display:flex; justify-content:space-between; gap:1rem; padding:.5rem 0; font-size:.9rem; color:var(--muted); }
+.brow2 b{ color:var(--text); font-weight:400; }
+.btot{ border-top:1px solid rgba(255,255,255,.14); margin-top:.5rem; padding-top:.9rem; font-size:1rem; }
+.btot b{ font-family:var(--f-display); font-size:1.25rem; color:var(--gold-hi); }
+.bfree{ font-family:var(--f-mono); font-size:.6rem; letter-spacing:.08em; color:var(--gold-hi);
+  margin:.3rem 0 0; }
+.bcont{ display:block; text-align:center; margin-top:.9rem; font-family:var(--f-mono); font-size:.58rem;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--faint); text-decoration:none; }
+.bcont:hover{ color:var(--gold-hi); }
+@media (max-width:640px){
+  .brow{ grid-template-columns:56px 1fr auto; grid-template-areas:"img info rm" "img qty line"; gap:.7rem; }
+  .bimg{ grid-area:img; width:56px; height:56px; }
+  .binfo{ grid-area:info; }
+  .bqty{ grid-area:qty; }
+  .bline{ grid-area:line; text-align:right; }
+  .brm{ grid-area:rm; align-self:start; }
+  .bsum{ position:static; }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/ascentra-db.js"></script>
+<script src="js/account.js"></script>
+</body>
+</html>

@@ -154,6 +154,7 @@
     var total = Cart.total();
     var ship = (FREE_SHIP_ABOVE !== null && total >= FREE_SHIP_ABOVE) ? 0 : SHIP_FEE;
     foot.innerHTML =
+      '<a class="cart-view" href="cart.html">View full bag</a>' +
       '<div class="cf-line"><span>Subtotal</span><span>'+fmt(total)+'</span></div>' +
       (SHIP_FEE > 0
         ? '<div class="cf-line"><span>Delivery</span><span>'+(ship ? fmt(ship) : 'Free')+'</span></div>'

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Order confirmed — The AIM</title>
+<title>Your watchlist — The AIM</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#050818"
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,66 +54,114 @@ h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,
 </style>
 <script src="js/transitions.js"></script>
 <link rel="stylesheet" href="css/responsive.css">
-</head>
-<body>
-<header><div class="nav"><a href="index.html" class="logo">THE AIM<b>.</b></a><span data-account style="margin-left:auto"></span></div></header>
-<div class="wrap" id="page"></div>
+</head><body>
+<header><div class="nav"><a href="index.html" class="logo">THE AIM<b>.</b></a>
+  <a href="shop.html" class="back">← Shop</a><span data-account style="margin-left:auto"></span></div></header>
+
+<main class="wrap" style="max-width:820px;padding:clamp(2rem,6vw,4rem) 1.25rem">
+  <span class="eyebrow">Saved for later</span>
+  <h1>Your <em>watchlist</em></h1>
+  <p class="lede">Things you asked us to stock. When enough people want one, we order it —
+    and you'll see it appear in the shop.</p>
+  <div id="wlWrap"><p class="lede">Loading…</p></div>
+</main>
+
+<script src="js/upcoming-data.js"></script>
 <script src="js/products-data.js"></script>
-<script>
-(function(){
-  var fmt = function(n){ return '₹' + Number(n).toLocaleString('en-IN'); };
-  var order = null;
-  try{ order = JSON.parse(localStorage.getItem('ascentra_last_order')); }catch(e){}
-
-  var page = document.getElementById('page');
-  if(!order){
-    page.innerHTML = '<div class="tick">✓</div><h1>Thank you</h1>' +
-      '<p class="lead">Your order has been placed.</p>' +
-      '<div class="cta"><a href="shop.html" class="btn btn-solid">Continue shopping</a></div>';
-    return;
-  }
-
-  var c = order.customer;
-  var payLabel = order.payment === 'cod' ? 'Cash on Delivery' :
-                 order.status === 'paid' ? 'Paid online' : 'Online payment';
-
-  page.innerHTML =
-    '<div class="tick">✓</div>' +
-    '<h1>Order confirmed</h1>' +
-    '<p class="lead">Thank you, '+c.name.split(' ')[0]+'. We\'ve got your order and we\'re on it.</p>' +
-    '<div class="ordno">Order '+order.id+'</div>' +
-
-    '<div class="card"><h2>What happens next</h2><div class="steps">' +
-      '<div class="step"><span class="n">1</span><div><b>Confirmation</b> — you\'ll get an update on '+c.phone+(c.email?' and '+c.email:'')+'.</div></div>' +
-      '<div class="step"><span class="n">2</span><div><b>Packed & shipped</b> — we dispatch your order and send you tracking.</div></div>' +
-      '<div class="step"><span class="n">3</span><div><b>Delivered</b> — '+payLabel+(order.payment==='cod'?' — keep the amount ready.':'.')+'</div></div>' +
-    '</div></div>' +
-
-    '<div class="card"><h2>Order summary</h2>' +
-      order.items.map(function(i){ var p=PRODUCTS.find(function(x){return x.id===i.id;});
-        return '<div class="o-row"><img src="'+(p?(p.thumb||p.hero):'')+'" alt="" />' +
-          '<div><div class="o-nm">'+i.name+'</div><div class="o-q">Qty '+i.qty+'</div></div>' +
-          '<div class="o-pr">'+fmt(i.line)+'</div></div>';
-      }).join('') +
-      '<div class="o-total"><span>Total ('+payLabel+')</span><span>'+fmt(order.total)+'</span></div>' +
-    '</div>' +
-
-    '<div class="card"><h2>Delivering to</h2><p class="addr">' +
-      '<b>'+c.name+'</b><br/>'+c.address+'<br/>'+
-      (c.landmark?c.landmark+'<br/>':'')+c.city+', '+c.state+' — '+c.pincode+'<br/>'+
-      'Phone: '+c.phone+'</p></div>' +
-
-    '<div class="cta">' +
-      '<a href="shop.html" class="btn btn-solid">Continue shopping</a>' +
-      '<a href="index.html" class="btn btn-line">Back to home</a>' +
-    '</div>' +
-    '<p class="note">A copy of this order is saved to your device. Questions? See our Contact page.</p>';
-})();
-</script>
-<p style="margin-top:2rem;font-size:.86rem;color:var(--muted);text-align:center">Track this order any time at <a href="track.html" style="color:var(--gold-hi)">itsaim.netlify.app/track</a></p>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
 <script src="js/ascentra-db.js"></script>
+<script>
+(function(){
+  var KEY = 'ascentra_watch_v1';
+  var wrap = document.getElementById('wlWrap');
+
+  function list(){ try{ return JSON.parse(localStorage.getItem(KEY)) || []; }catch(e){ return []; } }
+  function save2(a){ save(a); if(window.AimAccount && AimAccount.user()) AimAccount.pushWatch(a); }
+  function save(a){ try{ localStorage.setItem(KEY, JSON.stringify(a)); }catch(e){} }
+
+  var ITEMS = (typeof UPCOMING !== 'undefined') ? UPCOMING.slice() : [];
+  var tally = {};
+
+  // pull live vote counts + admin-managed items if the backend is on
+  var A = window.Ascentra;
+  if(A && A.configured && A.configured() && A.raw){
+    A.raw.from('upcoming_tally').select('*')
+      .then(function(res){
+        if(res.data && res.data.length){
+          ITEMS = res.data.map(function(r){
+            tally[r.id] = r.vote_count || 0;
+            return { id:r.id, name:r.name, category:r.category, img:r.img,
+                     teaser:r.teaser, est:r.est_price };
+          });
+        }
+        render();
+      }).catch(render);
+  } else { render(); }
+
+  function render(){
+    var ids = list();
+    var mine = ITEMS.filter(function(i){ return ids.indexOf(String(i.id)) > -1; });
+
+    if(!mine.length){
+      wrap.innerHTML =
+        '<div class="tcard" style="text-align:center;padding:3rem 1.4rem">' +
+          '<p style="font-size:1.02rem;margin:0 0 .6rem">Nothing saved yet.</p>' +
+          '<p style="color:var(--faint);font-size:.88rem;margin:0 0 1.4rem">' +
+            'On the homepage, tap the heart on anything in <b>Dropping Next</b> to save it here.</p>' +
+          '<a href="index.html#upcoming" class="tbtn" style="display:inline-block;width:auto;padding:.85rem 1.8rem;text-decoration:none">See what\u2019s dropping next</a>' +
+        '</div>';
+      return;
+    }
+
+    wrap.innerHTML = '<div class="wgrid">' + mine.map(function(i){
+      var votes = tally[i.id];
+      return '<div class="tcard wcard">' +
+        '<div class="wimg"><img src="'+(i.img||'')+'" alt="'+i.name+'" /></div>' +
+        '<div class="winfo">' +
+          '<span class="bcat">'+(i.category||'')+'</span>' +
+          '<h3>'+i.name+'</h3>' +
+          (i.teaser ? '<p>'+i.teaser+'</p>' : '') +
+          '<div class="wmeta">' +
+            (i.est ? '<span class="west">Est. '+i.est+'</span>' : '') +
+            (votes != null ? '<span class="wvotes">'+votes+' want it</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<button class="brm" data-rm="'+i.id+'" aria-label="Remove">\u2715</button>' +
+      '</div>';
+    }).join('') + '</div>';
+
+    wrap.querySelectorAll('[data-rm]').forEach(function(b){
+      b.addEventListener('click', function(){
+        save2(list().filter(function(x){ return x !== String(b.dataset.rm); }));
+        render();
+      });
+    });
+  }
+})();
+</script>
+<style>
+.wgrid{ display:grid; gap:.9rem; }
+.wcard{ display:grid; grid-template-columns:78px 1fr auto; gap:1rem; align-items:center; padding:.9rem; }
+.wimg{ width:78px; height:78px; border-radius:10px; overflow:hidden; background:rgba(255,255,255,.9);
+  display:flex; align-items:center; justify-content:center; padding:4px; }
+.wimg img{ width:100%; height:100%; object-fit:contain; }
+.winfo{ min-width:0; }
+.winfo h3{ font-family:var(--f-display); font-weight:400; font-size:1rem; margin:.15rem 0 .3rem;
+  line-height:1.2; overflow-wrap:anywhere; }
+.winfo p{ font-size:.82rem; color:var(--muted); margin:0; line-height:1.5; }
+.bcat{ font-family:var(--f-mono); font-size:.5rem; letter-spacing:.2em; text-transform:uppercase; color:var(--faint); }
+.wmeta{ display:flex; gap:.9rem; margin-top:.5rem; flex-wrap:wrap; }
+.west, .wvotes{ font-family:var(--f-mono); font-size:.6rem; letter-spacing:.1em; }
+.west{ color:var(--gold-hi); }
+.wvotes{ color:var(--faint); }
+.brm{ background:none; border:none; color:var(--faint); cursor:pointer; font-size:.8rem; padding:.4rem; align-self:start; }
+.brm:hover{ color:var(--err); }
+@media (max-width:560px){
+  .wcard{ grid-template-columns:64px 1fr auto; gap:.75rem; }
+  .wimg{ width:64px; height:64px; }
+}
+</style>
 <script src="js/account.js"></script>
 </body>
 </html>

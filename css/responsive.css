@@ -352,3 +352,174 @@ body.app [class*="arrow"], body.work [class*="arrow"]{
   .shop-head{ padding-bottom:.5rem !important; }
   .count-line{ margin:.8rem 0 !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE — the primary experience. Everything below is tuned
+   for phones first, because that's where people actually shop.
+═══════════════════════════════════════════════════════════ */
+@media (max-width:760px){
+
+  /* ── HERO: stack cleanly, nothing overlapping ── */
+  .hero{ padding:2.2rem 0 2.6rem !important; }
+  .hero-grid{ grid-template-columns:1fr !important; gap:1.8rem !important; }
+  .hero h1{ font-size:clamp(1.9rem,8vw,2.6rem) !important; max-width:100% !important; }
+  .hero-sub{ font-size:.92rem !important; max-width:100% !important; margin-top:1rem !important; }
+
+  /* hero product card: image and text in separate stacked blocks */
+  .hero-media{ position:relative; margin-top:.5rem; }
+  .hero-media img{ width:100%; height:auto; border-radius:14px; }
+  /* the meta (category / name / price) sits BELOW the image, never on it */
+  .hero-meta, .hero-media + .hero-meta{
+    position:static !important;
+    display:block !important;
+    margin-top:1rem;
+    padding:0;
+  }
+  .hero-meta h3, .hero-media ~ * h3{ font-size:1.05rem !important; line-height:1.25; }
+  /* arrows + dots go under everything, centred */
+  .hero .arrows, .hero-nav, .hero [class*="arrow"]{
+    position:static !important;
+    display:flex !important; justify-content:center; gap:.6rem;
+    margin-top:1.1rem;
+  }
+  .hero .dots, .hero-dots{ justify-content:center; margin-top:.8rem; }
+
+  /* ── CARDS: images never escape their box ── */
+  .pcase, .prod-card, .shelf-card, [class*="card"]{
+    overflow:hidden !important;
+    border-radius:12px !important;
+  }
+  .pimg, .pcase img, .prod-card img{
+    width:100% !important; height:auto !important;
+    max-height:160px;
+    object-fit:contain !important;
+    border-radius:10px !important;
+    display:block;
+  }
+  .ticket{ margin-top:.4rem !important; }
+
+  /* ── PRODUCT SHEET: tight, no dead gaps ── */
+  .sh{ gap:.4rem !important; padding:.2rem !important; }
+  .sh-col-a, .sh-col-b{ gap:.4rem !important; }
+  .sh-info{ padding:.75rem .85rem !important; }
+  .sh-desc{ font-size:.8rem !important; line-height:1.55 !important; }
+  .sh-more > button{ padding:.7rem .85rem !important; }
+  .sh-acts{ padding:.55rem !important; gap:.35rem !important; }
+  .sh-thumbs{ padding:.3rem !important; gap:.3rem !important; }
+
+  /* ── TYPE: comfortable, never cramped ── */
+  h1{ letter-spacing:-.02em; }
+  section{ padding-top:2.4rem !important; padding-bottom:2.4rem !important; }
+  .wrap{ padding-left:1.15rem !important; padding-right:1.15rem !important; }
+
+  /* ── NAV: compact ── */
+  .nav{ height:60px !important; }
+  .logo{ font-size:.95rem !important; }
+  .nav-links{ display:none; }        /* categories live on the shop page */
+}
+
+/* ── very small phones ── */
+@media (max-width:400px){
+  .pimg, .pcase img, .prod-card img{ max-height:132px; }
+  .hero h1{ font-size:1.75rem !important; }
+  .sh-buy, .sh-bag{ font-size:.52rem !important; }
+}
+
+/* ── cart drawer must always sit above everything ── */
+.cart-drawer, [class*="drawer"]{ z-index:9600 !important; }
+
+/* ── tap targets: everything reachable with a thumb ── */
+@media (max-width:760px){
+  .sh-qty button, .sh-x, .mini, .rbtn, [class*="arrow"],
+  button, a.btn, .quick-add{
+    min-height:40px; min-width:40px;
+  }
+  .sh-qty button{ min-height:34px; min-width:34px; }   /* paired, still comfortable */
+  /* close buttons need room from the notch */
+  .sh-x{ top:calc(10px + env(safe-area-inset-top)) !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GLASS — reserved for two things only:
+     1. the main message (the hero)
+     2. anything you can touch that takes you somewhere
+   Everything else stays plain, so the glass keeps its meaning.
+═══════════════════════════════════════════════════════════ */
+
+/* ── 1. the hero message sits on its own pane ── */
+.hero-copy{
+  position:relative;
+  padding:clamp(1.6rem,3.4vw,2.4rem);
+  border-radius:20px;
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.13);
+  box-shadow:0 24px 64px -28px rgba(0,0,0,.78),
+             inset 0 1px 0 rgba(255,255,255,.20);
+  backdrop-filter:blur(28px) saturate(165%);
+  -webkit-backdrop-filter:blur(28px) saturate(165%);
+}
+/* a soft top highlight, the way light catches real glass */
+.hero-copy::before{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(160deg, rgba(255,255,255,.10), transparent 42%);
+}
+
+/* ── 2. the product card panel (name + price) ── */
+.ticket{
+  background:rgba(255,255,255,.10) !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  border-radius:14px !important;
+  backdrop-filter:blur(26px) saturate(170%);
+  -webkit-backdrop-filter:blur(26px) saturate(170%);
+  box-shadow:0 14px 38px -18px rgba(0,0,0,.7),
+             inset 0 1px 0 rgba(255,255,255,.20) !important;
+  color:#F2EDE3 !important;
+  transition:background .35s ease, transform .4s cubic-bezier(.2,.7,.24,1),
+             box-shadow .4s ease, border-color .35s ease;
+}
+.ticket .nm, .ticket h3{ color:#FFF !important; }
+.ticket .pr{ color:#F0DCC0 !important; }
+.ticket .cat{ color:rgba(242,237,227,.6) !important; }
+.pcase:hover .ticket{
+  background:rgba(255,255,255,.16) !important;
+  border-color:rgba(230,203,168,.42) !important;
+  transform:translateY(-3px);
+  box-shadow:0 22px 52px -18px rgba(0,0,0,.8),
+             inset 0 1px 0 rgba(255,255,255,.28) !important;
+}
+
+/* ── 3. touchable things that take you somewhere ── */
+.tbtn, .quick-add, .rbtn, .see-all, .cta,
+a.btn, .shop-cta, .cart-checkout{
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.20);
+  backdrop-filter:blur(22px) saturate(160%);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.20);
+  transition:background .3s ease, border-color .3s ease, transform .3s cubic-bezier(.2,.7,.24,1);
+}
+.tbtn:hover, .quick-add:hover, .rbtn:hover, .see-all:hover,
+a.btn:hover, .cart-checkout:hover{
+  background:rgba(255,255,255,.20);
+  border-color:rgba(230,203,168,.5);
+  transform:translateY(-2px);
+}
+/* the primary action stays solid cream — it must not look optional */
+.hero-cta, .shop-all, .sh-buy, .save-btn, .primary-btn{
+  background:var(--gold, #E6CBA8) !important;
+  color:#050818 !important;
+  border:none !important;
+  backdrop-filter:none !important;
+}
+
+/* ── the workspaces never get any of this ── */
+body.app .hero-copy, body.app .ticket, body.app .tbtn,
+body.work .hero-copy, body.work .ticket, body.work .tbtn{
+  background:inherit !important; backdrop-filter:none !important;
+  box-shadow:none !important; border-color:inherit !important;
+}
+
+@media (max-width:760px){
+  .hero-copy{ padding:1.3rem 1.15rem; border-radius:16px; }
+  .ticket{ border-radius:12px !important; }
+}

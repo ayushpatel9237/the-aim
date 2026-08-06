@@ -506,6 +506,12 @@ footer{ border-top:1px solid var(--line-soft); padding:3rem 0 2.4rem; }
 /* the FEATURED chip is gone — a quiet index number replaces it */
 .hero-media .chip, .hero-media .badge, .hero-media [class*="feat"]{ display:none !important; }
 .hero-meta{ display:flex; align-items:baseline; gap:1rem; margin-top:1.2rem; }
+
+/* FEATURED chip: gone on mobile, quiet label on desktop */
+@media (max-width:760px){
+  .hero-media .chip, .hero-media .badge, .hero-media [class*="feat"],
+  .spot-chip, [class*="featured"]{ display:none !important; }
+}
 </style>
 <script src="js/transitions.js"></script>
 <link rel="stylesheet" href="css/responsive.css">
@@ -522,7 +528,7 @@ footer{ border-top:1px solid var(--line-soft); padding:3rem 0 2.4rem; }
       <a href="shop.html?category=Gadgets">Gadgets</a>
       <a href="shop.html?category=Storage">Storage</a>
     </nav>
-    <div class="nav-right"><button class="watch-btn" id="watchOpen" aria-label="Your watchlist">Watchlist<span class="wc" data-watch-count>0</span></button><button class="cart-btn" data-cart-open aria-label="Open cart">Bag<span class="badge" data-cart-count>0</span></button></div>
+    <div class="nav-right"><span data-account></span><button class="watch-btn" id="watchOpen" aria-label="Your watchlist">Watchlist<span class="wc" data-watch-count>0</span></button><button class="cart-btn" data-cart-open aria-label="Open cart">Bag<span class="badge" data-cart-count>0</span></button></div>
   </div>
 </header>
 
@@ -531,7 +537,7 @@ footer{ border-top:1px solid var(--line-soft); padding:3rem 0 2.4rem; }
 <!-- HERO / STAGE -->
 <section class="hero rise">
   <div class="wrap hero-grid">
-    <div>
+    <div class="hero-copy">
       <h1>
         <span class="ln"><span>Things you didn't</span></span>
         <span class="ln"><span>know you needed</span></span>
@@ -616,6 +622,7 @@ footer{ border-top:1px solid var(--line-soft); padding:3rem 0 2.4rem; }
     <span class="links">
       <a href="shop.html">All Products</a>
       <a href="track.html">Track order</a>
+<a href="watchlist.html">Watchlist</a>
 <a href="contact.html">Contact</a>
       <a href="shipping.html">Shipping</a>
       <a href="returns.html">Returns</a>
@@ -758,5 +765,6 @@ document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
 </script>
 <script src="js/ambient.js"></script>
 <script src="js/sheet.js"></script>
+<script src="js/account.js"></script>
 </body>
 </html>

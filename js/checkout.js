@@ -115,6 +115,15 @@
     });
   });
 
+
+  /* signed-in customers get their email filled in — one less field */
+  document.addEventListener('account:ready', function(e){
+    var u = e.detail && e.detail.user;
+    if(!u) return;
+    var em = document.getElementById('f-email');
+    if(em && !em.value) em.value = u.email || '';
+  });
+
   /* place order */
   document.getElementById('placeBtn').addEventListener('click', function(){
     if(!validate()){
