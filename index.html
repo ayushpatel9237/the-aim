@@ -60,7 +60,6 @@ h1 em, h2 em{ font-style:italic; font-weight:300;
 @keyframes foil{ 0%,100%{ background-position:0% 0 } 50%{ background-position:100% 0 } }
 @media (prefers-reduced-motion:reduce){ h1 em, h2 em, .shop-head h1 em, .rhead h2 em{ animation:none } }
 
-
 .eyebrow{
   font-family:var(--f-mono); font-size:.64rem; letter-spacing:.26em;
   text-transform:uppercase; color:var(--faint);
@@ -123,7 +122,6 @@ header.scrolled{ border-bottom-color:var(--line-soft); }
 .hero h1 .ln:nth-child(3) span{ animation-delay:.18s }
 @keyframes rise{ to{ transform:translateY(0) } }
 .hero-sub{ color:var(--muted); max-width:28rem; margin-top:1.6rem; }
-.hero-actions{ display:flex; flex-wrap:wrap; gap:1rem; margin-top:2.4rem; }
 .proof{ display:flex; gap:2.2rem; margin-top:3rem; padding-top:1.7rem; border-top:1px solid var(--line-soft); flex-wrap:wrap; }
 .proof .n{ font-family:var(--f-mono); font-size:1.4rem; }
 .proof .n em{ color:var(--gold); font-style:normal; }
@@ -397,10 +395,6 @@ section{ padding:clamp(4rem,8vw,6.5rem) 0; }
   .pcase:hover .ticket, .pcase:hover .pimg::before{ animation:none; }
 }
 
-
-
-
-
 /* ── brass ribbon ticker ── */
 .ribbon{
   overflow:hidden; position:relative;
@@ -420,7 +414,6 @@ section{ padding:clamp(4rem,8vw,6.5rem) 0; }
 @media (prefers-reduced-motion:reduce){ .ribbon-track{ animation:none } }
 
 /* categories */
-
 
 .cat-row:last-child{ border-bottom:none; }
 .cat-row:hover{ padding-left:1.4rem; }
@@ -547,10 +540,7 @@ footer{ border-top:1px solid var(--line-soft); padding:3rem 0 2.4rem; }
         Useful everyday items at honest prices — hand-picked, limited,
         delivered fast across India.
       </p>
-      <div class="hero-actions">
-        <a href="shop.html" class="btn btn-solid">Shop All Products</a>
-      </div>
-    </div>
+</div>
 
     <div class="stage" id="stage" aria-label="Featured products">
       <div class="ghost" id="ghost">01</div>
@@ -646,7 +636,6 @@ footer{ border-top:1px solid var(--line-soft); padding:3rem 0 2.4rem; }
 var fmt = function(n){ return '₹' + n.toLocaleString('en-IN'); };
 var byId = function(id){ return PRODUCTS.find(function(p){ return p.id===id; }); };
 
-
 /* which products star on the stage — edit these ids to change the reel */
 var FEATURED = [
   '22_butterfly_phone_stand',
@@ -738,7 +727,6 @@ function cardHTML(p){
 /* new arrivals — first 8; edit the slice or reorder PRODUCTS to change */
 document.getElementById('arrivals').innerHTML =
   PRODUCTS.slice(0,8).map(cardHTML).join('');
-
 
 /* header + reveal */
 var hd = document.getElementById('hd');

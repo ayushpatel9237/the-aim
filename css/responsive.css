@@ -254,16 +254,14 @@ button:active, .btn:active{ transform:translateY(0); }
   }
   .prod-card .price, [class*="card"] .price{ font-size:.9rem !important; }
   /* images sized sensibly on small screens */
-  .prod-card img, .shelf-card img, [class*="card"] img{
-    max-height:180px;
-  }
+
   /* nothing may stick out of its card */
   [class*="card"] > *{ max-width:100%; }
 }
 
 /* very small phones */
 @media (max-width:390px){
-  .prod-card img, .shelf-card img, [class*="card"] img{ max-height:150px; }
+
   .grid, .shelf-grid, .prod-grid, [class*="grid"]{ gap:1.1rem !important; }
 }
 
@@ -391,7 +389,6 @@ body.app [class*="arrow"], body.work [class*="arrow"]{
   }
   .pimg, .pcase img, .prod-card img{
     width:100% !important; height:auto !important;
-    max-height:160px;
     object-fit:contain !important;
     border-radius:10px !important;
     display:block;
@@ -420,7 +417,7 @@ body.app [class*="arrow"], body.work [class*="arrow"]{
 
 /* ── very small phones ── */
 @media (max-width:400px){
-  .pimg, .pcase img, .prod-card img{ max-height:132px; }
+
   .hero h1{ font-size:1.75rem !important; }
   .sh-buy, .sh-bag{ font-size:.52rem !important; }
 }
@@ -446,21 +443,17 @@ body.app [class*="arrow"], body.work [class*="arrow"]{
    Everything else stays plain, so the glass keeps its meaning.
 ═══════════════════════════════════════════════════════════ */
 
-/* ── 1. the hero: a frame around the words, not a slab ── */
-.hero-copy{ position:relative; }
+/* ── 1. hero text is PLAIN — no boxes on the headline ── */
 .hero-copy h1 .ln > span,
 .hero-copy .hero-sub{
-  display:inline-block;
-  padding:.18em .42em;
-  border-radius:12px;
-  background:rgba(255,255,255,.055);
-  border:1px solid rgba(255,255,255,.11);
-  box-shadow:0 10px 30px -14px rgba(0,0,0,.7),
-             inset 0 1px 0 rgba(255,255,255,.16);
-  backdrop-filter:blur(18px) saturate(150%);
-  -webkit-backdrop-filter:blur(18px) saturate(150%);
+  background:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  padding:0 !important;
+  border-radius:0 !important;
 }
-.hero-copy .hero-sub{ padding:.6em .8em; border-radius:14px; }
 
 /* ── 2. the cream card stays cream. Only the TEXT floats. ── */
 .ticket{
@@ -557,7 +550,7 @@ body.work .hero-copy, body.work .ticket, body.work .tbtn{
     grid-template-columns:repeat(2,1fr) !important;
     gap:.85rem !important;
   }
-  .pimg, .pcase img, .prod-card img{ max-height:142px; }
+
   .ticket{ padding:.7rem .6rem !important; }
   .ticket .nm, .ticket h3{ font-size:.82rem !important; padding:.26rem .45rem; }
   .ticket .pr{ font-size:.8rem !important; }
@@ -588,4 +581,80 @@ body.work .hero-copy, body.work .ticket, body.work .tbtn{
 @media (min-height:900px) and (max-width:440px){
   .hero{ padding-top:2.6rem !important; }
   .hero-media img{ max-height:340px; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE PRODUCT DISPLAY — match the desktop, nothing cut off
+   The earlier max-height caps were cropping images and clipping
+   the card. Cards now size to their content, like on desktop.
+═══════════════════════════════════════════════════════════ */
+@media (max-width:760px){
+  /* the card grows to fit — never a fixed height that clips */
+  .pcase, .prod-card, .shelf-card{
+    height:auto !important;
+    min-height:0 !important;
+    overflow:visible !important;
+    display:flex !important;
+    flex-direction:column;
+  }
+  /* image area keeps a square frame and shows the WHOLE image */
+  .pimg{
+    width:100% !important;
+    aspect-ratio:1 / 1;
+    height:auto !important;
+    max-height:none !important;
+    display:flex; align-items:center; justify-content:center;
+    background:#fff;
+    border-radius:12px;
+    overflow:hidden;
+    padding:8px;
+  }
+  .pimg img, .pcase img, .prod-card img{
+    width:100% !important;
+    height:100% !important;
+    max-height:none !important;
+    object-fit:contain !important;
+    border-radius:0 !important;
+  }
+  /* the cream panel sits under it, sized to its text */
+  .ticket{
+    height:auto !important;
+    min-height:0 !important;
+    margin-top:.5rem !important;
+    padding:.75rem .7rem !important;
+  }
+  .ticket .nm, .ticket h3{
+    font-size:.84rem !important;
+    line-height:1.3;
+    white-space:normal !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PRODUCT PAGE ON MOBILE — real gaps, cards not full-bleed
+═══════════════════════════════════════════════════════════ */
+@media (max-width:760px){
+  #page{ padding:1.2rem 0 2rem !important; gap:1rem !important; }
+  /* pull the cards in from the screen edge so they read as cards */
+  .info{ gap:.85rem !important; padding:0 .25rem; }
+  .pbox{
+    padding:1rem 1.05rem !important;
+    border-radius:15px !important;
+    margin:0 !important;
+  }
+  .viewer{ padding:0 .25rem; }
+  .thumbs{ margin-top:.85rem !important; }
+
+  /* the sheet's cards need the same breathing room */
+  .sh{ gap:.75rem !important; padding:.5rem !important; }
+  .sh-col-a, .sh-col-b{ gap:.75rem !important; }
+  .card-f{ border-radius:15px !important; }
+}
+
+/* boxes should not run the full width of a big phone */
+@media (min-width:420px) and (max-width:760px){
+  .info, .viewer{ max-width:96%; margin-inline:auto; }
+  .sh{ width:90vw !important; }
 }
