@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Track your order — The AIM</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#050818"
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#050818; --ink-2:#0A0F26; --line-1:#1A2142; --line-soft:#111735;
+  --text:#FFF1E2; --muted:#8E96B8; --faint:#5F678E;
+  --gold:#E6CBA8; --gold-hi:#F0DCC0; --live:#5FA88C;
+  --f-display:"Fraunces",Georgia,serif; --f-body:"Space Grotesk",system-ui,sans-serif; --f-mono:"Space Mono",monospace;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ background:#050818; background-image:radial-gradient(1200px 700px at 50% -20%, rgba(26,33,66,.42), transparent 70%); background-attachment:fixed; color:var(--text); font-family:var(--f-body); line-height:1.6; -webkit-font-smoothing:antialiased; }
+a{ color:inherit; text-decoration:none; }
+img{ display:block; max-width:100%; }
+header{ position:sticky; top:0; z-index:50; background:transparent; transition:background .35s ease, border-color .35s ease, backdrop-filter .35s ease; border-bottom:1px solid transparent; }header.stuck{ background:rgba(5,8,24,.72); backdrop-filter:saturate(160%) blur(16px); -webkit-backdrop-filter:saturate(160%) blur(16px); border-bottom-color:rgba(230,203,168,.12); }
+.nav{ max-width:760px; margin:0 auto; padding:0 1.4rem; height:72px; display:flex; align-items:center; }
+.logo{ font-family:var(--f-display); font-size:1.15rem; letter-spacing:.3em; text-transform:uppercase; }
+.logo b{ color:var(--gold); font-weight:400; }
+.wrap{ max-width:640px; margin:0 auto; padding:clamp(2.5rem,6vw,4.5rem) 1.4rem 5rem; }
+.tick{ width:72px; height:72px; border-radius:50%; border:2px solid var(--live); display:flex; align-items:center; justify-content:center; font-size:2rem; color:var(--live); margin-bottom:1.6rem; animation:pop .5s cubic-bezier(.34,1.4,.64,1); }
+@keyframes pop{ from{ transform:scale(.4); opacity:0 } to{ transform:scale(1); opacity:1 } }
+h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,2.8rem); letter-spacing:-.01em; }
+.lead{ color:var(--muted); margin-top:.9rem; font-size:1rem; }
+.ordno{ font-family:var(--f-mono); font-size:.72rem; letter-spacing:.14em; color:var(--gold-hi); margin-top:1.4rem; background:var(--ink-2); border:1px solid var(--line-1); border-radius:999px; padding:.6rem 1.2rem; display:inline-block; }
+.card{ background:var(--ink-2); border:1px solid var(--line-soft); border-radius:16px; padding:1.5rem; margin-top:2rem; }
+.card h2{ font-family:var(--f-display); font-weight:400; font-size:1.15rem; margin-bottom:1.1rem; }
+.o-row{ display:grid; grid-template-columns:48px 1fr auto; gap:.8rem; align-items:center; padding:.65rem 0; border-bottom:1px solid var(--line-soft); }
+.o-row img{ width:48px; height:48px; border-radius:6px; object-fit:cover; background:#FFF1E2; }
+.o-nm{ font-size:.85rem; } .o-q{ font-family:var(--f-mono); font-size:.6rem; color:var(--muted); margin-top:.15rem; }
+.o-pr{ font-family:var(--f-mono); font-size:.8rem; color:var(--gold-hi); }
+.o-total{ display:flex; justify-content:space-between; margin-top:1rem; padding-top:.9rem; border-top:1px solid var(--line-1); font-family:var(--f-mono); }
+.o-total span:last-child{ color:var(--gold-hi); font-weight:700; font-size:1.1rem; }
+.addr{ font-size:.85rem; color:var(--muted); line-height:1.7; }
+.addr b{ color:var(--text); font-weight:500; }
+.steps{ display:flex; flex-direction:column; gap:.9rem; margin-top:.4rem; }
+.step{ display:flex; gap:.9rem; align-items:flex-start; font-size:.86rem; color:var(--muted); }
+.step .n{ font-family:var(--f-mono); font-size:.6rem; color:var(--gold); border:1px solid var(--line-1); border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex:none; }
+.step b{ color:var(--text); font-weight:500; }
+.cta{ display:flex; gap:1rem; flex-wrap:wrap; margin-top:2.2rem; }
+.btn{ font-family:var(--f-mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; padding:.95rem 1.8rem; border-radius:999px; transition:all .3s; }
+.btn-solid{ background:#E6CBA8; color:#050818; font-weight:700; }
+.btn-solid:hover{ transform:translateY(-2px); }
+.btn-line{ border:1px solid var(--line-1); color:var(--text); }
+.btn-line:hover{ border-color:var(--gold); color:var(--gold-hi); }
+.note{ font-family:var(--f-mono); font-size:.62rem; letter-spacing:.1em; color:var(--faint); margin-top:1.6rem; }
+</style>
+<script src="js/transitions.js"></script>
+<link rel="stylesheet" href="css/responsive.css">
+</head><body>
+<header><div class="nav"><a href="index.html" class="logo">THE AIM<b>.</b></a>
+  <a href="shop.html" class="back">← Shop</a></div></header>
+
+<main class="wrap" style="max-width:640px;padding:clamp(2.5rem,7vw,5rem) 1.25rem">
+  <span class="eyebrow">Order status</span>
+  <h1>Track your <em>order</em></h1>
+  <p class="lede">Enter the order number from your confirmation, plus the phone number you ordered with.</p>
+
+  <div class="tcard">
+    <div class="fld"><label>Order number</label>
+      <input id="t-id" placeholder="AIM12345678" autocomplete="off" /></div>
+    <div class="fld"><label>Phone number</label>
+      <input id="t-phone" placeholder="10-digit mobile" inputmode="numeric" maxlength="10" /></div>
+    <button class="tbtn" id="t-go">Find my order</button>
+    <div class="tmsg" id="t-msg"></div>
+  </div>
+
+  <div id="t-result"></div>
+
+  <p class="thelp">Can't find your order number? It was shown on screen after payment and starts with
+    <b>AIM</b>. If you're stuck, <a href="contact.html">contact us</a> and we'll look it up.</p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/ascentra-db.js"></script>
+<script>
+(function(){
+  var A = window.Ascentra;
+  var STEPS = [
+    { k:'confirmed', label:'Order placed',  note:'We have your order' },
+    { k:'paid',      label:'Payment received', note:'Payment confirmed' },
+    { k:'shipped',   label:'Shipped',       note:'On its way to you' },
+    { k:'delivered', label:'Delivered',     note:'Enjoy it' }
+  ];
+  function money(n){ return '\u20B9' + Number(n||0).toLocaleString('en-IN'); }
+
+  function stageIndex(status){
+    if(status === 'delivered') return 3;
+    if(status === 'shipped') return 2;
+    if(status === 'paid' || status === 'confirmed') return 1;
+    if(status === 'cancelled' || status === 'refunded') return -1;
+    return 0;
+  }
+
+  document.getElementById('t-go').addEventListener('click', find);
+  document.getElementById('t-phone').addEventListener('keydown', function(e){ if(e.key==='Enter') find(); });
+
+  async function find(){
+    var id = document.getElementById('t-id').value.trim().toUpperCase();
+    var phone = document.getElementById('t-phone').value.replace(/\D/g,'');
+    var msg = document.getElementById('t-msg');
+    var out = document.getElementById('t-result');
+    out.innerHTML = '';
+    if(!id || phone.length < 10){
+      msg.className = 'tmsg bad'; msg.textContent = 'Enter both your order number and the 10-digit phone number.';
+      return;
+    }
+    msg.className = 'tmsg'; msg.textContent = 'Looking\u2026';
+
+    if(!(A && A.configured && A.configured() && A.raw)){
+      msg.className = 'tmsg bad'; msg.textContent = 'Order lookup is not available right now. Please contact us.';
+      return;
+    }
+    try{
+      var res = await A.raw.rpc('lookup_order', { p_id: id, p_phone: phone });
+      var o = res.data && res.data[0];
+      if(res.error || !o){
+        msg.className = 'tmsg bad';
+        msg.textContent = 'No order found with that number and phone. Check both and try again.';
+        return;
+      }
+      msg.textContent = '';
+      render(o, out);
+    }catch(err){
+      msg.className = 'tmsg bad'; msg.textContent = 'Something went wrong. Please try again.';
+    }
+  }
+
+  function render(o, out){
+    var si = stageIndex(o.status);
+    var cancelled = si === -1;
+    var items = (o.items||[]).map(function(i){
+      return '<div class="titem"><span>' + i.qty + '\u00D7 ' + i.name + '</span><span>' + money(i.line) + '</span></div>';
+    }).join('');
+
+    out.innerHTML =
+      '<div class="tcard tout">' +
+        '<div class="thead"><div><span class="tlabel">Order</span><b>' + o.id + '</b></div>' +
+          '<div style="text-align:right"><span class="tlabel">Total</span><b>' + money(o.total) + '</b></div></div>' +
+        (cancelled
+          ? '<div class="tcancel">This order was ' + o.status + '. If you were charged, the refund is on its way.</div>'
+          : '<div class="track">' + STEPS.map(function(s, i){
+              var state = i <= si ? 'done' : '';
+              return '<div class="tstep ' + state + '"><span class="dot"></span>' +
+                     '<div><b>' + s.label + '</b><span>' + s.note + '</span></div></div>';
+            }).join('') + '</div>') +
+        '<div class="titems"><span class="tlabel">Items</span>' + items + '</div>' +
+        '<div class="tship"><span class="tlabel">Delivering to</span>' +
+          '<p>' + [o.city, o.state, o.pincode].filter(Boolean).join(', ') + '</p></div>' +
+      '</div>';
+  }
+})();
+</script>
+<style>
+.back{ font-family:var(--f-mono); font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); text-decoration:none; }
+.back:hover{ color:var(--gold-hi); }
+.lede{ color:var(--muted); max-width:46ch; margin-bottom:2rem; }
+.tcard{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); border-radius:14px;
+  padding:1.4rem; backdrop-filter:blur(24px) saturate(160%); -webkit-backdrop-filter:blur(24px) saturate(160%);
+  box-shadow:0 18px 50px -22px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.16); margin-bottom:1.2rem; }
+.tcard .fld{ margin-bottom:.9rem; }
+.tcard label{ display:block; font-family:var(--f-mono); font-size:.54rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:.4rem; }
+.tcard input{ width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.18);
+  border-radius:9px; color:var(--text); padding:.85rem 1rem; font-size:16px; outline:none; font-family:var(--f-body); }
+.tcard input:focus{ border-color:var(--gold); }
+.tbtn{ width:100%; border:none; border-radius:9px; padding:.95rem; cursor:pointer; background:var(--gold);
+  color:#050818; font-family:var(--f-mono); font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; font-weight:700; }
+.tbtn:hover{ transform:translateY(-2px); }
+.tmsg{ margin-top:.8rem; font-family:var(--f-mono); font-size:.62rem; letter-spacing:.06em; color:var(--muted); min-height:1em; }
+.tmsg.bad{ color:var(--err); }
+.thead{ display:flex; justify-content:space-between; gap:1rem; padding-bottom:1rem; margin-bottom:1.2rem;
+  border-bottom:1px solid rgba(255,255,255,.12); }
+.thead b{ display:block; font-family:var(--f-display); font-size:1.15rem; font-weight:400; margin-top:.25rem; }
+.tlabel{ font-family:var(--f-mono); font-size:.52rem; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); }
+.track{ display:grid; gap:0; margin-bottom:1.4rem; }
+.tstep{ display:flex; gap:.9rem; padding:.55rem 0; position:relative; }
+.tstep .dot{ width:11px; height:11px; border-radius:50%; border:1.5px solid rgba(255,255,255,.28);
+  margin-top:.32rem; flex:none; background:transparent; }
+.tstep.done .dot{ background:var(--gold); border-color:var(--gold); }
+.tstep:not(:last-child)::before{ content:""; position:absolute; left:5px; top:1.5rem; bottom:-.2rem;
+  width:1.5px; background:rgba(255,255,255,.16); }
+.tstep.done:not(:last-child)::before{ background:var(--gold); }
+.tstep b{ display:block; font-weight:400; font-size:.92rem; color:var(--faint); }
+.tstep.done b{ color:var(--text); }
+.tstep span:last-child{ font-size:.76rem; color:var(--faint); }
+.titems{ padding-top:1rem; border-top:1px solid rgba(255,255,255,.12); margin-bottom:1rem; }
+.titem{ display:flex; justify-content:space-between; gap:1rem; padding:.4rem 0; font-size:.86rem; }
+.tship p{ margin:.4rem 0 0; font-size:.86rem; color:var(--muted); }
+.tcancel{ background:rgba(255,69,58,.12); border:1px solid rgba(255,69,58,.3); border-radius:9px;
+  padding:.9rem 1rem; font-size:.86rem; margin-bottom:1.2rem; }
+.thelp{ font-size:.82rem; color:var(--faint); line-height:1.7; }
+.thelp a{ color:var(--gold-hi); }
+</style>
+</body>
+</html>

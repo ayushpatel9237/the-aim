@@ -68,6 +68,53 @@ Deno.serve(async (req) => {
       }
     }
 
+
+    /* ── send the customer a confirmation email ──
+       Uses Resend (resend.com) — free tier covers a new store.
+       Set RESEND_API_KEY in Supabase secrets to switch this on.
+       If the key is missing we skip silently: a missing email must
+       never break a successful payment. */
+    try{
+      const RESEND = Deno.env.get("RESEND_API_KEY");
+      const FROM   = Deno.env.get("ORDER_FROM_EMAIL") || "orders@theaim.store";
+      const ADMIN  = Deno.env.get("ADMIN_EMAIL");
+      const email  = order.customer?.email;
+      if(RESEND && email){
+        const rows = (order.items||[]).map((i:any)=>
+          `<tr><td style="padding:8px 0">${i.qty}× ${i.name}</td>
+               <td style="padding:8px 0;text-align:right">₹${i.line}</td></tr>`).join("");
+        const html = `
+          <div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;margin:0 auto;color:#0A0F26">
+            <h1 style="font-size:20px;margin:0 0 4px">Thanks — your order is confirmed.</h1>
+            <p style="color:#5B6478;margin:0 0 20px">Order <b>${order.id}</b></p>
+            <table style="width:100%;border-collapse:collapse;font-size:14px">${rows}
+              <tr><td style="padding:12px 0;border-top:1px solid #E3E6EC"><b>Total</b></td>
+                  <td style="padding:12px 0;border-top:1px solid #E3E6EC;text-align:right"><b>₹${order.total}</b></td></tr>
+            </table>
+            <p style="font-size:14px;color:#5B6478;margin-top:20px">
+              We'll let you know as soon as it ships. You can track it any time with your
+              order number and phone number.</p>
+            <p style="font-size:12px;color:#8A93A6;margin-top:28px">THE AIM</p>
+          </div>`;
+        await fetch("https://api.resend.com/emails", {
+          method:"POST",
+          headers:{ "Authorization":`Bearer ${RESEND}`, "Content-Type":"application/json" },
+          body: JSON.stringify({ from:`THE AIM <${FROM}>`, to:[email],
+                                 subject:`Order confirmed — ${order.id}`, html })
+        });
+        // and tell the shop owner a sale came in
+        if(ADMIN){
+          await fetch("https://api.resend.com/emails", {
+            method:"POST",
+            headers:{ "Authorization":`Bearer ${RESEND}`, "Content-Type":"application/json" },
+            body: JSON.stringify({ from:`THE AIM <${FROM}>`, to:[ADMIN],
+              subject:`New order ${order.id} — ₹${order.total}`,
+              html:`<p><b>${order.customer?.name}</b> (${order.customer?.phone})</p>${html}` })
+          });
+        }
+      }
+    }catch(_e){ /* email must never block a paid order */ }
+
     return json({ ok: true, order: { id: order.id, total: order.total } });
   } catch (e) {
     return json({ ok: false, error: String(e.message || e) }, 400);

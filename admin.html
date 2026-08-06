@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Admin — The AIM</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#050818"
+<meta name="theme-color" content="#000000"
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -123,6 +123,75 @@ body.app{ display:flex; min-height:100vh; }
 .empty-state{ text-align:center; padding:3rem 1rem; }
 .empty-state .ico{ font-size:2rem; opacity:.35; margin-bottom:.8rem; }
 .empty-state p{ color:var(--faint); font-family:var(--f-mono); font-size:.68rem; letter-spacing:.1em; }
+
+/* ══════════════════════════════════════════════════════════
+   ADMIN CONSOLE — true black, high contrast, built for work
+══════════════════════════════════════════════════════════ */
+:root{
+  --ink:#000000; --ink-2:#0B0B0C; --ink-3:#131315;
+  --line-1:#26262A; --line-soft:#1A1A1D;
+  --text:#F4F4F5; --muted:#A1A1A6; --faint:#6E6E76;
+  --gold:#FFFFFF; --gold-hi:#FFFFFF;
+  --live:#30D158; --err:#FF453A;
+}
+body{ background:#000000 !important; background-image:none !important; color:#F4F4F5 !important; }
+.sidebar{ background:#000000 !important; border-right:1px solid #1A1A1D !important; }
+.sb-logo{ border-bottom:1px solid #1A1A1D !important; }
+.sb-logo .mark, .sb-logo .mark b{ color:#FFFFFF !important; }
+.sb-section{ color:#6E6E76 !important; }
+.nav-item{ color:#A1A1A6 !important; }
+.nav-item:hover{ color:#FFFFFF !important; background:rgba(255,255,255,.04) !important; }
+.nav-item.on{ color:#FFFFFF !important; border-left-color:#FFFFFF !important; background:rgba(255,255,255,.07) !important; }
+.nav-item .cnt{ background:#FFFFFF !important; color:#000000 !important; }
+.sb-bottom{ border-top:1px solid #1A1A1D !important; }
+.sb-bottom a, .sb-bottom button{ color:#A1A1A6 !important; }
+.sb-bottom a:hover, .sb-bottom button:hover{ color:#FFFFFF !important; }
+
+.topbar{ background:rgba(0,0,0,.9) !important; border-bottom:1px solid #1A1A1D !important; }
+.topbar h1{ color:#FFFFFF !important; }
+.topbar .sub{ color:#6E6E76 !important; }
+.avatar{ background:#FFFFFF !important; color:#000000 !important; }
+
+/* panels: near-black with a hairline */
+.card, .panel, .scard{
+  background:#0B0B0C !important; border:1px solid #1F1F23 !important;
+  border-radius:10px !important; box-shadow:none !important;
+}
+.card:hover, .panel:hover{ transform:none !important; box-shadow:none !important; }
+.card-title, h1, h2, h3{ color:#FFFFFF !important; }
+.scard .l{ color:#6E6E76 !important; } .scard .v{ color:#FFFFFF !important; }
+
+/* inputs: dark fields, clear focus */
+input, select, textarea{
+  background:#131315 !important; border:1px solid #2A2A2E !important; color:#F4F4F5 !important; border-radius:8px !important;
+}
+input:focus, textarea:focus{ border-color:#FFFFFF !important; box-shadow:0 0 0 3px rgba(255,255,255,.10) !important; }
+.fld label{ color:#6E6E76 !important; }
+
+/* buttons */
+.save-btn{ background:#FFFFFF !important; color:#000000 !important; border-radius:8px !important; }
+.save-btn:hover{ background:#E5E5E7 !important; }
+.mini{ background:transparent !important; border:1px solid #2A2A2E !important; color:#F4F4F5 !important; border-radius:7px !important; }
+.mini:hover{ background:#1A1A1D !important; border-color:#3A3A40 !important; color:#FFFFFF !important; }
+.mini.danger:hover{ border-color:#FF453A !important; color:#FF453A !important; }
+.google-btn{ background:#FFFFFF !important; color:#000000 !important; border:none !important; }
+.status-sel{ background:#131315 !important; border:1px solid #2A2A2E !important; color:#F4F4F5 !important; border-radius:7px !important; }
+
+/* tables */
+table th{ color:#6E6E76 !important; border-bottom:1px solid #1F1F23 !important; }
+table td{ border-bottom:1px solid #141417 !important; color:#F4F4F5 !important; }
+table tr:hover td{ background:rgba(255,255,255,.03) !important; }
+
+/* pills + uploader */
+.pill{ background:#131315 !important; border:1px solid #2A2A2E !important; backdrop-filter:none !important; }
+.pill-live{ color:#30D158 !important; border-color:#1E4D33 !important; }
+.pill-wait{ color:#FFD60A !important; border-color:#4D451E !important; }
+.pill-off{ color:#A1A1A6 !important; }
+.up-drop{ border:1px dashed #2A2A2E !important; color:#A1A1A6 !important; }
+.up-drop:hover{ border-color:#FFFFFF !important; color:#FFFFFF !important; }
+.up-thumb{ border:1px solid #2A2A2E !important; background:#131315 !important; }
+.empty-state .ico{ opacity:.25; } .empty-state p, .empty-note{ color:#6E6E76 !important; }
+.tabs{ border-bottom:1px solid #1A1A1D !important; }
 </style>
 <script src="js/transitions.js"></script>
 <link rel="stylesheet" href="css/responsive.css">

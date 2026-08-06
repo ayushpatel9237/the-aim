@@ -64,7 +64,7 @@ const FEED = [
     var shopBtn = f.shop
       ? '<a class="rbtn" href="product.html?id='+f.shop+'">Shop this →</a>' : '';
     var name = '<span class="rname">'+f.name+'</span>';
-    return '<div data-story="'+i+'" class="reel" data-i="'+i+'">' +
+    return '<div class="reel" data-i="'+i+'">' +
       '<img class="poster" src="'+f.poster+'" alt="'+f.name+'" loading="lazy" />' +
       (f.video ? '<button class="rplay" data-play aria-label="Play video">▶</button>' : '') +
       '<div class="rmeta">'+name+shopBtn+'</div>' +

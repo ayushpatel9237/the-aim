@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Curator Portal — The AIM</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#050818"
+<meta name="theme-color" content="#FFFFFF"
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -118,11 +118,74 @@ td.mono{ font-family:var(--f-mono); }
 .empty-state{ text-align:center; padding:2.5rem 1rem; }
 .empty-state .ico{ font-size:1.8rem; opacity:.35; margin-bottom:.7rem; }
 .empty-state p{ color:var(--faint); font-family:var(--f-mono); font-size:.66rem; letter-spacing:.1em; }
+
+/* ══════════════════════════════════════════════════════════
+   CURATOR WORKSPACE — light, clean, professional
+   A place to work, not a shop window.
+══════════════════════════════════════════════════════════ */
+:root{
+  --ink:#FFFFFF; --ink-2:#FFFFFF; --ink-3:#F6F7F9;
+  --line-1:#E3E6EC; --line-soft:#EDEFF3;
+  --text:#0E1320; --muted:#5B6478; --faint:#8A93A6;
+  --gold:#0E1320; --gold-hi:#2C3550;
+  --live:#0F8A5F; --err:#C0392B;
+}
+body{ background:#FFFFFF !important; background-image:none !important; color:#0E1320 !important; }
+header{ background:rgba(255,255,255,.92) !important; border-bottom:1px solid #E3E6EC !important;
+        backdrop-filter:saturate(160%) blur(12px) !important; }
+header.stuck{ background:rgba(255,255,255,.96) !important; border-bottom-color:#E3E6EC !important; }
+.logo, .logo b, h1, h2, h3{ color:#0E1320 !important; }
+h1 em, h2 em{ color:#4A5570 !important; font-style:italic; }
+.eyebrow, .sub, .l, label{ color:#8A93A6 !important; }
+p, .desc{ color:#5B6478 !important; }
+
+/* cards: white with a hairline, soft lift */
+.card, .panel, .stat, .how-card, .card-f{
+  background:#FFFFFF !important; border:1px solid #E3E6EC !important;
+  border-radius:12px !important; color:#0E1320 !important;
+  box-shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.10) !important;
+  backdrop-filter:none !important;
+}
+.stat .v{ color:#0E1320 !important; }
+.tier-badge{ background:#F6F7F9 !important; border-color:#D8DCE5 !important; }
+.tier-badge .t{ color:#0E1320 !important; }
+
+/* inputs */
+input, select, textarea{
+  background:#FFFFFF !important; border:1px solid #D8DCE5 !important; color:#0E1320 !important;
+  border-radius:9px !important;
+}
+input:focus, textarea:focus{ border-color:#0E1320 !important; box-shadow:0 0 0 3px rgba(14,19,32,.08) !important; }
+
+/* buttons */
+.primary-btn, .save-btn, .btn-gold{
+  background:#0E1320 !important; color:#FFFFFF !important; border:none !important; border-radius:9px !important;
+}
+.primary-btn:hover, .save-btn:hover{ background:#2C3550 !important; }
+.mini, .btn-ghost, .sh-bag{
+  background:#FFFFFF !important; border:1px solid #D8DCE5 !important; color:#0E1320 !important; border-radius:8px !important;
+}
+.mini:hover{ background:#F6F7F9 !important; }
+.google-btn{ background:#FFFFFF !important; color:#0E1320 !important; border:1px solid #D8DCE5 !important; }
+.google-btn:hover{ background:#F6F7F9 !important; box-shadow:none !important; }
+
+/* tables */
+table th{ color:#8A93A6 !important; border-bottom:1px solid #E3E6EC !important; }
+table td{ border-bottom:1px solid #EDEFF3 !important; color:#0E1320 !important; }
+
+/* pills */
+.pill{ background:#F6F7F9 !important; border:1px solid #E3E6EC !important; backdrop-filter:none !important; }
+.pill-live{ background:#E8F6EF !important; color:#0F8A5F !important; border-color:#BFE6D5 !important; }
+.pill-wait{ background:#FEF6E7 !important; color:#8A6100 !important; border-color:#F3E0BA !important; }
+.pill-off{ background:#F6F7F9 !important; color:#5B6478 !important; }
+.empty-state p, .empty-note{ color:#8A93A6 !important; }
+.or-divider span{ color:#8A93A6 !important; }
+.or-divider::before, .or-divider::after{ background:#E3E6EC !important; }
 </style>
 <script src="js/transitions.js"></script>
 <link rel="stylesheet" href="css/responsive.css">
 </head>
-<body>
+<body class="work">
 
 <header>
   <div class="nav">
