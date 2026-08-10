@@ -12,6 +12,5 @@ function shelfCard(p){
       '<span class="pr">'+shelfFmt(p.price)+'</span>' +
       '<span class="go">Buy now →</span>' +
     '</div>' +
-    '<button class="quick-add" data-add="'+p.id+'" aria-label="Add '+p.name+' to cart">+ Bag</button>' +
     '</a>';
 }

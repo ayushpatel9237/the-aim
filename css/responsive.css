@@ -658,3 +658,131 @@ body.work .hero-copy, body.work .ticket, body.work .tbtn{
   .info, .viewer{ max-width:96%; margin-inline:auto; }
   .sh{ width:90vw !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   PRODUCT CARD IMAGE — centred in its frame, shown in full
+   (.pimg img was object-fit:cover, which crops rather than fits)
+═══════════════════════════════════════════════════════════ */
+.pimg{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  background:#FFFFFF;
+  overflow:hidden;
+  padding:10px;
+}
+.pimg img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  margin:auto;
+}
+/* the hover zoom stays, just gentler so nothing spills */
+.pcase:hover .pimg img{ transform:scale(1.035) !important; }
+
+/* the +Bag button is gone — remove any space it reserved */
+.quick-add{ display:none !important; }
+
+@media (max-width:760px){
+  .pimg{ aspect-ratio:1 / 1; padding:9px; border-radius:12px; }
+  /* "Buy now →" is the only action on the card now */
+  .ticket .go{
+    display:block; margin-top:.45rem;
+    font-family:var(--f-mono); font-size:.55rem; letter-spacing:.14em;
+    text-transform:uppercase; color:#0A0F26; opacity:.72;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ALL PRODUCTS PAGE — mobile grid tidy
+═══════════════════════════════════════════════════════════ */
+@media (max-width:760px){
+  .shop-grid-zone{ padding-left:0 !important; padding-right:0 !important; }
+  .shop-head h1{ margin-bottom:1rem !important; }
+  .shop-tools{ display:grid !important; gap:.7rem !important; margin-bottom:1rem !important; }
+  .searchbox{ width:100% !important; }
+  .sortbox{ width:100% !important; justify-content:space-between; }
+  .count-line{ margin:.6rem 0 1rem !important; font-size:.58rem !important; }
+  .grid{ grid-template-columns:repeat(2,1fr) !important; gap:.8rem !important; }
+}
+@media (max-width:400px){
+  .grid{ gap:.65rem !important; }
+  .ticket .nm{ font-size:.78rem !important; }
+  .ticket .pr{ font-size:.76rem !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PRODUCT PAGE ON MOBILE — a clean vertical stack.
+   Each block owns its own row with real space between.
+   (.viewer was staying sticky, so cards scrolled underneath it.)
+═══════════════════════════════════════════════════════════ */
+@media (max-width:900px){
+
+  /* one column, generous rhythm, nothing pinned */
+  #page{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:0 !important;
+    padding:1.2rem 0 2.5rem !important;
+  }
+  .viewer{
+    position:static !important;
+    top:auto !important;
+    order:1;
+    width:100%;
+    margin:0 0 1rem !important;
+  }
+  .thumbs{
+    order:2;
+    margin:0 0 1.15rem !important;
+  }
+  .info{
+    order:3;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:0 !important;
+    width:100%;
+    margin:0 !important;
+  }
+
+  /* every card is its own block with its own breathing room */
+  .info > .crumb{ margin:0 0 1rem !important; }
+  .pbox{
+    position:relative !important;
+    width:100% !important;
+    margin:0 0 1rem !important;
+    padding:1.1rem 1.15rem !important;
+    border-radius:16px !important;
+    /* the entry animation must not leave a transform behind */
+    animation:none !important;
+    opacity:1 !important;
+    transform:none !important;
+  }
+  .pbox:last-child{ margin-bottom:0 !important; }
+
+  /* no hover-lift on touch — it reads as a glitch, not a lift */
+  .pbox:hover{ transform:none !important; }
+
+  /* the details card keeps its edge-to-edge button */
+  .pbox-more{ padding:0 !important; }
+  .pbox-more .details-toggle{ padding:1rem 1.15rem !important; }
+  .pbox-more .details{ padding:0 1.15rem 1rem !important; }
+
+  /* buy card: full-width buttons, stacked, clearly separated */
+  .pbox-buy{
+    display:flex !important; flex-wrap:wrap; gap:.6rem !important;
+    padding:1rem 1.05rem !important;
+  }
+  .pbox-buy .qty{ flex:1 1 100%; justify-content:center; }
+  .pbox-buy .buy, .pbox-buy .cart{ flex:1 1 100%; }
+
+  /* sticky bar must never sit on the last card */
+  body{ padding-bottom:5.5rem; }
+}
+
+/* small phones: slightly tighter, still never touching */
+@media (max-width:420px){
+  .pbox{ margin-bottom:.85rem !important; padding:1rem !important; border-radius:14px !important; }
+  .thumbs{ margin-bottom:1rem !important; }
+}
