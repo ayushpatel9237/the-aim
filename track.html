@@ -58,6 +58,7 @@ h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,
 </style>
 <script src="js/transitions.js"></script>
 <link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/layout-fix.css">
 </head><body>
 <header><div class="nav"><a href="index.html" class="logo">THE AIM<b>.</b></a>
   <a href="shop.html" class="back">← Shop</a><span data-account style="margin-left:auto"></span></div></header>
@@ -157,6 +158,12 @@ h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,
                      '<div><b>' + s.label + '</b><span>' + s.note + '</span></div></div>';
             }).join('') + '</div>') +
         '<div class="titems"><span class="tlabel">Items</span>' + items + '</div>' +
+        (o.tracking_no
+          ? '<div class="tship" style="border-top:1px solid rgba(255,255,255,.12);padding-top:1rem;margin-bottom:1rem">' +
+            '<span class="tlabel">Tracking</span>' +
+            '<p style="font-family:var(--f-mono);font-size:.86rem;color:var(--gold-hi)">' +
+            (o.courier ? o.courier + ' \u00B7 ' : '') + o.tracking_no + '</p></div>'
+          : '') +
         '<div class="tship"><span class="tlabel">Delivering to</span>' +
           '<p>' + [o.city, o.state, o.pincode].filter(Boolean).join(', ') + '</p></div>' +
       '</div>';
@@ -254,5 +261,6 @@ h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,
 .thelp a{ color:var(--gold-hi); }
 </style>
 <script src="js/account.js"></script>
+<script src="js/support.js"></script>
 </body>
 </html>

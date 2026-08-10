@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Your account — The AIM</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#050818"
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#050818; --ink-2:#0A0F26; --line-1:#1A2142; --line-soft:#111735;
+  --text:#FFF1E2; --muted:#8E96B8; --faint:#5F678E;
+  --gold:#E6CBA8; --gold-hi:#F0DCC0; --live:#5FA88C;
+  --f-display:"Fraunces",Georgia,serif; --f-body:"Space Grotesk",system-ui,sans-serif; --f-mono:"Space Mono",monospace;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ background:#050818; background-image:radial-gradient(1200px 700px at 50% -20%, rgba(26,33,66,.42), transparent 70%); background-attachment:fixed; color:var(--text); font-family:var(--f-body); line-height:1.6; -webkit-font-smoothing:antialiased; }
+a{ color:inherit; text-decoration:none; }
+img{ display:block; max-width:100%; }
+header{ position:sticky; top:0; z-index:50; background:transparent; transition:background .35s ease, border-color .35s ease, backdrop-filter .35s ease; border-bottom:1px solid transparent; }header.stuck{ background:rgba(5,8,24,.72); backdrop-filter:saturate(160%) blur(16px); -webkit-backdrop-filter:saturate(160%) blur(16px); border-bottom-color:rgba(230,203,168,.12); }
+.nav{ max-width:760px; margin:0 auto; padding:0 1.4rem; height:72px; display:flex; align-items:center; }
+.logo{ font-family:var(--f-display); font-size:1.15rem; letter-spacing:.3em; text-transform:uppercase; }
+.logo b{ color:var(--gold); font-weight:400; }
+.wrap{ max-width:640px; margin:0 auto; padding:clamp(2.5rem,6vw,4.5rem) 1.4rem 5rem; }
+.tick{ width:72px; height:72px; border-radius:50%; border:2px solid var(--live); display:flex; align-items:center; justify-content:center; font-size:2rem; color:var(--live); margin-bottom:1.6rem; animation:pop .5s cubic-bezier(.34,1.4,.64,1); }
+@keyframes pop{ from{ transform:scale(.4); opacity:0 } to{ transform:scale(1); opacity:1 } }
+h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,2.8rem); letter-spacing:-.01em; }
+.lead{ color:var(--muted); margin-top:.9rem; font-size:1rem; }
+.ordno{ font-family:var(--f-mono); font-size:.72rem; letter-spacing:.14em; color:var(--gold-hi); margin-top:1.4rem; background:var(--ink-2); border:1px solid var(--line-1); border-radius:999px; padding:.6rem 1.2rem; display:inline-block; }
+.card{ background:var(--ink-2); border:1px solid var(--line-soft); border-radius:16px; padding:1.5rem; margin-top:2rem; }
+.card h2{ font-family:var(--f-display); font-weight:400; font-size:1.15rem; margin-bottom:1.1rem; }
+.o-row{ display:grid; grid-template-columns:48px 1fr auto; gap:.8rem; align-items:center; padding:.65rem 0; border-bottom:1px solid var(--line-soft); }
+.o-row img{ width:48px; height:48px; border-radius:6px; object-fit:cover; background:#FFF1E2; }
+.o-nm{ font-size:.85rem; } .o-q{ font-family:var(--f-mono); font-size:.6rem; color:var(--muted); margin-top:.15rem; }
+.o-pr{ font-family:var(--f-mono); font-size:.8rem; color:var(--gold-hi); }
+.o-total{ display:flex; justify-content:space-between; margin-top:1rem; padding-top:.9rem; border-top:1px solid var(--line-1); font-family:var(--f-mono); }
+.o-total span:last-child{ color:var(--gold-hi); font-weight:700; font-size:1.1rem; }
+.addr{ font-size:.85rem; color:var(--muted); line-height:1.7; }
+.addr b{ color:var(--text); font-weight:500; }
+.steps{ display:flex; flex-direction:column; gap:.9rem; margin-top:.4rem; }
+.step{ display:flex; gap:.9rem; align-items:flex-start; font-size:.86rem; color:var(--muted); }
+.step .n{ font-family:var(--f-mono); font-size:.6rem; color:var(--gold); border:1px solid var(--line-1); border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex:none; }
+.step b{ color:var(--text); font-weight:500; }
+.cta{ display:flex; gap:1rem; flex-wrap:wrap; margin-top:2.2rem; }
+.btn{ font-family:var(--f-mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; padding:.95rem 1.8rem; border-radius:999px; transition:all .3s; }
+.btn-solid{ background:#E6CBA8; color:#050818; font-weight:700; }
+.btn-solid:hover{ transform:translateY(-2px); }
+.btn-line{ border:1px solid var(--line-1); color:var(--text); }
+.btn-line:hover{ border-color:var(--gold); color:var(--gold-hi); }
+.note{ font-family:var(--f-mono); font-size:.62rem; letter-spacing:.1em; color:var(--faint); margin-top:1.6rem; }
+.ohist{ display:flex; justify-content:space-between; gap:1rem; padding:.85rem 0; border-bottom:1px solid rgba(255,255,255,.10); }
+.ohist:last-child{ border-bottom:none; }
+.ohist b{ display:block; font-weight:400; font-size:.92rem; }
+.ohist span{ display:block; font-family:var(--f-mono); font-size:.62rem; color:var(--faint); margin-top:.25rem; }
+</style>
+<script src="js/transitions.js"></script>
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/layout-fix.css">
+</head><body>
+<header><div class="nav"><a href="index.html" class="logo">THE AIM<b>.</b></a>
+  <span data-account style="margin-left:auto"></span></div></header>
+
+<main class="wrap" style="max-width:720px;padding:clamp(2rem,6vw,4rem) 1.25rem">
+  <span class="eyebrow">Your account</span>
+  <h1 id="acHi">Hello.</h1>
+  <div id="acWrap"><p class="lede">Loading…</p></div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/ascentra-db.js"></script>
+<script src="js/account.js"></script>
+<script>
+(function(){
+  var wrap = document.getElementById('acWrap');
+  var A = window.Ascentra;
+  function money(n){ return '\u20B9' + Number(n||0).toLocaleString('en-IN'); }
+  var STATES = ['Andhra Pradesh','Assam','Bihar','Chhattisgarh','Delhi','Goa','Gujarat','Haryana',
+    'Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Odisha',
+    'Punjab','Rajasthan','Tamil Nadu','Telangana','Uttar Pradesh','Uttarakhand','West Bengal'];
+
+  function signedOut(){
+    wrap.innerHTML =
+      '<div class="tcard" style="text-align:center;padding:2.6rem 1.4rem">' +
+        '<p style="font-size:1.02rem;margin:0 0 .5rem">You\u2019re browsing as a guest.</p>' +
+        '<p style="color:var(--faint);font-size:.88rem;margin:0 0 1.4rem;line-height:1.65">' +
+          'Sign in and your orders, saved address and watchlist stay with you \u2014 on any device.<br>' +
+          'You can always buy without an account.</p>' +
+        '<button class="tbtn" id="acIn" style="width:auto;padding:.85rem 1.9rem">Sign in with Google</button>' +
+      '</div>' +
+      '<p class="thelp">Already ordered as a guest? <a href="track.html">Track it with your order number</a>.</p>';
+    document.getElementById('acIn').addEventListener('click', function(){
+      if(window.AimAccount) AimAccount.signIn(); });
+  }
+
+  async function signedIn(u){
+    document.getElementById('acHi').innerHTML = 'Hello, <em>' + (u.email||'').split('@')[0] + '</em>.';
+
+    var prof = {};
+    try{
+      var r = await A.raw.from('customer_profiles').select('*').eq('user_id', u.id).maybeSingle();
+      prof = r.data || {};
+    }catch(e){}
+
+    wrap.innerHTML =
+      '<div class="tcard">' +
+        '<span class="tlabel">Delivery details</span>' +
+        '<p style="color:var(--faint);font-size:.82rem;margin:.4rem 0 1.2rem">Saved here so checkout is one tap next time.</p>' +
+        '<div class="ac-grid">' +
+          '<div class="fld"><label>Name</label><input id="p-name" value="'+(prof.name||'')+'" /></div>' +
+          '<div class="fld"><label>Phone</label><input id="p-phone" maxlength="10" inputmode="numeric" value="'+(prof.phone||'')+'" /></div>' +
+        '</div>' +
+        '<div class="fld" style="margin-bottom:.9rem"><label>Address</label>' +
+          '<input id="p-addr" value="'+(prof.address||'')+'" placeholder="House / street / area" /></div>' +
+        '<div class="ac-grid">' +
+          '<div class="fld"><label>City</label><input id="p-city" value="'+(prof.city||'')+'" /></div>' +
+          '<div class="fld"><label>Pincode</label><input id="p-pin" maxlength="6" inputmode="numeric" value="'+(prof.pincode||'')+'" /></div>' +
+        '</div>' +
+        '<div class="fld" style="margin-bottom:1rem"><label>State</label><select id="p-state">' +
+          '<option value="">Select state</option>' +
+          STATES.map(function(s){ return '<option'+(prof.state===s?' selected':'')+'>'+s+'</option>'; }).join('') +
+        '</select></div>' +
+        '<button class="tbtn" id="p-save">Save details</button>' +
+        '<div class="tmsg" id="p-msg"></div>' +
+      '</div>' +
+
+      '<div class="tcard"><span class="tlabel">Your orders</span><div id="acOrders" style="margin-top:.6rem">' +
+        '<p style="color:var(--faint);font-size:.85rem;margin:0">Loading\u2026</p></div></div>' +
+
+      '<div class="tcard" style="display:flex;gap:.6rem;flex-wrap:wrap">' +
+        '<a href="watchlist.html" class="ac-link">Watchlist</a>' +
+        '<a href="shop.html" class="ac-link">Keep shopping</a>' +
+        '<button class="ac-link ac-out" id="p-out">Sign out</button>' +
+      '</div>';
+
+    document.getElementById('p-save').addEventListener('click', async function(){
+      var msg = document.getElementById('p-msg');
+      var row = {
+        user_id: u.id,
+        name: document.getElementById('p-name').value.trim(),
+        phone: document.getElementById('p-phone').value.replace(/\D/g,''),
+        address: document.getElementById('p-addr').value.trim(),
+        city: document.getElementById('p-city').value.trim(),
+        pincode: document.getElementById('p-pin').value.replace(/\D/g,''),
+        state: document.getElementById('p-state').value,
+        updated_at: new Date().toISOString()
+      };
+      msg.className='tmsg'; msg.textContent='Saving\u2026';
+      try{
+        var res = await A.raw.from('customer_profiles').upsert(row);
+        if(res.error) throw res.error;
+        try{ localStorage.setItem('aim_profile', JSON.stringify(row)); }catch(e){}
+        msg.style.color='var(--live)'; msg.textContent='Saved \u2713';
+      }catch(e){ msg.className='tmsg bad'; msg.textContent=e.message; }
+    });
+
+    document.getElementById('p-out').addEventListener('click', function(){
+      if(window.AimAccount) AimAccount.signOut(); });
+
+    /* their orders */
+    var box = document.getElementById('acOrders');
+    var rows = window.AimAccount ? await AimAccount.myOrders() : [];
+    box.innerHTML = rows.length
+      ? rows.map(function(o){
+          return '<div class="ohist"><div><b>'+o.id+'</b><span>' +
+            new Date(o.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) +
+            ' \u00B7 ' + (o.items||[]).length + ' item' + ((o.items||[]).length===1?'':'s') + '</span></div>' +
+            '<div style="text-align:right"><b>'+money(o.total)+'</b><span>'+o.status+'</span></div></div>';
+        }).join('') + '<a href="track.html" class="ac-more">Track an order \u2192</a>'
+      : '<p style="color:var(--faint);font-size:.85rem;margin:0">No orders yet. <a href="shop.html" style="color:var(--gold-hi)">Start shopping \u2192</a></p>';
+  }
+
+  document.addEventListener('account:ready', function(e){
+    var u = e.detail && e.detail.user;
+    if(u) signedIn(u); else signedOut();
+  });
+  setTimeout(function(){ if(wrap.textContent.indexOf('Loading') > -1) signedOut(); }, 2500);
+})();
+</script>
+<style>
+.ac-grid{ display:grid; grid-template-columns:1fr 1fr; gap:.9rem; margin-bottom:.9rem; }
+@media (max-width:520px){ .ac-grid{ grid-template-columns:1fr; } }
+.tcard select{ width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.18);
+  border-radius:9px; color:var(--text); padding:.85rem 1rem; font-size:16px; outline:none; font-family:var(--f-body); }
+.ac-link{ flex:1; min-width:120px; text-align:center; padding:.8rem 1rem; border-radius:9px;
+  border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.05); color:var(--text);
+  text-decoration:none; cursor:pointer; font-family:var(--f-mono); font-size:.56rem;
+  letter-spacing:.16em; text-transform:uppercase; }
+.ac-link:hover{ border-color:var(--gold); color:var(--gold-hi); }
+.ac-out:hover{ border-color:var(--err); color:var(--err); }
+.ac-more{ display:block; margin-top:.9rem; font-family:var(--f-mono); font-size:.56rem;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--faint); text-decoration:none; }
+.ac-more:hover{ color:var(--gold-hi); }
+.ohist{ display:flex; justify-content:space-between; gap:1rem; padding:.8rem 0;
+  border-bottom:1px solid rgba(255,255,255,.10); }
+.ohist:last-of-type{ border-bottom:none; }
+.ohist b{ display:block; font-weight:400; font-size:.9rem; }
+.ohist span{ display:block; font-family:var(--f-mono); font-size:.6rem; color:var(--faint); margin-top:.22rem; }
+</style>
+<script src="js/support.js"></script>
+</body>
+</html>

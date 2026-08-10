@@ -244,9 +244,54 @@ table tr:hover td{ background:rgba(255,255,255,.03) !important; }
   background:rgba(11,11,12,.96); border-top:1px solid #1F1F23; backdrop-filter:blur(12px); }
 .ed-foot .save-btn{ flex:1; }
 @media (max-width:600px){ .ed-body{ padding:1rem; } .ed-imgs{ grid-template-columns:repeat(3,1fr); } }
+
+/* ── order cards: everything you need to ship, in one block ── */
+.ord{ background:#0B0B0C; border:1px solid #1F1F23; border-radius:10px; padding:1rem 1.1rem; margin-bottom:.8rem; }
+.ord-top{ display:flex; justify-content:space-between; gap:1rem; padding-bottom:.8rem;
+  border-bottom:1px solid #1A1A1D; margin-bottom:.85rem; }
+.ord-top b{ font-size:.95rem; color:#FFF; }
+.ord-date{ display:block; font-family:var(--f-mono); font-size:.56rem; letter-spacing:.1em; color:#6E6E76; margin-top:.25rem; }
+.ord-grid{ display:grid; grid-template-columns:1fr 1.3fr 1fr; gap:1.2rem; margin-bottom:.9rem; font-size:.84rem; }
+@media (max-width:820px){ .ord-grid{ grid-template-columns:1fr; gap:.8rem; } }
+.ord-l{ display:block; font-family:var(--f-mono); font-size:.5rem; letter-spacing:.18em;
+  text-transform:uppercase; color:#6E6E76; margin-bottom:.3rem; }
+.ord-ph{ color:#F4F4F5; text-decoration:none; font-family:var(--f-mono); font-size:.78rem; }
+.ord-ph:hover{ color:#FFF; text-decoration:underline; }
+.ord-em{ font-size:.72rem; color:#6E6E76; }
+.ord-addr{ line-height:1.55; color:#F4F4F5; }
+.ord-act{ display:flex; gap:.45rem; flex-wrap:wrap; align-items:center;
+  padding-top:.85rem; border-top:1px solid #1A1A1D; }
+.trk{ background:#131315; border:1px solid #2A2A2E; border-radius:7px; color:#F4F4F5;
+  padding:.45rem .7rem; font-size:.78rem; outline:none; width:150px; }
+.trk.crr{ width:110px; }
+.trk:focus{ border-color:#FFF; }
+@media (max-width:600px){ .ord-act{ gap:.4rem; } .trk, .trk.crr{ width:100%; } }
+/* ── order cards: everything you need to ship, in one block ── */
+.ord{ background:#0B0B0C; border:1px solid #1F1F23; border-radius:10px; padding:1rem 1.1rem; margin-bottom:.8rem; }
+.ord-top{ display:flex; justify-content:space-between; gap:1rem; padding-bottom:.8rem;
+  border-bottom:1px solid #1A1A1D; margin-bottom:.85rem; }
+.ord-top b{ font-size:.95rem; color:#FFF; }
+.ord-date{ display:block; font-family:var(--f-mono); font-size:.56rem; letter-spacing:.1em; color:#6E6E76; margin-top:.25rem; }
+.ord-grid{ display:grid; grid-template-columns:1fr 1.3fr 1fr; gap:1.2rem; margin-bottom:.9rem; font-size:.84rem; }
+@media (max-width:820px){ .ord-grid{ grid-template-columns:1fr; gap:.8rem; } }
+.ord-l{ display:block; font-family:var(--f-mono); font-size:.5rem; letter-spacing:.18em;
+  text-transform:uppercase; color:#6E6E76; margin-bottom:.3rem; }
+.ord-ph{ color:#F4F4F5; text-decoration:none; font-family:var(--f-mono); font-size:.78rem; }
+.ord-ph:hover{ color:#FFF; text-decoration:underline; }
+.ord-em{ font-size:.72rem; color:#6E6E76; }
+.ord-addr{ line-height:1.55; color:#F4F4F5; }
+.ord-act{ display:flex; gap:.45rem; flex-wrap:wrap; align-items:center;
+  padding-top:.85rem; border-top:1px solid #1A1A1D; }
+.trk{ background:#131315; border:1px solid #2A2A2E; border-radius:7px; color:#F4F4F5;
+  padding:.45rem .7rem; font-size:.78rem; outline:none; width:150px; }
+.trk.crr{ width:110px; }
+.trk:focus{ border-color:#FFF; }
+@media (max-width:600px){ .ord-act{ gap:.4rem; } .trk, .trk.crr{ width:100%; } }
+</style></head><body>' +
 </style>
 <script src="js/transitions.js"></script>
 <link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/layout-fix.css">
 </head>
 <body>
 <header><div class="nav">
@@ -338,7 +383,9 @@ table tr:hover td{ background:rgba(255,255,255,.03) !important; }
         '</div>' +
         '<div class="content">' +
           '<div class="page-v on" id="v-dash"><div class="stat-row" id="statRow"></div>' +
-            '<div class="card" style="margin-top:1.4rem"><div class="card-header"><span class="card-title">Recent orders</span></div>' +
+            '<div class="card" style="margin-top:1.4rem" id="lowCard"><div class="card-header"><span class="card-title">Running low</span></div>' +
+            '<div id="lowWrap"></div></div>' +
+            '<div class="card"><div class="card-header"><span class="card-title">Recent orders</span></div>' +
             '<div id="recentOrders"><div class="empty-note">Loading…</div></div></div></div>' +
           '<div class="page-v" id="v-products">' +
             '<div class="card"><div class="card-header"><span class="card-title" id="pfTitle">Add a product</span></div>' +
@@ -367,7 +414,15 @@ table tr:hover td{ background:rgba(255,255,255,.03) !important; }
               '<button class="save-btn" id="newProd" style="padding:.6rem 1.1rem">+ New product</button>' +
               '<input id="prodSearch" placeholder="Search…" style="background:var(--ink-3);border:1px solid var(--line-1);border-radius:999px;color:var(--text);padding:.6rem 1.1rem;outline:none;font-size:.85rem" /></div>' +
               '<div id="prodWrap"><div class="empty-note">Loading…</div></div></div></div>' +
-          '<div class="page-v" id="v-orders"><div class="card"><div class="card-header"><span class="card-title">Orders</span></div><div id="ordWrap"><div class="empty-note">Loading…</div></div></div></div>' +
+          '<div class="page-v" id="v-orders">' +
+            '<div class="card"><div class="card-header"><span class="card-title">Orders</span>' +
+              '<div style="display:flex;gap:.5rem;flex-wrap:wrap">' +
+                '<input id="ordSearch" placeholder="Search order, name, phone…" style="background:#131315;border:1px solid #2A2A2E;border-radius:8px;color:#F4F4F5;padding:.55rem .9rem;font-size:.85rem;outline:none;min-width:200px" />' +
+                '<select id="ordFilter" class="status-sel" style="padding:.55rem .9rem">' +
+                  '<option value="">All statuses</option>' +
+                  ['pending_payment','paid','confirmed','shipped','delivered','cancelled'].map(function(s){ return '<option value="'+s+'">'+s+'</option>'; }).join('') +
+                '</select></div></div>' +
+              '<div id="ordWrap"><div class="empty-note">Loading…</div></div></div></div>' +
           '<div class="page-v" id="v-feed">' +
             '<div class="card"><div class="card-header"><span class="card-title" id="ffTitle">Add a reel</span></div>' +
               '<div class="form-grid">' +
@@ -451,6 +506,29 @@ table tr:hover td{ background:rgba(255,255,255,.03) !important; }
     var newOrders = orders.filter(function(o){ return ['paid','confirmed'].indexOf(o.status)>-1; }).length;
     var co = document.getElementById('cntOrders');
     if(co){ if(newOrders){ co.textContent = newOrders; co.style.display='inline-flex'; } else co.style.display='none'; }
+    /* what's running out */
+    try{
+      var low = await A.lowStock();
+      var lw = document.getElementById('lowWrap'), lc = document.getElementById('lowCard');
+      if(lw){
+        if(!low.length){ if(lc) lc.style.display='none'; }
+        else {
+          if(lc) lc.style.display='';
+          lw.innerHTML = '<table><tbody>' + low.map(function(p){
+            return '<tr><td>'+p.name+'</td><td class="mono" style="color:'+(p.stock<=0?'#FF453A':'#FFD60A')+'">' +
+                   (p.stock<=0 ? 'OUT OF STOCK' : p.stock+' left') + '</td>' +
+                   '<td style="text-align:right"><button class="mini" data-restock="'+p.id+'">Restock</button></td></tr>';
+          }).join('') + '</tbody></table>';
+          lw.querySelectorAll('[data-restock]').forEach(function(b){
+            b.addEventListener('click', function(){
+              var p = (window._allProducts||[]).find(function(x){ return x.id===b.dataset.restock; });
+              if(p && window.openEditor) openEditor(p);
+            });
+          });
+        }
+      }
+    }catch(e){}
+
     var recent = orders.slice(0,5);
     document.getElementById('recentOrders').innerHTML = recent.length
       ? '<table><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody>' +
@@ -577,76 +655,125 @@ table tr:hover td{ background:rgba(255,255,255,.03) !important; }
   }
   async function loadOrders(){
     var rows = await A.allOrders();
+    window._allOrders = rows;
+    renderOrders(rows);
+    var q = document.getElementById('ordSearch'), f = document.getElementById('ordFilter');
+    function apply(){
+      var t = (q && q.value || '').toLowerCase();
+      var st = (f && f.value) || '';
+      renderOrders((window._allOrders||[]).filter(function(o){
+        var c = o.customer || {};
+        var hay = (o.id+' '+(c.name||'')+' '+(c.phone||'')+' '+(c.city||'')+' '+(c.pincode||'')).toLowerCase();
+        return hay.indexOf(t) > -1 && (!st || o.status === st);
+      }));
+    }
+    if(q && !q._w){ q._w = true; q.addEventListener('input', apply); }
+    if(f && !f._w){ f._w = true; f.addEventListener('change', apply); }
+  }
+
+  function addrOf(c){
+    if(!c) return '—';
+    return [c.address, c.landmark, c.city, c.state, c.pincode].filter(Boolean).join(', ');
+  }
+
+  function renderOrders(rows){
     var wrap = document.getElementById('ordWrap');
-    if(!rows.length){ wrap.innerHTML = '<div class="empty-state"><div class="ico">▤</div><p>No orders yet</p></div>'; return; }
-    var statuses = ['pending_payment','paid','confirmed','shipped','delivered','cancelled'];
-    wrap.innerHTML = '<table><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th></tr></thead><tbody>' +
-      rows.map(function(o){
-        var items = (o.items||[]).map(function(i){ return i.qty+'x '+i.name; }).join(', ');
-        var opts = statuses.map(function(s){ return '<option'+(o.status===s?' selected':'')+'>'+s+'</option>'; }).join('');
-        return '<tr><td class="mono" style="font-size:.72rem">'+o.id+'<br><span style="color:var(--faint)">'+new Date(o.created_at).toLocaleDateString('en-IN')+'</span></td>' +
-          '<td>'+((o.customer&&o.customer.name)||'—')+'<br><span style="color:var(--faint);font-size:.7rem">'+((o.customer&&o.customer.phone)||'')+'</span></td>' +
-          '<td style="font-size:.75rem;max-width:200px">'+items+'</td>' +
-          '<td class="mono" style="color:var(--gold-hi)">'+fmt(o.total)+'</td>' +
-          '<td><select class="status-sel" data-order="'+o.id+'">'+opts+'</select></td></tr>';
-      }).join('') + '</tbody></table>';
+    if(!wrap) return;
+    if(!rows.length){ wrap.innerHTML = '<div class="empty-state"><div class="ico">▤</div><p>No orders match</p></div>'; return; }
+    var statuses = ['pending_payment','paid','confirmed','shipped','delivered','cancelled','refunded'];
+
+    wrap.innerHTML = rows.map(function(o){
+      var c = o.customer || {};
+      var items = (o.items||[]).map(function(i){ return i.qty+'× '+i.name; }).join(', ');
+      var opts = statuses.map(function(s){ return '<option'+(o.status===s?' selected':'')+'>'+s+'</option>'; }).join('');
+      return '<div class="ord">' +
+        '<div class="ord-top">' +
+          '<div><b class="mono">'+o.id+'</b>' +
+            '<span class="ord-date">'+new Date(o.created_at).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</span></div>' +
+          '<div style="text-align:right"><b style="color:#FFF">'+fmt(o.total)+'</b>' +
+            '<span class="ord-date">'+(o.payment||'')+'</span></div>' +
+        '</div>' +
+        '<div class="ord-grid">' +
+          '<div><span class="ord-l">Customer</span>'+(c.name||'—')+'<br>' +
+            '<a href="tel:'+(c.phone||'')+'" class="ord-ph">'+(c.phone||'')+'</a>' +
+            (c.email ? '<br><span class="ord-em">'+c.email+'</span>' : '') + '</div>' +
+          '<div><span class="ord-l">Deliver to</span><span class="ord-addr">'+addrOf(c)+'</span></div>' +
+          '<div><span class="ord-l">Items</span>'+items+'</div>' +
+        '</div>' +
+        '<div class="ord-act">' +
+          '<select class="status-sel" data-order="'+o.id+'">'+opts+'</select>' +
+          '<input class="trk" data-trk="'+o.id+'" placeholder="Tracking number" value="'+(o.tracking_no||'')+'" />' +
+          '<input class="trk crr" data-crr="'+o.id+'" placeholder="Courier" value="'+(o.courier||'')+'" />' +
+          '<button class="mini" data-save="'+o.id+'">Save</button>' +
+          '<button class="mini" data-slip="'+o.id+'">Packing slip</button>' +
+          '<button class="mini" data-copy="'+o.id+'">Copy address</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
     wrap.querySelectorAll('[data-order]').forEach(function(sel){
       sel.addEventListener('change', async function(){
-        await A.setOrderStatus(sel.dataset.order, sel.value); loadDashboard();
-      });
+        await A.setOrderStatus(sel.dataset.order, sel.value); loadDashboard(); });
     });
-  }
-
-  async function loadCurators(){
-    var rows = await A.allCurators();
-    var wrap = document.getElementById('curWrap');
-    if(!rows.length){ wrap.innerHTML = '<div class="empty-state"><div class="ico">◉</div><p>No curator applications yet</p></div>'; return; }
-    wrap.innerHTML = '<table><thead><tr><th>Name</th><th>Code</th><th>Sales</th><th>Earned</th><th>Status</th><th>Actions</th></tr></thead><tbody>' +
-      rows.map(function(c){
-        var pill = c.status==='active'?'<span class="pill pill-live">Active</span>':
-                   c.status==='pending'?'<span class="pill pill-wait">Pending</span>':
-                   '<span class="pill pill-off">'+c.status+'</span>';
-        var actions = '';
-        if(c.status==='pending') actions = '<button class="act go" data-a="approve" data-id="'+c.id+'">Approve</button><button class="act" data-a="reject" data-id="'+c.id+'">Reject</button>';
-        else if(c.status==='active') actions = '<button class="act" data-a="suspend" data-id="'+c.id+'">Suspend</button>';
-        else actions = '<button class="act go" data-a="approve" data-id="'+c.id+'">Activate</button>';
-        return '<tr><td>'+c.name+'<br><span style="color:var(--faint);font-size:.72rem">'+c.email+'</span></td>' +
-          '<td class="mono">'+c.ref_code+'</td><td class="mono">'+c.total_sales+'</td>' +
-          '<td class="mono" style="color:var(--gold-hi)">'+fmt(c.total_earned)+'</td>' +
-          '<td>'+pill+'</td><td>'+actions+'</td></tr>';
-      }).join('') + '</tbody></table>';
-    wrap.querySelectorAll('[data-a]').forEach(function(b){
+    wrap.querySelectorAll('[data-save]').forEach(function(b){
       b.addEventListener('click', async function(){
-        var map = { approve:'active', reject:'rejected', suspend:'suspended' };
-        await A.setCuratorStatus(b.dataset.id, map[b.dataset.a]);
-        loadCurators();
+        var id = b.dataset.save;
+        var trk = wrap.querySelector('[data-trk="'+id+'"]').value.trim();
+        var crr = wrap.querySelector('[data-crr="'+id+'"]').value.trim();
+        b.textContent = 'Saving…';
+        try{ await A.setShipping(id, trk, crr); b.textContent = 'Saved ✓'; }
+        catch(e){ b.textContent = 'Failed'; }
+        setTimeout(function(){ b.textContent = 'Save'; }, 1400);
       });
+    });
+    wrap.querySelectorAll('[data-copy]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var o = (window._allOrders||[]).find(function(x){ return x.id===b.dataset.copy; });
+        var c = o.customer||{};
+        var txt = [c.name, c.phone, addrOf(c)].filter(Boolean).join('\n');
+        navigator.clipboard.writeText(txt);
+        b.textContent = 'Copied ✓'; setTimeout(function(){ b.textContent='Copy address'; }, 1400);
+      });
+    });
+    wrap.querySelectorAll('[data-slip]').forEach(function(b){
+      b.addEventListener('click', function(){ packingSlip(b.dataset.slip); });
     });
   }
 
-  async function loadPayouts(){
-    var rows = await A.allPayouts();
-    var wrap = document.getElementById('payWrap');
-    var pending = rows.filter(function(p){ return p.status==='requested'; });
-    if(!rows.length){ wrap.innerHTML = '<div class="empty-state"><div class="ico">◇</div><p>No payout requests</p></div>'; return; }
-    wrap.innerHTML = '<table><thead><tr><th>Curator</th><th>Amount</th><th>Method</th><th>Requested</th><th>Status</th><th></th></tr></thead><tbody>' +
-      rows.map(function(p){
-        var who = p.curators ? p.curators.name+' ('+p.curators.ref_code+')' : '—';
-        var pill = p.status==='paid'?'<span class="pill pill-live">✓ Paid</span>':'<span class="pill pill-wait">Requested</span>';
-        var act = p.status==='requested' ? '<button class="act go" data-pay="'+p.id+'">Mark paid</button>' : '';
-        return '<tr><td>'+who+'</td><td class="mono" style="color:var(--gold-hi)">'+fmt(p.amount)+'</td>' +
-          '<td class="mono" style="font-size:.72rem">'+(p.method||'—')+'</td>' +
-          '<td class="mono">'+new Date(p.requested_at).toLocaleDateString('en-IN')+'</td>' +
-          '<td>'+pill+'</td><td>'+act+'</td></tr>';
-      }).join('') + '</tbody></table>';
-    wrap.querySelectorAll('[data-pay]').forEach(function(b){
-      b.addEventListener('click', async function(){
-        if(!confirm('Mark this payout as paid? Do this only after you\'ve actually sent the money.')) return;
-        await A.markPayoutPaid(b.dataset.pay); loadPayouts();
-      });
-    });
+  /* printable packing slip — opens ready to print */
+  function packingSlip(id){
+    var o = (window._allOrders||[]).find(function(x){ return x.id===id; });
+    if(!o) return;
+    var c = o.customer||{};
+    var rows = (o.items||[]).map(function(i){
+      return '<tr><td>'+i.qty+'</td><td>'+i.name+'</td><td style="text-align:right">'+fmt(i.line)+'</td></tr>'; }).join('');
+    var html =
+      '<html><head><title>Packing slip '+o.id+'<\/title><style>' +
+      'body{font-family:-apple-system,Segoe UI,sans-serif;color:#111;padding:32px;max-width:640px;margin:0 auto}' +
+      'h1{font-size:20px;margin:0 0 2px;letter-spacing:.18em}' +
+      '.sub{color:#666;font-size:12px;margin-bottom:24px}' +
+      '.box{border:1px solid #ddd;border-radius:8px;padding:16px;margin-bottom:16px}' +
+      '.l{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#888;display:block;margin-bottom:4px}' +
+      'table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}' +
+      'th{text-align:left;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#888;border-bottom:1px solid #ddd;padding:6px 0}' +
+      'td{padding:8px 0;border-bottom:1px solid #f0f0f0}' +
+      '.tot{display:flex;justify-content:space-between;font-weight:600;padding-top:12px;font-size:15px}' +
+      '.ft{margin-top:28px;font-size:11px;color:#888;text-align:center}' +
+      '@media print{body{padding:0}}<\/style><\/head><body>' +
+      '<h1>THE AIM.</h1><div class="sub">Packing slip · Order '+o.id+' · '+new Date(o.created_at).toLocaleDateString('en-IN')+'</div>' +
+      '<div class="box"><span class="l">Deliver to</span><b>'+(c.name||'')+'</b><br>'+addrOf(c)+'<br>'+(c.phone||'')+'</div>' +
+      '<div class="box"><span class="l">Items</span>' +
+        '<table><thead><tr><th>Qty</th><th>Product</th><th style="text-align:right">Amount</th></tr></thead>' +
+        '<tbody>'+rows+'</tbody></table>' +
+        '<div class="tot"><span>Total</span><span>'+fmt(o.total)+'</span></div>' +
+        '<div style="font-size:12px;color:#666;margin-top:6px">Payment: '+(o.payment==='cod'?'CASH ON DELIVERY — collect '+fmt(o.total):'Paid online')+'</div>' +
+      '</div>' +
+      (o.tracking_no ? '<div class="box"><span class="l">Tracking</span>'+(o.courier||'')+' · '+o.tracking_no+'</div>' : '') +
+      '<div class="ft">Thank you for shopping with THE AIM<\/div>' +
+      '<script>window.onload=function(){window.print()}<\/script></body></html>';
+    var w = window.open('', '_blank');
+    w.document.write(html); w.document.close();
   }
-
 
   /* ── FEED REELS ── */
   var ffPoster = '';

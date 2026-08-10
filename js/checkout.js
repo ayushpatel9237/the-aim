@@ -122,6 +122,20 @@
     if(!u) return;
     var em = document.getElementById('f-email');
     if(em && !em.value) em.value = u.email || '';
+    /* fill the saved delivery details so checkout is one tap */
+    var A2 = window.Ascentra;
+    if(A2 && A2.raw){
+      A2.raw.from('customer_profiles').select('*').eq('user_id', u.id).maybeSingle()
+        .then(function(r){
+          var p = r && r.data; if(!p) return;
+          var map = { 'f-name':p.name, 'f-phone':p.phone, 'f-addr':p.address,
+                      'f-city':p.city, 'f-pin':p.pincode, 'f-state':p.state };
+          Object.keys(map).forEach(function(k){
+            var el = document.getElementById(k);
+            if(el && !el.value && map[k]) el.value = map[k];
+          });
+        }).catch(function(){});
+    }
   });
 
   /* place order */

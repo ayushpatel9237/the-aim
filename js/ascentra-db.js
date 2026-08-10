@@ -148,6 +148,20 @@ window.Ascentra = (function(){
     return sb.from('upcoming_items').delete().eq('id', id);
   }
 
+
+  /* ── admin: shipping details on an order ── */
+  async function setShipping(id, tracking, courier){
+    if(!(await isAdmin())) throw new Error('Admins only');
+    var patch = { tracking_no: tracking || null, courier: courier || null };
+    if(tracking) patch.shipped_at = new Date().toISOString();
+    return sb.from('orders').update(patch).eq('id', id);
+  }
+  /* ── admin: what is running out ── */
+  async function lowStock(){
+    var { data } = await sb.from('low_stock').select('*');
+    return data || [];
+  }
+
   return {
     configured: configured, raw: sb, isAdmin: isAdmin,
     currentUser: currentUser, signUp: signUp, signIn: signIn, signOut: signOut, onAuth: onAuth,
@@ -157,6 +171,7 @@ window.Ascentra = (function(){
     setCuratorStatus: setCuratorStatus, markPayoutPaid: markPayoutPaid,
     allProducts: allProducts, saveProduct: saveProduct, deleteProduct: deleteProduct, uploadImage: uploadImage,
     allOrders: allOrders, setOrderStatus: setOrderStatus, setCommission: setCommission,
+    setShipping: setShipping, lowStock: lowStock,
     allFeed: allFeed, saveFeed: saveFeed, deleteFeed: deleteFeed,
     allUpcoming: allUpcoming, saveUpcoming: saveUpcoming, deleteUpcoming: deleteUpcoming
   };

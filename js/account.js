@@ -86,6 +86,7 @@
         '<div class="acct"><button class="acct-btn" id="acctBtn" aria-label="Account">' + initial + '</button>' +
         '<div class="acct-menu" id="acctMenu">' +
           '<span class="acct-em">' + (user.email || '') + '</span>' +
+          '<a href="account.html">My account</a>' +
           '<a href="track.html">My orders</a>' +
           '<a href="watchlist.html">Watchlist</a>' +
           '<button id="acctOut">Sign out</button>' +
