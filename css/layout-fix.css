@@ -1,348 +1,253 @@
 /* ══════════════════════════════════════════════════════════════
-   THE AIM — layout fix
-   Loaded LAST, after every other stylesheet, on every page.
+   THE AIM — layout-fix.css
+   Load this LAST on every page that shows a product grid
+   (index.html, shop.html, and any category page).
 
-   Fixes: (1) the decorative "shelf" box around product rows
-          (2) the cream compartment leaking over names/prices on mobile
-          (3) general small-screen overflow
-
-   The real culprits were in css/shelf.css:
-     · .grid::before / ::after   — velvet sheen + brass plaque
-     · .pcase::before            — the compartment panel
-     · .ticket{ margin:34px -8px 0 } — a negative margin that pulled
-       the cream card up over the product name. That was the overlap.
+   The shelf design is unchanged. What this does:
+     1. removes the "+ Bag" button
+     2. rebuilds the compartment so the photo can never overflow it
+     3. evens out the tickets so prices line up across a row
+     4. rebuilds every mobile breakpoint
    ══════════════════════════════════════════════════════════════ */
 
-/* ── 1. KILL THE SHELF ──────────────────────────────────────── */
-.grid{
-  background:none !important;
-  border:none !important;
-  border-radius:0 !important;
-  box-shadow:none !important;
-  padding:0 !important;
-  gap:1.6rem 1.4rem !important;
-}
-.grid::before,
-.grid::after{ display:none !important; }
 
-/* ── 2. EACH PRODUCT GETS ITS OWN BOX ───────────────────────── */
-.pcase{
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  height:100%;
-  overflow:hidden;
-  border-radius:14px;
-  padding:10px 10px 0;
-  background:linear-gradient(180deg, #0E1533 0%, #0A0F26 100%);
-  border:1px solid rgba(230,203,168,.16);
-  box-shadow:0 10px 26px -14px rgba(0,0,0,.8);
-  transition:transform .35s cubic-bezier(.22,.9,.3,1),
-             border-color .35s ease,
-             box-shadow .35s ease;
-}
+/* ── 1. NO "+ BAG" ─────────────────────────────────────────── */
+.quick-add,
+.pcase .quick-add{ display:none !important; }
+
+
+/* ── 2. THE COMPARTMENT, REBUILT ────────────────────────────
+   Was: .pcase::before, a floating pseudo-element sized by
+   padding-top:100% — its height came from the CARD's width while
+   the photo's size came from its own margins. Two separate sums,
+   so on narrow screens the photo drifted out of its own niche.
+
+   Now: .pimg IS the niche. The photo sits inside it as real
+   content, so the walls always wrap the photo exactly — at any
+   width, on any screen. */
 .pcase::before{ display:none !important; }
 
-@media (hover:hover){
-  .pcase:hover{
-    transform:translateY(-4px);
-    border-color:rgba(230,203,168,.42);
-    box-shadow:0 20px 40px -18px rgba(0,0,0,.9),
-               0 0 24px -6px rgba(230,203,168,.12);
-  }
-}
+.pcase{ overflow:visible; }
 
-/* the photo sits flush inside its own card */
 .pimg{
+  position:relative; z-index:1;
   margin:0 !important;
-  border-radius:9px;
-  aspect-ratio:1/1;
-  border:1px solid rgba(230,203,168,.14);
-  box-shadow:none;
-  overflow:hidden;
-  background:#FFFFFF;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:8px;
+  padding:13px 11px 22px !important;   /* walls + shelf board */
+  aspect-ratio:auto !important;        /* height comes from the photo */
+  height:auto !important;
+  overflow:visible !important;
+  border:none !important;
+  border-radius:12px 12px 5px 5px !important;
+  background:
+    /* contact shadow where the product meets the shelf */
+    radial-gradient(ellipse 58% 14px at 50% calc(100% - 20px), rgba(0,0,0,.28), transparent 72%),
+    /* the light above the niche */
+    radial-gradient(ellipse 80% 26% at 50% 0%, rgba(255,255,255,.22), transparent 70%),
+    /* wall, dark seam, then the brass shelf edge */
+    linear-gradient(180deg,
+      #F8E9D2 0%,
+      #ECD9BC calc(100% - 16px),
+      #1A2142 calc(100% - 16px),
+      #1A2142 calc(100% - 14px),
+      #E6CBA8 calc(100% - 14px),
+      #A98F6B calc(100% - 5px),
+      #1A2142 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(231,200,120,.14),
+    inset 0 9px 15px rgba(0,0,0,.16),
+    0 12px 22px -8px rgba(0,0,0,.6) !important;
+  transition:filter .4s ease, box-shadow .4s ease;
 }
+/* the niche light brightens as the customer reaches in */
 .pcase:hover .pimg{
   transform:none !important;
-  box-shadow:none;
-  border-color:rgba(230,203,168,.3);
+  filter:brightness(1.06) saturate(1.03);
 }
-/* whole product visible — never cropped */
+
 .pimg img{
-  width:100%; height:100%;
-  object-fit:contain !important;
-  object-position:center center;
+  width:100% !important;
+  height:auto !important;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  border-radius:8px;
+  border:1px solid rgba(231,200,120,.3);
+  box-shadow:0 8px 14px rgba(10,8,4,.35);
+  transition:transform .4s cubic-bezier(.22,.9,.3,1);
 }
+.pcase:hover .pimg img{ transform:translateY(-5px); }
 
-/* ── 3. THE TICKET — cream panel, sitting BELOW the photo ────
-   The cream stays. What's removed is the negative margin that
-   pulled it up over the product name. It now sits in normal flow. */
+/* the gloss overlay used to cover the whole element — pull it
+   back onto the photo now that the element includes the walls */
+.pimg::after{
+  inset:13px 11px 22px !important;
+  border-radius:8px;
+}
+/* the glint sits on the photo, not on the wall */
+.pimg::before{ top:12% !important; right:14% !important; }
+
+/* badges sit on the photo, inside the walls */
+.pimg .sku{ top:20px !important; right:19px !important; }
+.pimg .off{ left:19px !important; bottom:33px !important; }
+.pimg .vbadge{ z-index:3; }
+
+
+/* ── 3. THE TICKET ─────────────────────────────────────────── */
 .ticket{
-  position:relative;
-  margin:.55rem 0 0 !important;     /* was 34px -8px 0 — the overlap */
-  padding:.8rem .85rem .9rem !important;
-  background:linear-gradient(180deg,#FBF6EA 0%,#F0E7D5 100%) !important;
-  border:1px solid rgba(255,255,255,.7) !important;
-  border-radius:11px !important;
-  box-shadow:0 6px 16px -8px rgba(0,0,0,.5),
-             inset 0 1px 0 rgba(255,255,255,.9) !important;
-  text-align:left;
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  gap:.22rem;
-  animation:none !important;
-  backdrop-filter:none !important;
+  /* was margin:34px -8px 0 — the negative sides made the ticket
+     wider than its own card, which is what collided on phones */
+  margin:26px 0 0 !important;
+  padding:.8rem .6rem .85rem !important;
 }
-.ticket::before{ display:none !important; }   /* the brass clip */
-
-.ticket .cat{ color:#6B7290 !important; font-size:.5rem; letter-spacing:.24em; }
-.ticket .nm{
-  color:#0A0F26 !important;
-  font-size:.92rem;
-  line-height:1.25;
-  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
-  overflow:hidden;
-  background:none !important; border:none !important;
-  box-shadow:none !important; padding:0 !important;
-  backdrop-filter:none !important;
-}
-.ticket .pr{
-  color:#8A6F3E !important;
-  font-size:.86rem;
-  margin-top:.1rem;
-  background:none !important; border:none !important;
-  box-shadow:none !important; padding:0 !important;
-  backdrop-filter:none !important;
-}
-.ticket .pr s{ color:#9AA0B8 !important; }
+/* other stylesheets were giving each span its own background,
+   so the name and price showed as separate stacked boxes */
+.ticket .cat,
+.ticket .nm,
+.ticket .pr,
 .ticket .go{
-  color:#0A0F26 !important;
-  opacity:.62;                      /* was 0 until hover — invisible on phones */
-  margin-top:auto;
-  padding-top:.45rem;
+  background:none !important;
+  background-image:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  margin-left:0 !important;
+  margin-right:0 !important;
+  width:auto !important;
 }
-.pcase:hover .ticket .go{ opacity:1; }
-.pcase:hover .ticket{
-  box-shadow:0 10px 22px -8px rgba(0,0,0,.6),
-             inset 0 1px 0 rgba(255,255,255,.95) !important;
+.ticket .cat{ margin-bottom:.15rem !important; }
+.ticket .pr{ padding-top:.1rem !important; }
+/* two lines reserved for every name, so prices align across a row */
+.ticket .nm{
+  min-height:2.55em;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
 }
+/* "Buy now" was opacity:0 until hover — permanently invisible on
+   a touch device, and it left a hole in the card */
+.ticket .go{ opacity:.62 !important; transition:opacity .3s ease; }
+.pcase:hover .ticket .go{ opacity:1 !important; }
 
-/* ── 4. COLUMN COUNTS ───────────────────────────────────────── */
+
+/* ── 4. COLUMNS ────────────────────────────────────────────── */
 .grid{ grid-template-columns:repeat(4,1fr) !important; }
-@media (max-width:1100px){ .grid{ grid-template-columns:repeat(3,1fr) !important; } }
-@media (max-width:820px) { .grid{ grid-template-columns:repeat(2,1fr) !important; } }
 
-@media (max-width:560px){
-  .grid{ grid-template-columns:repeat(2,1fr) !important; gap:1rem .8rem !important; }
-  .pcase{ padding:7px 7px 0; border-radius:11px; }
-  .ticket{ padding:.65rem .6rem .75rem !important; margin-top:.45rem !important; }
-  .ticket .nm{ font-size:.82rem; }
-  .ticket .pr{ font-size:.78rem; }
-  .ticket .go{ font-size:.46rem; }
+@media (max-width:1140px){
+  .grid{ grid-template-columns:repeat(3,1fr) !important; }
+}
+@media (max-width:880px){
+  .grid{
+    grid-template-columns:repeat(2,1fr) !important;
+    gap:2.6rem 1.4rem !important;
+    padding:2.4rem 1.2rem 2.6rem !important;
+  }
 }
 
-/* ── 5. GENERAL MOBILE OVERFLOW ─────────────────────────────── */
+/* ── PHONES ────────────────────────────────────────────────── */
+@media (max-width:560px){
+  .grid{
+    grid-template-columns:repeat(2,1fr) !important;
+    gap:2rem .8rem !important;
+    padding:1.9rem .75rem 2.1rem !important;
+    border-radius:16px;
+  }
+  .grid::after{                      /* the brass plaque */
+    font-size:.5rem !important;
+    letter-spacing:.22em !important;
+    padding:.35rem 1rem !important;
+    top:-11px !important;
+  }
+
+  .pimg{
+    padding:9px 8px 16px !important;
+    border-radius:10px 10px 4px 4px !important;
+    background:
+      radial-gradient(ellipse 58% 10px at 50% calc(100% - 15px), rgba(0,0,0,.26), transparent 72%),
+      radial-gradient(ellipse 80% 26% at 50% 0%, rgba(255,255,255,.22), transparent 70%),
+      linear-gradient(180deg,
+        #F8E9D2 0%,
+        #ECD9BC calc(100% - 12px),
+        #1A2142 calc(100% - 12px),
+        #1A2142 calc(100% - 10.5px),
+        #E6CBA8 calc(100% - 10.5px),
+        #A98F6B calc(100% - 4px),
+        #1A2142 100%) !important;
+  }
+  .pimg::after{ inset:9px 8px 16px !important; border-radius:6px; }
+  .pimg img{ border-radius:6px; }
+  .pimg .sku{ top:15px !important; right:14px !important; }
+  .pimg .off{ left:14px !important; bottom:24px !important; }
+
+  .ticket{
+    margin:20px 0 0 !important;
+    padding:.6rem .45rem .7rem !important;
+    border-radius:8px;
+  }
+  .ticket::before{ width:24px; height:13px; top:-9px; }
+  .ticket .cat{ font-size:.45rem !important; letter-spacing:.2em !important; }
+  .ticket .nm{ font-size:.84rem !important; line-height:1.2; }
+  .ticket .pr{ font-size:.74rem !important; }
+  .ticket .go{ font-size:.45rem !important; letter-spacing:.16em !important; padding-top:.3rem !important; }
+}
+
+@media (max-width:360px){
+  .grid{ gap:1.7rem .6rem !important; padding:1.7rem .55rem 1.9rem !important; }
+  .ticket .nm{ font-size:.78rem !important; }
+}
+
+
+/* ── 5. NO HOVER EFFECTS ON TOUCH ──────────────────────────
+   Lift, twinkle and ticket-swing all fire on tap and leave the
+   card frozen mid-animation. */
+@media (hover:none){
+  .pcase:hover .pimg{ filter:none !important; }
+  .pcase:hover .pimg img{ transform:none !important; }
+  .pcase:hover .ticket{ animation:none !important; }
+  .pcase:hover .pimg::before{ animation:none !important; }
+}
+
+
+/* ── 6. PAGE-WIDE MOBILE CLEANUP ───────────────────────────── */
 @media (max-width:760px){
   html,body{ overflow-x:hidden; max-width:100%; }
-  section{ padding:2.6rem 0 !important; }
-  .wrap{ padding:0 1.1rem; }
+  section{ padding:2.8rem 0 !important; }
+  .wrap{ padding:0 1rem; }
 
-  /* hero stage: the ghost numeral was colliding with the caption */
-  .stage{ height:auto !important; min-height:auto; padding-bottom:5.5rem; }
-  .slides{ width:min(300px,78%) !important; margin:0 auto; }
-  .ghost{ font-size:7rem !important; opacity:.5; }
+  /* hero: the ghost numeral and the caption were colliding */
+  .stage{ height:auto !important; padding-bottom:5rem; }
+  .slides{ width:min(300px,76%) !important; margin:0 auto; }
+  .ghost{ font-size:7rem !important; opacity:.45; }
   .stage-foot{
     position:static !important;
-    flex-direction:column; align-items:flex-start; gap:.9rem;
-    margin-top:1.4rem;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:.9rem;
+    margin-top:1.5rem;
   }
-  .sec-head{ margin-bottom:1.6rem; }
-  .foot{ flex-direction:column; align-items:flex-start; gap:1.1rem; }
-  .foot .links{ gap:.9rem 1.2rem; }
 
-  /* iOS: stop the fixed radial background repainting every scroll frame */
+  .sec-head{ margin-bottom:1.7rem; }
+  .foot{ flex-direction:column; align-items:flex-start; gap:1rem; }
+  .foot .links{ gap:.8rem 1.1rem; }
+
+  /* a fixed background repaints on every scroll frame in iOS */
   body{ background-attachment:scroll !important; }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   PRODUCT PAGE — every element its own box
-   No big containers holding several things. Each piece of
-   information sits in its own bordered card, so nothing looks
-   like it's floating loose on top of a panel.
-   ══════════════════════════════════════════════════════════════ */
 
-/* ── the hero image frame follows the image, not a fixed shape ── */
-.viewer .stage, .viewer > div:first-child{
-  display:inline-flex !important;
-  width:100% !important;
-  height:auto !important;
-  aspect-ratio:auto !important;      /* the image decides the height */
-  background:#FFFFFF;
-  padding:10px;
-  border:1px solid rgba(230,203,168,.22);
-  border-radius:18px;
-  box-shadow:0 30px 70px -30px rgba(0,0,0,.85),
-             0 4px 14px -6px rgba(0,0,0,.45),
-             inset 0 1px 0 rgba(255,255,255,.5);
-}
-#mainImg, .viewer img{
-  width:100% !important;
-  height:auto !important;
-  max-height:none !important;
-  object-fit:contain !important;
-  border-radius:11px !important;
-}
-
-/* ── each thumbnail is its own small box, not one strip ── */
-.thumbs{
-  background:none !important;
-  border:none !important;
-  box-shadow:none !important;
-  backdrop-filter:none !important;
-  padding:0 !important;
-  gap:.5rem !important;
-  margin-top:.65rem !important;
-}
-.thumbs > *{
-  flex:0 0 auto;
-  background:#FFFFFF;
-  border:1px solid rgba(230,203,168,.22);
-  border-radius:11px;
-  padding:5px;
-  box-shadow:0 6px 16px -8px rgba(0,0,0,.6);
-  transition:transform .3s cubic-bezier(.2,.7,.24,1), border-color .3s ease;
-}
-.thumbs > *:hover{ transform:translateY(-3px); border-color:rgba(230,203,168,.55); }
-.thumbs img{ object-fit:contain !important; border-radius:6px; }
-
-/* ── text: no panel behind it, just a hairline box ── */
-.pbox{
-  background:none !important;
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-  border:1px solid rgba(230,203,168,.18) !important;
-  border-radius:14px !important;
-  box-shadow:0 10px 26px -18px rgba(0,0,0,.6) !important;
-  padding:1rem 1.1rem !important;
-}
-.pbox::before{ display:none !important; }
-.pbox:hover{
-  border-color:rgba(230,203,168,.34) !important;
-  transform:none !important;
-}
-
-/* ── the buy row: three separate boxes, not one ── */
-.pbox-buy{
-  background:none !important;
-  border:none !important;
-  box-shadow:none !important;
-  padding:0 !important;
-  display:flex !important;
-  gap:.55rem !important;
-  flex-wrap:wrap;
-  align-items:stretch;
-}
-.pbox-buy .qty{
-  flex:0 0 auto;
-  border:1px solid rgba(230,203,168,.28) !important;
-  border-radius:12px !important;
-  padding:.5rem .6rem !important;
-  background:rgba(255,255,255,.04);
-  box-shadow:0 8px 20px -14px rgba(0,0,0,.7);
-}
-.pbox-buy .buy{
-  flex:1 1 150px;
-  border-radius:12px !important;
-  box-shadow:0 10px 26px -14px rgba(230,203,168,.55);
-}
-.pbox-buy .cart{
-  flex:0 1 auto;
-  border:1px solid rgba(230,203,168,.28) !important;
-  border-radius:12px !important;
-  background:rgba(255,255,255,.04) !important;
-  box-shadow:0 8px 20px -14px rgba(0,0,0,.7);
-}
-
-/* ── mobile: same idea, tighter ── */
+/* ── 7. SHOP PAGE FILTER BAR ───────────────────────────────── */
 @media (max-width:760px){
-  .viewer .stage, .viewer > div:first-child{ padding:8px; border-radius:15px; }
-  #mainImg, .viewer img{ border-radius:9px !important; }
-  .thumbs > *{ border-radius:9px; padding:4px; }
-  .pbox{ padding:.9rem .95rem !important; border-radius:13px !important; }
-  .pbox-buy{ gap:.5rem !important; }
-  .pbox-buy .qty{ flex:1 1 100%; justify-content:center; }
-  .pbox-buy .buy, .pbox-buy .cart{ flex:1 1 100%; }
-}
-
-
-/* ══════════════════════════════════════════════════════════════
-   QUICK-VIEW SHEET — same treatment, so both routes feel alike
-   ══════════════════════════════════════════════════════════════ */
-.sh-hero{
-  background:#FFFFFF !important;
-  border:1px solid rgba(230,203,168,.22) !important;
-  border-radius:16px !important;
-  padding:8px !important;
-  backdrop-filter:none !important;
-  box-shadow:0 24px 60px -26px rgba(0,0,0,.85),
-             inset 0 1px 0 rgba(255,255,255,.5) !important;
-}
-.sh-hero .ph{ background:none !important; min-height:0 !important; }
-.sh-hero img{ height:auto !important; max-height:52vh !important; border-radius:9px !important; }
-
-/* thumbnails: individual boxes, no strip behind them */
-.sh-thumbs{
-  background:none !important; border:none !important;
-  box-shadow:none !important; backdrop-filter:none !important;
-  padding:0 !important; gap:.45rem !important;
-}
-.sh-t{
-  background:#FFFFFF !important;
-  border:1px solid rgba(230,203,168,.22) !important;
-  border-radius:10px !important;
-  padding:4px !important;
-  opacity:1 !important;
-  box-shadow:0 6px 14px -8px rgba(0,0,0,.6);
-}
-.sh-t.on{ border-color:rgba(230,203,168,.8) !important; }
-
-/* text cards: hairline only, no frosted slab */
-.sh-info, .sh-more, .sh-facts{
-  background:none !important;
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-  border:1px solid rgba(230,203,168,.18) !important;
-  box-shadow:0 10px 26px -18px rgba(0,0,0,.6) !important;
-}
-.sh-info .sh-name{ color:#FFF1E2 !important; }
-.sh-info .sh-price{ color:#E6CBA8 !important; }
-.sh-info .sh-desc{ color:rgba(255,241,226,.72) !important; }
-
-/* buy row: separate boxes */
-.sh-acts{
-  background:none !important; border:none !important;
-  box-shadow:none !important; backdrop-filter:none !important;
-  padding:0 !important; gap:.5rem !important;
-}
-.sh-acts .sh-qty{
-  border:1px solid rgba(230,203,168,.28) !important;
-  border-radius:11px !important;
-  background:rgba(255,255,255,.04) !important;
-  padding:.45rem .55rem !important;
-}
-.sh-acts .sh-buy{ border-radius:11px !important; }
-.sh-acts .sh-bag{
-  border:1px solid rgba(230,203,168,.28) !important;
-  border-radius:11px !important;
-  background:rgba(255,255,255,.04) !important;
-}
-@media (max-width:640px){
-  .sh-hero img{ max-height:34vh !important; }
-  .sh-acts .sh-qty{ flex:1 1 100%; justify-content:center; }
-  .sh-acts .sh-buy, .sh-acts .sh-bag{ flex:1 1 100%; }
+  /* category pills: one scrolling row instead of a wrapped stack */
+  .cat-pills, .filters, [class*="chip-row"], [class*="pill-row"]{
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    overflow-x:auto;
+    gap:.5rem;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:.3rem;
+  }
+  .cat-pills::-webkit-scrollbar,
+  .filters::-webkit-scrollbar{ display:none; }
+  .cat-pills > *, .filters > *{ flex:0 0 auto; }
 }
