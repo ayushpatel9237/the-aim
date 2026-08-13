@@ -1,0 +1,253 @@
+/* ══════════════════════════════════════════════════════════════
+   THE AIM — layout-fix.css
+   Load this LAST on every page that shows a product grid
+   (index.html, shop.html, and any category page).
+
+   The shelf design is unchanged. What this does:
+     1. removes the "+ Bag" button
+     2. rebuilds the compartment so the photo can never overflow it
+     3. evens out the tickets so prices line up across a row
+     4. rebuilds every mobile breakpoint
+   ══════════════════════════════════════════════════════════════ */
+
+
+/* ── 1. NO "+ BAG" ─────────────────────────────────────────── */
+.quick-add,
+.pcase .quick-add{ display:none !important; }
+
+
+/* ── 2. THE COMPARTMENT, REBUILT ────────────────────────────
+   Was: .pcase::before, a floating pseudo-element sized by
+   padding-top:100% — its height came from the CARD's width while
+   the photo's size came from its own margins. Two separate sums,
+   so on narrow screens the photo drifted out of its own niche.
+
+   Now: .pimg IS the niche. The photo sits inside it as real
+   content, so the walls always wrap the photo exactly — at any
+   width, on any screen. */
+.pcase::before{ display:none !important; }
+
+.pcase{ overflow:visible; }
+
+.pimg{
+  position:relative; z-index:1;
+  margin:0 !important;
+  padding:13px 11px 22px !important;   /* walls + shelf board */
+  aspect-ratio:auto !important;        /* height comes from the photo */
+  height:auto !important;
+  overflow:visible !important;
+  border:none !important;
+  border-radius:12px 12px 5px 5px !important;
+  background:
+    /* contact shadow where the product meets the shelf */
+    radial-gradient(ellipse 58% 14px at 50% calc(100% - 20px), rgba(0,0,0,.28), transparent 72%),
+    /* the light above the niche */
+    radial-gradient(ellipse 80% 26% at 50% 0%, rgba(255,255,255,.22), transparent 70%),
+    /* wall, dark seam, then the brass shelf edge */
+    linear-gradient(180deg,
+      #F8E9D2 0%,
+      #ECD9BC calc(100% - 16px),
+      #1A2142 calc(100% - 16px),
+      #1A2142 calc(100% - 14px),
+      #E6CBA8 calc(100% - 14px),
+      #A98F6B calc(100% - 5px),
+      #1A2142 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(231,200,120,.14),
+    inset 0 9px 15px rgba(0,0,0,.16),
+    0 12px 22px -8px rgba(0,0,0,.6) !important;
+  transition:filter .4s ease, box-shadow .4s ease;
+}
+/* the niche light brightens as the customer reaches in */
+.pcase:hover .pimg{
+  transform:none !important;
+  filter:brightness(1.06) saturate(1.03);
+}
+
+.pimg img{
+  width:100% !important;
+  height:auto !important;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  border-radius:8px;
+  border:1px solid rgba(231,200,120,.3);
+  box-shadow:0 8px 14px rgba(10,8,4,.35);
+  transition:transform .4s cubic-bezier(.22,.9,.3,1);
+}
+.pcase:hover .pimg img{ transform:translateY(-5px); }
+
+/* the gloss overlay used to cover the whole element — pull it
+   back onto the photo now that the element includes the walls */
+.pimg::after{
+  inset:13px 11px 22px !important;
+  border-radius:8px;
+}
+/* the glint sits on the photo, not on the wall */
+.pimg::before{ top:12% !important; right:14% !important; }
+
+/* badges sit on the photo, inside the walls */
+.pimg .sku{ top:20px !important; right:19px !important; }
+.pimg .off{ left:19px !important; bottom:33px !important; }
+.pimg .vbadge{ z-index:3; }
+
+
+/* ── 3. THE TICKET ─────────────────────────────────────────── */
+.ticket{
+  /* was margin:34px -8px 0 — the negative sides made the ticket
+     wider than its own card, which is what collided on phones */
+  margin:26px 0 0 !important;
+  padding:.8rem .6rem .85rem !important;
+}
+/* other stylesheets were giving each span its own background,
+   so the name and price showed as separate stacked boxes */
+.ticket .cat,
+.ticket .nm,
+.ticket .pr,
+.ticket .go{
+  background:none !important;
+  background-image:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  margin-left:0 !important;
+  margin-right:0 !important;
+  width:auto !important;
+}
+.ticket .cat{ margin-bottom:.15rem !important; }
+.ticket .pr{ padding-top:.1rem !important; }
+/* two lines reserved for every name, so prices align across a row */
+.ticket .nm{
+  min-height:2.55em;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+/* "Buy now" was opacity:0 until hover — permanently invisible on
+   a touch device, and it left a hole in the card */
+.ticket .go{ opacity:.62 !important; transition:opacity .3s ease; }
+.pcase:hover .ticket .go{ opacity:1 !important; }
+
+
+/* ── 4. COLUMNS ────────────────────────────────────────────── */
+.grid{ grid-template-columns:repeat(4,1fr) !important; }
+
+@media (max-width:1140px){
+  .grid{ grid-template-columns:repeat(3,1fr) !important; }
+}
+@media (max-width:880px){
+  .grid{
+    grid-template-columns:repeat(2,1fr) !important;
+    gap:2.6rem 1.4rem !important;
+    padding:2.4rem 1.2rem 2.6rem !important;
+  }
+}
+
+/* ── PHONES ────────────────────────────────────────────────── */
+@media (max-width:560px){
+  .grid{
+    grid-template-columns:repeat(2,1fr) !important;
+    gap:2rem .8rem !important;
+    padding:1.9rem .75rem 2.1rem !important;
+    border-radius:16px;
+  }
+  .grid::after{                      /* the brass plaque */
+    font-size:.5rem !important;
+    letter-spacing:.22em !important;
+    padding:.35rem 1rem !important;
+    top:-11px !important;
+  }
+
+  .pimg{
+    padding:9px 8px 16px !important;
+    border-radius:10px 10px 4px 4px !important;
+    background:
+      radial-gradient(ellipse 58% 10px at 50% calc(100% - 15px), rgba(0,0,0,.26), transparent 72%),
+      radial-gradient(ellipse 80% 26% at 50% 0%, rgba(255,255,255,.22), transparent 70%),
+      linear-gradient(180deg,
+        #F8E9D2 0%,
+        #ECD9BC calc(100% - 12px),
+        #1A2142 calc(100% - 12px),
+        #1A2142 calc(100% - 10.5px),
+        #E6CBA8 calc(100% - 10.5px),
+        #A98F6B calc(100% - 4px),
+        #1A2142 100%) !important;
+  }
+  .pimg::after{ inset:9px 8px 16px !important; border-radius:6px; }
+  .pimg img{ border-radius:6px; }
+  .pimg .sku{ top:15px !important; right:14px !important; }
+  .pimg .off{ left:14px !important; bottom:24px !important; }
+
+  .ticket{
+    margin:20px 0 0 !important;
+    padding:.6rem .45rem .7rem !important;
+    border-radius:8px;
+  }
+  .ticket::before{ width:24px; height:13px; top:-9px; }
+  .ticket .cat{ font-size:.45rem !important; letter-spacing:.2em !important; }
+  .ticket .nm{ font-size:.84rem !important; line-height:1.2; }
+  .ticket .pr{ font-size:.74rem !important; }
+  .ticket .go{ font-size:.45rem !important; letter-spacing:.16em !important; padding-top:.3rem !important; }
+}
+
+@media (max-width:360px){
+  .grid{ gap:1.7rem .6rem !important; padding:1.7rem .55rem 1.9rem !important; }
+  .ticket .nm{ font-size:.78rem !important; }
+}
+
+
+/* ── 5. NO HOVER EFFECTS ON TOUCH ──────────────────────────
+   Lift, twinkle and ticket-swing all fire on tap and leave the
+   card frozen mid-animation. */
+@media (hover:none){
+  .pcase:hover .pimg{ filter:none !important; }
+  .pcase:hover .pimg img{ transform:none !important; }
+  .pcase:hover .ticket{ animation:none !important; }
+  .pcase:hover .pimg::before{ animation:none !important; }
+}
+
+
+/* ── 6. PAGE-WIDE MOBILE CLEANUP ───────────────────────────── */
+@media (max-width:760px){
+  html,body{ overflow-x:hidden; max-width:100%; }
+  section{ padding:2.8rem 0 !important; }
+  .wrap{ padding:0 1rem; }
+
+  /* hero: the ghost numeral and the caption were colliding */
+  .stage{ height:auto !important; padding-bottom:5rem; }
+  .slides{ width:min(300px,76%) !important; margin:0 auto; }
+  .ghost{ font-size:7rem !important; opacity:.45; }
+  .stage-foot{
+    position:static !important;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:.9rem;
+    margin-top:1.5rem;
+  }
+
+  .sec-head{ margin-bottom:1.7rem; }
+  .foot{ flex-direction:column; align-items:flex-start; gap:1rem; }
+  .foot .links{ gap:.8rem 1.1rem; }
+
+  /* a fixed background repaints on every scroll frame in iOS */
+  body{ background-attachment:scroll !important; }
+}
+
+
+/* ── 7. SHOP PAGE FILTER BAR ───────────────────────────────── */
+@media (max-width:760px){
+  /* category pills: one scrolling row instead of a wrapped stack */
+  .cat-pills, .filters, [class*="chip-row"], [class*="pill-row"]{
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    overflow-x:auto;
+    gap:.5rem;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:.3rem;
+  }
+  .cat-pills::-webkit-scrollbar,
+  .filters::-webkit-scrollbar{ display:none; }
+  .cat-pills > *, .filters > *{ flex:0 0 auto; }
+}

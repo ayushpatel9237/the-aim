@@ -140,62 +140,131 @@ header{ position:sticky; top:0; z-index:50; background:transparent; transition:b
   color:#8E96B8; background:rgba(246,241,230,.9); padding:.1em .45em; border-radius:3px;
 }
 
-/* ── info ── */
-.info{ margin-top:2.6rem; padding-bottom:4rem; }
-.seller{ font-family:var(--f-mono); font-size:.62rem; letter-spacing:.3em; text-transform:uppercase; color:var(--gold); }
-.skurow{ display:flex; align-items:center; gap:.8rem; margin-top:.9rem; }
-.sku{ font-family:var(--f-mono); font-size:.66rem; letter-spacing:.24em; text-transform:uppercase; color:var(--muted); }
+/* ══════════════════════════════════════════════════════════
+   INFO COLUMN — each block gets its own space on the page
+   ══════════════════════════════════════════════════════════ */
+.info{
+  display:flex; flex-direction:column; align-items:flex-start;
+  gap:1.5rem; margin-top:2.6rem; padding-bottom:4rem;
+}
+.info > *{ width:100%; }
+
+.crumb{
+  display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; margin:0;
+  font-family:var(--f-mono); font-size:.6rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--faint);
+}
+.crumb a{ color:var(--muted); }
+.crumb a:hover{ color:var(--gold-hi); }
+.crumb b{ color:var(--gold-hi); font-weight:400; }
+
+/* ── identity ── */
+.idblock{ display:flex; flex-direction:column; gap:.55rem; }
+.seller{
+  font-family:var(--f-mono); font-size:.62rem; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--gold);
+}
+.skurow{ display:flex; align-items:center; gap:.8rem; flex-wrap:wrap; }
+.sku{
+  font-family:var(--f-mono); font-size:.66rem; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--muted);
+}
 .badge{
-  font-family:var(--f-mono); font-size:.56rem; letter-spacing:.12em; text-transform:uppercase;
-  color:var(--live); border:1px solid rgba(106,168,143,.45); background:rgba(106,168,143,.1);
+  font-family:var(--f-mono); font-size:.56rem; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--live);
+  border:1px solid rgba(106,168,143,.45); background:rgba(106,168,143,.1);
   padding:.3em .8em; border-radius:999px;
 }
-h1{ font-family:var(--f-body); font-weight:600; font-size:clamp(1.6rem,4vw,2.1rem); letter-spacing:-.01em; margin-top:.7rem; }
+.info h1{
+  font-family:var(--f-body); font-weight:600;
+  font-size:clamp(1.55rem,4vw,2.05rem); line-height:1.2;
+  letter-spacing:-.01em; margin:.15rem 0 0;
+}
+.tagline{ color:var(--muted); font-size:.95rem; margin:0; }
 
+/* ── price, behind its gold rule ── */
 .pricebox{
-  display:flex; gap:1rem; align-items:flex-start; margin-top:1.2rem;
-  border-left:2px solid var(--gold); padding-left:1rem;
+  display:flex; flex-direction:column; gap:.3rem; margin:0;
+  border-left:2px solid var(--gold); padding-left:1.1rem;
 }
-.price-main{ font-family:var(--f-body); font-weight:600; font-size:2rem; color:var(--gold-hi); line-height:1.1; }
-.price-meta{ font-family:var(--f-mono); font-size:.7rem; color:var(--muted); padding-top:.55rem; }
+.price-row{ display:flex; align-items:baseline; gap:.9rem; flex-wrap:wrap; }
+.price-main{
+  font-family:var(--f-body); font-weight:600; line-height:1.1;
+  font-size:clamp(1.7rem,5vw,2.1rem); color:var(--gold-hi);
+}
+.price-meta{ font-family:var(--f-mono); font-size:.7rem; color:var(--muted); }
 .price-meta s{ color:var(--faint); }
-.price-meta b{ color:var(--gold); font-weight:700; }
-.price-sub{ font-family:var(--f-body); font-size:.78rem; color:var(--faint); margin-top:.35rem; }
+.price-meta b{ color:var(--live); font-weight:700; }
+.price-sub{ font-size:.78rem; color:var(--faint); }
 .price-sub i{ color:var(--live); font-style:normal; }
+.stockline{
+  font-family:var(--f-mono); font-size:.62rem; letter-spacing:.14em;
+  text-transform:uppercase; margin:0;
+}
+.stockline.ok{ color:var(--live); }
+.stockline.low{ color:var(--gold-hi); }
+.stockline.out{ color:#E08A7A; }
 
-.desc{ color:var(--muted); margin-top:1.4rem; max-width:34rem; }
+/* ── description ── */
+.desc{ color:var(--muted); line-height:1.75; margin:0; max-width:38rem; }
+
+/* ── full details ── */
 .details-toggle{
-  display:inline-flex; align-items:center; gap:.6em; margin-top:1.2rem;
-  font-family:var(--f-mono); font-size:.64rem; letter-spacing:.22em; text-transform:uppercase;
-  color:var(--gold); border-bottom:1px dashed var(--gold); padding-bottom:.3em;
+  display:inline-flex; align-items:center; gap:.6em; width:auto; cursor:pointer;
+  font-family:var(--f-mono); font-size:.64rem; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--gold);
+  background:none; border:none; border-bottom:1px dashed var(--gold);
+  padding:0 0 .35em;
 }
-.details{ display:none; margin-top:1.2rem; color:var(--muted); font-size:.9rem; border-left:1px solid var(--line-soft); padding-left:1rem; }
+.details-toggle:hover{ color:var(--gold-hi); }
+.details{
+  display:none; width:100%; margin-top:-.4rem;
+  border:1px solid var(--line-soft); border-radius:14px;
+  background:rgba(255,255,255,.03); padding:.4rem 1.1rem;
+}
 .details.open{ display:block; }
-.details div{ padding:.3rem 0; }
-.details b{ color:var(--text); font-weight:500; }
-
-/* actions */
-.actions{ display:flex; gap:.9rem; margin-top:2.2rem; flex-wrap:wrap; align-items:stretch; }
-.qty{
-  display:flex; align-items:center; border:1px solid var(--line); border-radius:999px; overflow:hidden;
+.details div{
+  display:flex; justify-content:space-between; gap:1rem;
+  padding:.6rem 0; border-bottom:1px dashed var(--line-soft); font-size:.86rem;
 }
-.qty button{ width:44px; height:50px; font-size:1.1rem; color:var(--muted); transition:color .2s; }
+.details div:last-child{ border-bottom:none; }
+.details b{
+  font-family:var(--f-mono); font-weight:400; font-size:.6rem;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--faint);
+}
+.details span{ color:var(--text); }
+
+/* ── actions: three separate boxes, never merged ── */
+.actions{
+  display:flex; gap:.7rem; align-items:stretch; flex-wrap:wrap; margin:.2rem 0 0;
+}
+.qty{
+  display:flex; align-items:center; flex:none; overflow:hidden;
+  border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.03);
+}
+.qty button{ width:44px; height:54px; font-size:1.1rem; color:var(--muted); transition:color .2s; }
 .qty button:hover{ color:var(--gold-hi); }
-.qty .q{ width:34px; text-align:center; font-family:var(--f-mono); }
+.qty .q{ width:32px; text-align:center; font-family:var(--f-mono); }
 .buy{
-  flex:1; min-width:180px; border-radius:999px;
-  background:linear-gradient(180deg, #F0DCC0, var(--gold));
-  color:#080C1F; font-weight:600; letter-spacing:.02em;
+  flex:1 1 190px; min-height:54px; border-radius:14px; padding:0 1.4rem;
+  background:linear-gradient(180deg,#F0DCC0,var(--gold));
+  color:#080C1F; font-weight:700; font-size:.95rem;
   display:flex; align-items:center; justify-content:center; gap:.5em;
-  transition:all .3s var(--ease); padding:0 1.6rem;
+  transition:all .3s var(--ease);
 }
 .buy:hover{ transform:translateY(-2px); box-shadow:0 16px 36px -14px rgba(201,161,95,.6); }
 .cart{
-  border:1px solid var(--line); border-radius:999px; padding:0 1.8rem;
+  flex:0 1 150px; min-height:54px; border-radius:14px;
+  border:1px solid var(--line); background:rgba(255,255,255,.03);
   display:flex; align-items:center; justify-content:center;
-  color:var(--text); transition:all .3s;
+  color:var(--text); font-size:.9rem; transition:all .3s;
 }
 .cart:hover{ border-color:var(--gold); color:var(--gold-hi); }
+
+/* ── quiet reassurance strip ── */
+.trust{ list-style:none; display:grid; gap:.55rem; margin:.2rem 0 0; padding:0; }
+.trust li{ display:flex; gap:.7rem; font-size:.84rem; color:var(--faint); }
+.trust .ti{ color:var(--gold); width:1rem; flex:none; text-align:center; }
 
 /* lightbox zoom */
 #lb{
@@ -241,144 +310,69 @@ h1{ font-family:var(--f-body); font-weight:600; font-size:clamp(1.6rem,4vw,2.1re
 }
 .rhead a:hover{ color:var(--gold-hi); border-color:var(--gold); }
 
-/* ── product page v2 ── */
-.crumb{ display:flex; align-items:center; gap:.5rem; font-family:var(--f-mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); margin-bottom:1.1rem; flex-wrap:wrap; }
-.crumb a{ color:var(--muted); text-decoration:none; } .crumb a:hover{ color:var(--gold-hi); }
-.crumb b{ color:var(--gold-hi); font-weight:400; }
-.cat-tag{ display:inline-block; font-family:var(--f-mono); font-size:.56rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); border:1px solid var(--line-1); border-radius:999px; padding:.3rem .8rem; margin-bottom:.9rem; }
-.info h1{ font-family:var(--f-display); font-weight:300; font-size:clamp(1.7rem,3.6vw,2.5rem); line-height:1.15; margin:0 0 .5rem; }
-.tagline{ color:var(--muted); font-size:1rem; margin:0 0 1.2rem; }
-.pricebox{ display:flex; align-items:baseline; gap:.85rem; flex-wrap:wrap; margin:1.1rem 0 .5rem; }
-.price-main{ font-family:var(--f-display); font-size:2rem; color:var(--gold-hi); }
-.mrp{ font-family:var(--f-mono); font-size:.95rem; color:var(--faint); text-decoration:line-through; }
-.save{ font-family:var(--f-mono); font-size:.58rem; letter-spacing:.12em; text-transform:uppercase; background:var(--gold); color:#050818; border-radius:999px; padding:.25rem .7rem; font-weight:700; }
-.stockline{ font-family:var(--f-mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; margin-bottom:1.2rem; min-height:1em; }
-.stockline.low{ color:#F0DCC0; } .stockline.ok{ color:var(--live); } .stockline.out{ color:var(--err); }
-.info .desc{ color:var(--muted); line-height:1.75; margin:0 0 1.4rem; }
-.trust{ list-style:none; padding:0; margin:0 0 1.5rem; display:grid; gap:.6rem; }
-.trust li{ display:flex; align-items:flex-start; gap:.7rem; font-size:.86rem; color:var(--muted); }
-.trust .ti{ color:var(--gold); flex:none; width:1rem; text-align:center; }
-.details-toggle{ width:100%; text-align:left; background:none; border:none; border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); padding:.95rem 0; cursor:pointer; color:var(--text); font-family:var(--f-mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; }
-.details-toggle:hover{ color:var(--gold-hi); }
-.details{ display:none; padding:1rem 0; }
-.details.on{ display:block; }
-.details div{ display:flex; justify-content:space-between; gap:1rem; padding:.5rem 0; border-bottom:1px dashed var(--line-soft); font-size:.86rem; }
-.details b{ font-weight:400; color:var(--faint); font-family:var(--f-mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; }
-.details span{ color:var(--text); }
+/* ══════════════════════════════════════════════════════════
+   VIEWER + RESPONSIVE
+   ══════════════════════════════════════════════════════════ */
+/* nothing gets cropped — product photos often carry text */
+.photo img{ object-fit:contain !important; }
+.thumbs{ scrollbar-width:none; }
+.thumbs::-webkit-scrollbar{ display:none; }
+
 /* sticky mobile buy bar */
-.buybar{ position:fixed; left:0; right:0; bottom:0; z-index:80; display:none; align-items:center; gap:1rem;
-  padding:.8rem clamp(1rem,4vw,1.4rem); background:rgba(7,19,32,.94); backdrop-filter:blur(12px);
-  border-top:1px solid var(--line-1); transform:translateY(110%); transition:transform .35s cubic-bezier(.2,.7,.3,1); }
+.buybar{
+  position:fixed; left:0; right:0; bottom:0; z-index:80;
+  display:none; align-items:center; gap:1rem;
+  padding:.75rem clamp(1rem,4vw,1.4rem);
+  background:rgba(5,8,24,.94);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);
+  transform:translateY(110%); transition:transform .35s cubic-bezier(.2,.7,.3,1);
+  padding-bottom:calc(.75rem + env(safe-area-inset-bottom));
+}
 .buybar.on{ transform:none; }
 .bb-info{ flex:1; min-width:0; }
 .bb-name{ display:block; font-size:.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.bb-price{ display:block; font-family:var(--f-display); color:var(--gold-hi); font-size:1.05rem; }
-.bb-btn{ flex:none; border:none; border-radius:999px; padding:.8rem 1.6rem; cursor:pointer; font-family:var(--f-mono);
-  font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#050818;
-  background:#E6CBA8; }
-@media (max-width:820px){ .buybar{ display:flex; } body{ padding-bottom:4.5rem; } }
-
-/* ══════════════════════════════════════════════════════════
-   PRODUCT PAGE — every block its own card, floating on air
-══════════════════════════════════════════════════════════ */
-.info{ display:grid; gap:.7rem; align-content:start; }
-
-.pbox{
-  position:relative;
-  background:rgba(255,255,255,.075);
-  border:1px solid rgba(255,255,255,.16);
-  border-radius:16px;
-  padding:1.1rem 1.2rem;
-  backdrop-filter:blur(30px) saturate(170%);
-  -webkit-backdrop-filter:blur(30px) saturate(170%);
-  box-shadow:0 20px 52px -24px rgba(0,0,0,.8),
-             inset 0 1px 0 rgba(255,255,255,.20);
-  opacity:0; transform:translateY(16px) scale(.985);
-  animation:pboxIn .6s cubic-bezier(.2,.7,.24,1) forwards var(--d,0s);
-  transition:transform .4s cubic-bezier(.2,.7,.24,1), box-shadow .4s ease, border-color .35s ease;
+.bb-price{ display:block; font-family:var(--f-body); font-weight:600; color:var(--gold-hi); font-size:1.05rem; }
+.bb-btn{
+  flex:none; border:none; border-radius:999px; padding:.85rem 1.6rem; cursor:pointer;
+  font-family:var(--f-mono); font-size:.62rem; letter-spacing:.14em;
+  text-transform:uppercase; font-weight:700; color:#050818; background:#E6CBA8;
 }
-/* light catches the top edge, the way it does on real glass */
-.pbox::before{
-  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-  background:linear-gradient(158deg, rgba(255,255,255,.11), transparent 44%);
+@media (max-width:820px){
+  .buybar{ display:flex; }
+  body{ padding-bottom:5rem; }
 }
-.pbox:hover{
-  transform:translateY(-3px);
-  border-color:rgba(230,203,168,.34);
-  box-shadow:0 28px 66px -24px rgba(0,0,0,.86),
-             inset 0 1px 0 rgba(255,255,255,.26);
-}
-@keyframes pboxIn{ to{ opacity:1; transform:none; } }
-
-/* each card arrives a beat after the one above it */
-.pbox-id{    --d:.05s; }
-.pbox-price{ --d:.11s; }
-.pbox-desc{  --d:.17s; }
-.pbox-trust{ --d:.23s; }
-.pbox-more{  --d:.29s; padding:0; }
-.pbox-buy{   --d:.35s; display:flex; gap:.55rem; flex-wrap:wrap; align-items:center; }
-
-.pbox-id h1{ margin:0 0 .4rem; }
-.pbox-id .tagline{ margin:0; }
-.pbox-price .pricebox{ margin:0 0 .4rem; }
-.pbox-price .stockline{ margin:0; }
-.pbox-desc .desc{ margin:0; }
-.pbox-trust .trust{ margin:0; }
-
-/* details toggle lives edge-to-edge inside its card */
-.pbox-more .details-toggle{
-  border:none; padding:1rem 1.2rem; width:100%;
-  display:flex; justify-content:space-between; align-items:center; gap:.6rem;
-}
-.pbox-more .details-toggle span{ transition:transform .35s ease; }
-.pbox-more .details.on ~ .details-toggle span,
-.pbox-more.open .details-toggle span{ transform:rotate(180deg); }
-.pbox-more .details{ padding:0 1.2rem 1rem; }
-
-/* ── the hero image: lifted off the page, softly 3D ── */
-.viewer{ perspective:1400px; }
-.viewer .stage, .viewer > div:first-child{
-  border-radius:20px;
-  overflow:hidden;
-  box-shadow:0 40px 90px -34px rgba(0,0,0,.9),
-             0 6px 18px -8px rgba(0,0,0,.5),
-             inset 0 1px 0 rgba(255,255,255,.14);
-  transition:transform .7s cubic-bezier(.2,.7,.24,1), box-shadow .7s ease;
-  transform-style:preserve-3d;
-}
-.viewer:hover .stage, .viewer:hover > div:first-child{
-  transform:translateY(-6px) rotateX(1.4deg);
-  box-shadow:0 54px 110px -34px rgba(0,0,0,.95),
-             0 8px 22px -8px rgba(0,0,0,.55),
-             inset 0 1px 0 rgba(255,255,255,.2);
-}
-#mainImg, .viewer img{
-  border-radius:20px;
-  display:block;
-  width:100%; height:auto;
-  object-fit:contain;
-}
-/* thumbnails get their own small card */
-.thumbs{
-  margin-top:.7rem; padding:.45rem;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:14px;
-  backdrop-filter:blur(24px) saturate(160%);
-  -webkit-backdrop-filter:blur(24px) saturate(160%);
-  box-shadow:0 14px 38px -20px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.16);
-  display:flex; gap:.4rem; overflow-x:auto; scrollbar-width:none;
-}
-.thumbs::-webkit-scrollbar{ display:none; }
 
 @media (max-width:760px){
-  .info{ gap:.55rem; }
-  .pbox{ padding:.9rem 1rem; border-radius:14px; }
-  .pbox-more .details-toggle{ padding:.85rem 1rem; }
-  .pbox-more .details{ padding:0 1rem .9rem; }
-  .pbox-buy .buy, .pbox-buy .cart{ flex:1 1 100%; }
-  .viewer .stage, .viewer > div:first-child{ border-radius:16px; }
-  #mainImg, .viewer img{ border-radius:16px; }
+  .wrap{ padding:0 1rem; }
+  #page{ padding:1.4rem 0 0; gap:1.5rem; }
+
+  .viewer{ margin-top:1rem; padding:1rem; border-radius:16px; }
+  .viewer .ck{ width:14px; height:14px; }
+  .viewer .ck.tl,.viewer .ck.tr{ top:10px; }
+  .viewer .ck.bl,.viewer .ck.br{ bottom:10px; }
+  .viewer .ck.tl,.viewer .ck.bl{ left:10px; }
+  .viewer .ck.tr,.viewer .ck.br{ right:10px; }
+
+  .thumbs{ gap:.45rem; margin-top:.8rem; }
+  .thumb{ width:62px; height:62px; border-radius:8px; }
+
+  .info{ gap:1.25rem; margin-top:1.5rem; padding-bottom:2rem; }
+  .pricebox{ padding-left:.9rem; }
+  .details-toggle{ font-size:.6rem; letter-spacing:.18em; }
+  .details{ padding:.3rem .9rem; }
+
+  /* quantity + Buy on one row, Add to bag full width beneath —
+     keeps every tap target a comfortable size on a phone */
+  .actions{ gap:.6rem; }
+  .qty{ flex:0 0 auto; }
+  .buy{ flex:1 1 auto; min-width:0; }
+  .cart{ flex:1 1 100%; }
+}
+
+@media (max-width:380px){
+  .qty button{ width:38px; }
+  .buy{ font-size:.88rem; padding:0 1rem; }
 }
 </style>
 <script src="js/transitions.js"></script>
@@ -492,6 +486,9 @@ h1{ font-family:var(--f-body); font-weight:600; font-size:clamp(1.6rem,4vw,2.1re
       '</button>'
     : '';
 
+  var badgeText = p.badge || (p.isNew ? 'New' : '');
+  var offPct = (p.mrp && p.mrp > p.price) ? Math.round((1 - p.price / p.mrp) * 100) : 0;
+
   page.innerHTML =
   '<div class="viewer">' +
     '<span class="ck tl"></span><span class="ck tr"></span><span class="ck bl"></span><span class="ck br"></span>' +
@@ -508,70 +505,70 @@ h1{ font-family:var(--f-body); font-weight:600; font-size:clamp(1.6rem,4vw,2.1re
   '</div>' +
 
   '<div class="info">' +
+
     '<nav class="crumb">' +
       '<a href="index.html">Home</a><span>/</span><a href="shop.html">Shop</a><span>/</span><b>'+p.category+'</b>' +
     '</nav>' +
 
-    /* card 1 — identity: category, name, tagline */
-    '<div class="pbox pbox-id">' +
-      '<span class="cat-tag">'+p.category+'</span>' +
+    /* who's selling it, what it is */
+    '<div class="idblock">' +
+      '<div class="seller">The AIM · Verified</div>' +
+      '<div class="skurow">' +
+        (p.sku ? '<span class="sku">SKU '+p.sku+'</span>' : '') +
+        (badgeText ? '<span class="badge">'+badgeText+'</span>' : '') +
+      '</div>' +
       '<h1>'+p.name+'</h1>' +
       (p.short ? '<p class="tagline">'+p.short+'</p>' : '') +
     '</div>' +
 
-    /* card 2 — price + availability */
-    '<div class="pbox pbox-price">' +
-      '<div class="pricebox">' +
-        '<div class="price-main">'+fmt(p.price)+'</div>' +
-        (p.mrp && p.mrp > p.price
-          ? '<span class="mrp">'+fmt(p.mrp)+'</span><span class="save">Save '+Math.round((1-p.price/p.mrp)*100)+'%</span>'
+    /* price, set off behind the gold rule */
+    '<div class="pricebox">' +
+      '<div class="price-row">' +
+        '<span class="price-main">'+fmt(p.price)+'</span>' +
+        (offPct
+          ? '<span class="price-meta">M.R.P. <s>'+fmt(p.mrp)+'</s> · <b>'+offPct+'% off</b></span>'
           : '') +
       '</div>' +
-      '<div class="stockline" id="stockline"></div>' +
+      '<div class="price-sub"><i>✓</i> Inclusive of all taxes · Free delivery above ₹499</div>' +
     '</div>' +
 
-    /* card 3 — description */
-    '<div class="pbox pbox-desc"><p class="desc">'+p.desc+'</p></div>' +
+    '<div class="stockline" id="stockline"></div>' +
 
-    /* card 4 — why buy here */
-    '<div class="pbox pbox-trust">' +
-      '<ul class="trust">' +
-        '<li><span class="ti">\u25C8</span>Hand-picked \u2014 not a dropship catalogue</li>' +
-        '<li><span class="ti">\u25B6</span>Filmed in real life before it reaches you</li>' +
-        '<li><span class="ti">\u21C4</span>7-day easy returns across India</li>' +
-        '<li><span class="ti">\u2691</span>Ships pan-India, tracked</li>' +
-      '</ul>' +
+    '<p class="desc">'+p.desc+'</p>' +
+
+    '<button class="details-toggle" id="dt">See full details ▾</button>' +
+    '<div class="details" id="dd">' +
+      '<div><b>Category</b><span>'+p.category+'</span></div>' +
+      (p.sku ? '<div><b>Product code</b><span>'+p.sku+'</span></div>' : '') +
+      (p.stock != null ? '<div><b>Availability</b><span>'+(p.stock>0?'In stock':'Sold out')+'</span></div>' : '') +
+      '<div><b>Delivery</b><span>1–2 days, pan-India</span></div>' +
+      '<div><b>Returns</b><span>7 days, no questions</span></div>' +
     '</div>' +
 
-    /* card 5 — details, opens in place */
-    '<div class="pbox pbox-more">' +
-      '<button class="details-toggle" id="dt">Product details<span>\u2304</span></button>' +
-      '<div class="details" id="dd">' +
-        '<div><b>Category</b><span>'+p.category+'</span></div>' +
-        '<div><b>Product code</b><span>'+p.sku+'</span></div>' +
-        (p.stock != null ? '<div><b>Availability</b><span>'+(p.stock>0?'In stock':'Sold out')+'</span></div>' : '') +
-        '<div><b>Delivery</b><span>1\u20132 days, pan-India</span></div>' +
+    /* three separate boxes — quantity, buy, bag */
+    '<div class="actions">' +
+      '<div class="qty">' +
+        '<button id="minus" aria-label="Decrease quantity">−</button>' +
+        '<span class="q" id="q">1</span>' +
+        '<button id="plus" aria-label="Increase quantity">+</button>' +
       '</div>' +
+      '<button class="buy" id="buyBtn">⚡ Buy now</button>' +
+      '<button class="cart" id="cartBtn">+ Bag</button>' +
     '</div>' +
 
-    /* card 6 — the buy actions */
-    '<div class="pbox pbox-buy">' +
-      '<div class="qty"><button id="minus" aria-label="Decrease quantity">\u2212</button><span class="q" id="q">1</span><button id="plus" aria-label="Increase quantity">+</button></div>' +
-      '<button class="buy" id="buyBtn">Buy now</button>' +
-      '<button class="cart" id="cartBtn">Add to bag</button>' +
-    '</div>' +
+    '<ul class="trust">' +
+      '<li><span class="ti">\u25C8</span>Hand-picked — not a dropship catalogue</li>' +
+      '<li><span class="ti">\u25B6</span>Filmed in real life before it reaches you</li>' +
+      '<li><span class="ti">\u21C4</span>7-day easy returns across India</li>' +
+      '<li><span class="ti">\u2691</span>Ships pan-India, tracked</li>' +
+    '</ul>' +
+
   '</div>' +
+
   '<div class="buybar" id="buybar">' +
     '<div class="bb-info"><span class="bb-name">'+p.name+'</span><span class="bb-price">'+fmt(p.price)+'</span></div>' +
     '<button class="bb-btn" id="bbBuy">Buy now</button>' +
   '</div>';
-
-  /* sticky buy bar — appears on mobile when you scroll past the buttons */
-  '<div class="buybar" id="buybar">' +
-    '<div class="bb-info"><span class="bb-name">'+p.name+'</span><span class="bb-price">'+fmt(p.price)+'</span></div>' +
-    '<button class="bb-btn" id="bbBuy">Buy now</button>' +
-  '</div>';
-
 
   /* stock line — honest, from live data when present */
   (function(){
