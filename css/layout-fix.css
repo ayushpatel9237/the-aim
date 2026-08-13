@@ -78,58 +78,59 @@
   object-position:center center;
 }
 
-/* ── 3. THE TICKET — text, not a floating cream card ─────────── */
+/* ── 3. THE TICKET — cream panel, sitting BELOW the photo ────
+   The cream stays. What's removed is the negative margin that
+   pulled it up over the product name. It now sits in normal flow. */
 .ticket{
   position:relative;
-  margin:0 !important;              /* was 34px -8px 0 — the overlap */
-  padding:.85rem .35rem 1rem !important;
-  background:none !important;
-  border-radius:0 !important;
-  box-shadow:none !important;
+  margin:.55rem 0 0 !important;     /* was 34px -8px 0 — the overlap */
+  padding:.8rem .85rem .9rem !important;
+  background:linear-gradient(180deg,#FBF6EA 0%,#F0E7D5 100%) !important;
+  border:1px solid rgba(255,255,255,.7) !important;
+  border-radius:11px !important;
+  box-shadow:0 6px 16px -8px rgba(0,0,0,.5),
+             inset 0 1px 0 rgba(255,255,255,.9) !important;
   text-align:left;
   flex:1;
   display:flex;
   flex-direction:column;
-  gap:.25rem;
+  gap:.22rem;
   animation:none !important;
   backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-  border:none !important;
 }
-.ticket::before{ display:none !important; }
+.ticket::before{ display:none !important; }   /* the brass clip */
 
-.ticket .cat{ color:var(--faint, #5F678E); font-size:.5rem; letter-spacing:.24em; }
+.ticket .cat{ color:#6B7290 !important; font-size:.5rem; letter-spacing:.24em; }
 .ticket .nm{
-  color:var(--text, #FFF1E2) !important;
-  font-size:.95rem;
+  color:#0A0F26 !important;
+  font-size:.92rem;
   line-height:1.25;
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
   overflow:hidden;
-  /* no floating frame — these are plain words now */
-  background:none !important;
-  border:none !important;
-  box-shadow:none !important;
-  padding:0 !important;
+  background:none !important; border:none !important;
+  box-shadow:none !important; padding:0 !important;
   backdrop-filter:none !important;
 }
 .ticket .pr{
-  color:var(--gold, #E6CBA8) !important;
-  font-size:.85rem;
-  margin-top:.15rem;
-  background:none !important;
-  border:none !important;
-  box-shadow:none !important;
-  padding:0 !important;
+  color:#8A6F3E !important;
+  font-size:.86rem;
+  margin-top:.1rem;
+  background:none !important; border:none !important;
+  box-shadow:none !important; padding:0 !important;
   backdrop-filter:none !important;
 }
-.ticket .pr s{ color:var(--faint, #5F678E); }
+.ticket .pr s{ color:#9AA0B8 !important; }
 .ticket .go{
-  color:var(--gold, #E6CBA8);
-  opacity:.75;                      /* was 0 until hover — invisible on phones */
+  color:#0A0F26 !important;
+  opacity:.62;                      /* was 0 until hover — invisible on phones */
   margin-top:auto;
-  padding-top:.5rem;
+  padding-top:.45rem;
 }
 .pcase:hover .ticket .go{ opacity:1; }
+.pcase:hover .ticket{
+  box-shadow:0 10px 22px -8px rgba(0,0,0,.6),
+             inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
 
 /* ── 4. COLUMN COUNTS ───────────────────────────────────────── */
 .grid{ grid-template-columns:repeat(4,1fr) !important; }
@@ -139,7 +140,7 @@
 @media (max-width:560px){
   .grid{ grid-template-columns:repeat(2,1fr) !important; gap:1rem .8rem !important; }
   .pcase{ padding:7px 7px 0; border-radius:11px; }
-  .ticket{ padding:.6rem .25rem .75rem !important; }
+  .ticket{ padding:.65rem .6rem .75rem !important; margin-top:.45rem !important; }
   .ticket .nm{ font-size:.82rem; }
   .ticket .pr{ font-size:.78rem; }
   .ticket .go{ font-size:.46rem; }
@@ -166,4 +167,182 @@
 
   /* iOS: stop the fixed radial background repainting every scroll frame */
   body{ background-attachment:scroll !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PRODUCT PAGE — every element its own box
+   No big containers holding several things. Each piece of
+   information sits in its own bordered card, so nothing looks
+   like it's floating loose on top of a panel.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── the hero image frame follows the image, not a fixed shape ── */
+.viewer .stage, .viewer > div:first-child{
+  display:inline-flex !important;
+  width:100% !important;
+  height:auto !important;
+  aspect-ratio:auto !important;      /* the image decides the height */
+  background:#FFFFFF;
+  padding:10px;
+  border:1px solid rgba(230,203,168,.22);
+  border-radius:18px;
+  box-shadow:0 30px 70px -30px rgba(0,0,0,.85),
+             0 4px 14px -6px rgba(0,0,0,.45),
+             inset 0 1px 0 rgba(255,255,255,.5);
+}
+#mainImg, .viewer img{
+  width:100% !important;
+  height:auto !important;
+  max-height:none !important;
+  object-fit:contain !important;
+  border-radius:11px !important;
+}
+
+/* ── each thumbnail is its own small box, not one strip ── */
+.thumbs{
+  background:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  padding:0 !important;
+  gap:.5rem !important;
+  margin-top:.65rem !important;
+}
+.thumbs > *{
+  flex:0 0 auto;
+  background:#FFFFFF;
+  border:1px solid rgba(230,203,168,.22);
+  border-radius:11px;
+  padding:5px;
+  box-shadow:0 6px 16px -8px rgba(0,0,0,.6);
+  transition:transform .3s cubic-bezier(.2,.7,.24,1), border-color .3s ease;
+}
+.thumbs > *:hover{ transform:translateY(-3px); border-color:rgba(230,203,168,.55); }
+.thumbs img{ object-fit:contain !important; border-radius:6px; }
+
+/* ── text: no panel behind it, just a hairline box ── */
+.pbox{
+  background:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  border:1px solid rgba(230,203,168,.18) !important;
+  border-radius:14px !important;
+  box-shadow:0 10px 26px -18px rgba(0,0,0,.6) !important;
+  padding:1rem 1.1rem !important;
+}
+.pbox::before{ display:none !important; }
+.pbox:hover{
+  border-color:rgba(230,203,168,.34) !important;
+  transform:none !important;
+}
+
+/* ── the buy row: three separate boxes, not one ── */
+.pbox-buy{
+  background:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  display:flex !important;
+  gap:.55rem !important;
+  flex-wrap:wrap;
+  align-items:stretch;
+}
+.pbox-buy .qty{
+  flex:0 0 auto;
+  border:1px solid rgba(230,203,168,.28) !important;
+  border-radius:12px !important;
+  padding:.5rem .6rem !important;
+  background:rgba(255,255,255,.04);
+  box-shadow:0 8px 20px -14px rgba(0,0,0,.7);
+}
+.pbox-buy .buy{
+  flex:1 1 150px;
+  border-radius:12px !important;
+  box-shadow:0 10px 26px -14px rgba(230,203,168,.55);
+}
+.pbox-buy .cart{
+  flex:0 1 auto;
+  border:1px solid rgba(230,203,168,.28) !important;
+  border-radius:12px !important;
+  background:rgba(255,255,255,.04) !important;
+  box-shadow:0 8px 20px -14px rgba(0,0,0,.7);
+}
+
+/* ── mobile: same idea, tighter ── */
+@media (max-width:760px){
+  .viewer .stage, .viewer > div:first-child{ padding:8px; border-radius:15px; }
+  #mainImg, .viewer img{ border-radius:9px !important; }
+  .thumbs > *{ border-radius:9px; padding:4px; }
+  .pbox{ padding:.9rem .95rem !important; border-radius:13px !important; }
+  .pbox-buy{ gap:.5rem !important; }
+  .pbox-buy .qty{ flex:1 1 100%; justify-content:center; }
+  .pbox-buy .buy, .pbox-buy .cart{ flex:1 1 100%; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   QUICK-VIEW SHEET — same treatment, so both routes feel alike
+   ══════════════════════════════════════════════════════════════ */
+.sh-hero{
+  background:#FFFFFF !important;
+  border:1px solid rgba(230,203,168,.22) !important;
+  border-radius:16px !important;
+  padding:8px !important;
+  backdrop-filter:none !important;
+  box-shadow:0 24px 60px -26px rgba(0,0,0,.85),
+             inset 0 1px 0 rgba(255,255,255,.5) !important;
+}
+.sh-hero .ph{ background:none !important; min-height:0 !important; }
+.sh-hero img{ height:auto !important; max-height:52vh !important; border-radius:9px !important; }
+
+/* thumbnails: individual boxes, no strip behind them */
+.sh-thumbs{
+  background:none !important; border:none !important;
+  box-shadow:none !important; backdrop-filter:none !important;
+  padding:0 !important; gap:.45rem !important;
+}
+.sh-t{
+  background:#FFFFFF !important;
+  border:1px solid rgba(230,203,168,.22) !important;
+  border-radius:10px !important;
+  padding:4px !important;
+  opacity:1 !important;
+  box-shadow:0 6px 14px -8px rgba(0,0,0,.6);
+}
+.sh-t.on{ border-color:rgba(230,203,168,.8) !important; }
+
+/* text cards: hairline only, no frosted slab */
+.sh-info, .sh-more, .sh-facts{
+  background:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  border:1px solid rgba(230,203,168,.18) !important;
+  box-shadow:0 10px 26px -18px rgba(0,0,0,.6) !important;
+}
+.sh-info .sh-name{ color:#FFF1E2 !important; }
+.sh-info .sh-price{ color:#E6CBA8 !important; }
+.sh-info .sh-desc{ color:rgba(255,241,226,.72) !important; }
+
+/* buy row: separate boxes */
+.sh-acts{
+  background:none !important; border:none !important;
+  box-shadow:none !important; backdrop-filter:none !important;
+  padding:0 !important; gap:.5rem !important;
+}
+.sh-acts .sh-qty{
+  border:1px solid rgba(230,203,168,.28) !important;
+  border-radius:11px !important;
+  background:rgba(255,255,255,.04) !important;
+  padding:.45rem .55rem !important;
+}
+.sh-acts .sh-buy{ border-radius:11px !important; }
+.sh-acts .sh-bag{
+  border:1px solid rgba(230,203,168,.28) !important;
+  border-radius:11px !important;
+  background:rgba(255,255,255,.04) !important;
+}
+@media (max-width:640px){
+  .sh-hero img{ max-height:34vh !important; }
+  .sh-acts .sh-qty{ flex:1 1 100%; justify-content:center; }
+  .sh-acts .sh-buy, .sh-acts .sh-bag{ flex:1 1 100%; }
 }
