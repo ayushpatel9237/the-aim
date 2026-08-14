@@ -1,14 +1,10 @@
 /* ═══════════════════════════════════════════════════════════
    THE AIM — PRODUCT SHEET
 
-   Tapping any product opens it as a panel over the page — the
-   background stays exactly where it was, blurred behind. Closing
-   returns you to the same spot, no reload.
-
-   Layout: framed photo with corner brackets, thumbnail rail
-   beneath it, then the info as one flat column — seller, SKU,
-   name, gold-ruled price, description, full details, and the
-   quantity / buy / bag row. No cards; spacing holds it apart.
+   Ported from the Ascentra popup-card so both sites read the
+   same. The image tile is the only glass box; the thumbnail
+   strip floats free below it, and the info and actions are bare
+   text held apart by spacing. Natural page scroll, no reload.
 ═══════════════════════════════════════════════════════════ */
 (function(){
   if(typeof PRODUCTS === 'undefined') return;
@@ -16,156 +12,197 @@
 
   var css = document.createElement('style');
   css.textContent = [
-    /* ── scrim ── */
-    '.sh-scrim{position:fixed;inset:0;z-index:9000;background:rgba(3,5,16,.72);',
-      'backdrop-filter:blur(26px) saturate(140%);-webkit-backdrop-filter:blur(26px) saturate(140%);',
-      'opacity:0;transition:opacity .4s ease;}',
+    /* ── overlay ── */
+    '.sh-scrim{position:fixed;inset:0;z-index:9000;background:rgba(4,4,10,.78);',
+      'backdrop-filter:blur(26px) brightness(.5) saturate(118%);',
+      '-webkit-backdrop-filter:blur(26px) brightness(.5) saturate(118%);',
+      'opacity:0;transition:opacity .3s ease;}',
     '.sh-scrim.on{opacity:1;}',
 
-    /* ── the panel: one column, always ── */
-    '.sh{position:fixed;z-index:9001;left:50%;top:50%;transform:translate(-50%,-50%);',
-      'width:min(600px,94vw);max-height:92vh;overflow-y:auto;overflow-x:hidden;',
-      'background:rgba(5,8,24,.94);border:1px solid rgba(230,203,168,.12);border-radius:22px;',
-      'box-shadow:0 40px 90px -30px rgba(0,0,0,.9);padding:.85rem;scrollbar-width:none;',
-      'opacity:0;transform:translate(-50%,-48%) scale(.985);',
-      'transition:opacity .45s ease, transform .5s cubic-bezier(.2,.7,.24,1);}',
-    '.sh.on{opacity:1;transform:translate(-50%,-50%) scale(1);}',
+    /* ── the card: no box at all, just a column ── */
+    '.sh{position:fixed;inset:0;z-index:9001;overflow-y:auto;overflow-x:hidden;',
+      'padding:max(3vh,1rem) 1rem 3rem;scrollbar-width:none;',
+      'opacity:0;transition:opacity .3s ease;}',
+    '.sh.on{opacity:1;}',
     '.sh::-webkit-scrollbar{display:none;}',
+    '.sh-card{max-width:420px;width:100%;margin:0 auto;display:flex;flex-direction:column;',
+      'transform:translateY(26px) scale(.93);',
+      'transition:transform .35s cubic-bezier(.34,1.56,.64,1);}',
+    '.sh.on .sh-card{transform:none;}',
 
-    /* ── framed photo, gold corner brackets ── */
-    '.sh-frame{position:relative;background:#080C1F;border:1px solid rgba(230,203,168,.14);',
-      'border-radius:18px;padding:1.1rem;}',
-    '.sh-frame .ck{position:absolute;width:16px;height:16px;border:1px solid #E6CBA8;opacity:.8;}',
-    '.sh-frame .ck.tl{top:12px;left:12px;border-right:none;border-bottom:none;}',
-    '.sh-frame .ck.tr{top:12px;right:12px;border-left:none;border-bottom:none;}',
-    '.sh-frame .ck.bl{bottom:12px;left:12px;border-right:none;border-top:none;}',
-    '.sh-frame .ck.br{bottom:12px;right:12px;border-left:none;border-top:none;}',
-    '.sh-ph{width:100%;background:#FFF1E2;border-radius:10px;overflow:hidden;cursor:zoom-in;',
-      'display:flex;align-items:center;justify-content:center;}',
-    '.sh-ph img{width:100%;height:auto;max-height:52vh;object-fit:contain;display:block;}',
-    '.sh-main{position:absolute;left:20px;bottom:20px;z-index:3;display:none;',
-      'font-family:var(--f-mono,monospace);font-size:.54rem;letter-spacing:.18em;text-transform:uppercase;',
-      'background:rgba(5,8,24,.86);color:#FFF1E2;border:1px solid rgba(230,203,168,.3);',
-      'padding:.55em 1em;border-radius:8px;cursor:pointer;backdrop-filter:blur(6px);}',
+    /* ── IMAGE TILE — the one glass frame ── */
+    '.sh-tile{',
+      'background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.01) 18%),',
+        'linear-gradient(168deg,rgba(36,36,62,.58),rgba(10,10,22,.72));',
+      'backdrop-filter:blur(40px) saturate(175%);-webkit-backdrop-filter:blur(40px) saturate(175%);',
+      'border:0.5px solid rgba(255,255,255,.09);border-radius:24px;',
+      'box-shadow:0 18px 50px rgba(0,0,0,.48),inset 0 1.5px 0 rgba(255,255,255,.3);',
+      'padding:.6rem .6rem .55rem;}',
+
+    '.sh-hero{position:relative;width:100%;aspect-ratio:1/1;border-radius:17px;overflow:hidden;',
+      'background:#07070d;border:0.5px solid rgba(255,255,255,.05);',
+      'box-shadow:inset 0 1.5px 0 rgba(255,255,255,.18),inset 0 0 0 1px rgba(255,255,255,.03);',
+      'cursor:zoom-in;}',
+    /* top sheen + vignette over everything */
+    '.sh-hero::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;',
+      'background:linear-gradient(180deg,rgba(255,255,255,.06),transparent 16%),',
+        'radial-gradient(125% 85% at 50% 42%,transparent 56%,rgba(0,0,0,.42) 100%);}',
+    '.sh-stage{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;',
+      'background:#0c0c16;}',
+    '.sh-stage img{width:100%;height:100%;object-fit:cover;display:block;',
+      'transition:transform .6s cubic-bezier(.2,.7,.3,1);}',
+    '.sh-hero:hover .sh-stage img{transform:scale(1.02);}',
+    '.sh-stage iframe,.sh-stage video{width:100%;height:100%;border:none;}',
+
+    /* editorial corner ticks */
+    '.sh-tick{position:absolute;width:14px;height:14px;border:1.5px solid rgba(201,168,76,.6);',
+      'z-index:4;pointer-events:none;}',
+    '.sh-tick.tl{top:11px;left:11px;border-right:0;border-bottom:0;}',
+    '.sh-tick.tr{top:11px;right:11px;border-left:0;border-bottom:0;}',
+    '.sh-tick.bl{bottom:11px;left:11px;border-right:0;border-top:0;}',
+    '.sh-tick.br{bottom:11px;right:11px;border-left:0;border-top:0;}',
+
+    /* ← main photo chip */
+    '.sh-main{position:absolute;bottom:.75rem;left:.75rem;z-index:5;cursor:pointer;',
+      'background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.04));',
+      'backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);',
+      'border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.45);',
+      'border-radius:8px;color:#C9A84C;font-family:var(--f-mono,monospace);font-size:.5rem;',
+      'letter-spacing:1px;text-transform:uppercase;padding:5px 10px;display:none;align-items:center;gap:4px;',
+      'transition:.15s;}',
     '.sh-main.on{display:inline-flex;}',
-    '.sh-main:hover{border-color:#E6CBA8;color:#F0DCC0;}',
+    '.sh-main:hover{background:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,.1));',
+      'border-color:rgba(255,255,255,.35);}',
 
-    /* ── thumbnail rail, bare on the background ── */
-    '.sh-rail{display:flex;gap:.5rem;overflow-x:auto;scrollbar-width:none;margin-top:.7rem;padding:.15rem;}',
-    '.sh-rail::-webkit-scrollbar{display:none;}',
-    '.sh-t{flex:none;width:74px;height:74px;border-radius:10px;overflow:hidden;cursor:pointer;',
-      'background:#FFF1E2;border:2px solid transparent;opacity:.6;padding:2px;',
-      'transition:opacity .25s,border-color .25s,transform .25s;',
-      'display:flex;align-items:center;justify-content:center;}',
-    '.sh-t:hover{opacity:1;transform:translateY(-2px);}',
-    '.sh-t img{width:100%;height:100%;object-fit:contain;display:block;}',
-    '.sh-t.on{opacity:1;border-color:#E6CBA8;}',
-    '.sh-t.vid{position:relative;}',
+    /* ── THUMBNAILS — outside the box, each its own glass tile ── */
+    '.sh-thumbs-wrap{margin-top:.55rem;padding:0 .1rem;}',
+    '.sh-thumbs{display:flex;gap:.5rem;overflow-x:auto;padding:3px;scrollbar-width:none;}',
+    '.sh-thumbs::-webkit-scrollbar{display:none;}',
+    '.sh-t{width:68px;height:68px;flex:0 0 68px;border-radius:12px;overflow:hidden;cursor:pointer;',
+      'background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));',
+      'backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);',
+      'border:0.5px solid rgba(255,255,255,.12);',
+      'box-shadow:0 4px 16px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.22);',
+      'transition:transform .15s,border-color .18s,box-shadow .18s;padding:0;position:relative;}',
+    '.sh-t img{width:100%;height:100%;object-fit:cover;display:block;}',
+    '.sh-t:hover{transform:scale(1.06);border-color:rgba(255,255,255,.22);}',
+    '.sh-t.on{border:1px solid #C9A84C;',
+      'box-shadow:0 4px 18px rgba(201,168,76,.25),0 0 0 1px rgba(201,168,76,.2),',
+        'inset 0 1px 0 rgba(255,255,255,.3);}',
     '.sh-t.vid::after{content:"▶";position:absolute;inset:0;display:flex;align-items:center;',
-      'justify-content:center;background:rgba(5,8,24,.45);color:#fff;font-size:.75rem;}',
+      'justify-content:center;background:rgba(6,6,12,.45);color:#fff;font-size:.8rem;}',
 
-    /* ── info: flat column, spacing only ── */
-    '.sh-body{padding:1.6rem .6rem .5rem;display:flex;flex-direction:column;gap:1.1rem;}',
-    '.sh-body > *{margin:0;}',
+    /* ── INFO — floating text, no box ── */
+    '.sh-info{padding:1.3rem .1rem 0;}',
+    '.sh-eyebrow{font-family:var(--f-mono,monospace);font-size:.55rem;letter-spacing:2px;',
+      'text-transform:uppercase;color:#C9A84C;opacity:.8;margin-bottom:.5rem;}',
+    '.sh-meta{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.5rem;}',
+    '.sh-sku{font-family:var(--f-mono,monospace);font-size:.55rem;letter-spacing:2px;',
+      'text-transform:uppercase;color:#6E6C78;}',
+    '.sh-chip{display:inline-flex;align-items:center;gap:3px;color:#5DCAA5;',
+      'background:linear-gradient(180deg,rgba(93,202,165,.24),rgba(93,202,165,.06));',
+      'backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);',
+      'border:1px solid rgba(93,202,165,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.32);',
+      'font-family:var(--f-mono,monospace);font-size:.56rem;padding:2px 8px;border-radius:6px;}',
+    '.sh-name{font-family:var(--f-body,system-ui),sans-serif;font-weight:700;font-size:1.3rem;',
+      'color:#F4F2EC;text-align:left;line-height:1.24;letter-spacing:-.3px;margin:.36rem 0 .85rem;}',
 
-    '.sh-seller{font-family:var(--f-mono,monospace);font-size:.6rem;letter-spacing:.3em;',
-      'text-transform:uppercase;color:#E6CBA8;}',
-    '.sh-skurow{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-top:-.75rem;}',
-    '.sh-sku{font-family:var(--f-mono,monospace);font-size:.64rem;letter-spacing:.22em;',
-      'text-transform:uppercase;color:#8E96B8;}',
-    '.sh-badge{font-family:var(--f-mono,monospace);font-size:.54rem;letter-spacing:.12em;',
-      'text-transform:uppercase;color:#5FA88C;border:1px solid rgba(106,168,143,.45);',
-      'background:rgba(106,168,143,.1);padding:.32em .85em;border-radius:999px;}',
+    /* price — gold left bar, no box */
+    '.sh-price-strip{border-left:2px solid rgba(201,168,76,.5);padding-left:.85rem;margin:.15rem 0 .8rem;}',
+    '.sh-price-row{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;margin:0 0 .25rem;}',
+    '.sh-price{font-family:var(--f-body,system-ui),sans-serif;font-size:1.6rem;font-weight:700;',
+      'color:#C9A84C;line-height:1;letter-spacing:-.5px;}',
+    '.sh-mrp{font-family:var(--f-mono,monospace);font-size:.62rem;color:#6E6C78;}',
+    '.sh-mrp s{text-decoration:line-through;}',
+    '.sh-mrp b{color:#5DCAA5;font-weight:700;}',
+    '.sh-tax{font-size:.6rem;color:#F4F2EC;opacity:.45;margin-top:.25rem;',
+      'display:flex;align-items:center;gap:.3rem;}',
 
-    '.sh-name{font-family:var(--f-body,system-ui),sans-serif;font-weight:600;',
-      'font-size:clamp(1.35rem,4.4vw,1.75rem);line-height:1.18;letter-spacing:-.015em;',
-      'color:#FFF1E2;overflow-wrap:anywhere;margin-top:-.35rem;}',
-    '.sh-tagline{color:#8E96B8;font-size:.9rem;margin-top:-.7rem;}',
+    '.sh-desc{color:rgba(244,242,236,.52);font-size:.74rem;line-height:1.7;',
+      'text-align:left;margin:.2rem 0 .85rem;}',
 
-    /* price behind its gold rule */
-    '.sh-pricebox{border-left:3px solid #E6CBA8;padding-left:1.05rem;display:flex;',
-      'flex-direction:column;gap:.28rem;}',
-    '.sh-price-row{display:flex;align-items:baseline;gap:.85rem;flex-wrap:wrap;}',
-    '.sh-price{font-family:var(--f-body,system-ui),sans-serif;font-weight:600;',
-      'font-size:clamp(1.7rem,6vw,2.1rem);line-height:1.05;color:#F0DCC0;}',
-    '.sh-mrp{font-family:var(--f-mono,monospace);font-size:.72rem;color:#8E96B8;letter-spacing:.04em;}',
-    '.sh-mrp s{color:#5F678E;}',
-    '.sh-mrp b{color:#5FA88C;font-weight:700;}',
-    '.sh-taxline{font-size:.76rem;color:#5F678E;}',
-    '.sh-taxline i{color:#5FA88C;font-style:normal;}',
+    /* see full details — gold text link */
+    '.sh-more-btn{background:none;border:none;box-shadow:none;cursor:pointer;',
+      'color:rgba(201,168,76,.62);font-family:var(--f-mono,monospace);font-size:.6rem;',
+      'letter-spacing:1.2px;text-transform:uppercase;padding:.15rem 0;border-radius:0;',
+      'text-decoration:underline;text-underline-offset:3px;width:auto;',
+      'display:inline-flex;align-items:center;gap:.5rem;justify-content:flex-start;}',
+    '.sh-more-btn:hover{color:#C9A84C;}',
+    '.sh-chev{font-size:.55rem;transition:transform .25s;}',
+    '.sh-more-btn.open .sh-chev{transform:rotate(180deg);}',
+    '.sh-more{max-height:0;overflow:hidden;transition:max-height .4s ease;}',
+    '.sh-more.open{max-height:680px;}',
+    '.sh-more-in{padding:.1rem 0 .7rem;}',
+    '.sh-more-in h5{font-family:var(--f-mono,monospace);font-size:.56rem;letter-spacing:2.5px;',
+      'text-transform:uppercase;color:rgba(201,168,76,.65);margin:.6rem 0 .5rem;font-weight:400;}',
+    '.sh-spec{display:flex;justify-content:space-between;gap:1rem;font-size:.7rem;',
+      'padding:.46rem 0;border-bottom:1px solid rgba(255,255,255,.055);}',
+    '.sh-spec-k{font-family:var(--f-mono,monospace);font-size:.62rem;letter-spacing:.5px;',
+      'color:#6E6C78;text-transform:uppercase;}',
+    '.sh-spec-v{color:#F4F2EC;text-align:right;}',
 
-    '.sh-stock{font-family:var(--f-mono,monospace);font-size:.6rem;letter-spacing:.14em;',
-      'text-transform:uppercase;color:#5FA88C;margin-top:-.55rem;}',
-    '.sh-stock.low{color:#F0DCC0;} .sh-stock.out{color:#E08A7A;}',
-
-    '.sh-desc{color:#8E96B8;line-height:1.75;font-size:.92rem;overflow-wrap:anywhere;}',
-
-    /* full details — an underlined link, not a bar */
-    '.sh-more-btn{align-self:flex-start;background:none;border:none;cursor:pointer;padding:0 0 .35em;',
-      'font-family:var(--f-mono,monospace);font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;',
-      'color:#E6CBA8;border-bottom:1px dashed #E6CBA8;display:inline-flex;align-items:center;gap:.5em;}',
-    '.sh-more-btn:hover{color:#F0DCC0;}',
-    '.sh-more{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.2,.7,.24,1);',
-      'margin-top:-.5rem;}',
-    '.sh-more.open{max-height:380px;}',
-    '.sh-more-in{border:1px solid #111735;border-radius:14px;background:rgba(255,255,255,.03);',
-      'padding:.25rem 1rem;}',
-    '.sh-more-in div{display:flex;justify-content:space-between;gap:.9rem;padding:.6rem 0;',
-      'font-size:.84rem;color:#FFF1E2;min-width:0;border-bottom:1px dashed #111735;}',
-    '.sh-more-in div:last-child{border-bottom:none;}',
-    '.sh-more-in b{font-weight:400;color:#5F678E;font-family:var(--f-mono,monospace);',
-      'font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;flex:none;}',
-    '.sh-more-in span{text-align:right;overflow-wrap:anywhere;}',
-
-    /* ── actions: three separate boxes ── */
-    '.sh-acts{display:flex;gap:.65rem;align-items:stretch;flex-wrap:wrap;margin-top:.35rem;}',
-    '.sh-qty{display:flex;align-items:center;flex:none;border:1px solid #1A2142;border-radius:14px;',
-      'background:rgba(255,255,255,.03);overflow:hidden;}',
-    '.sh-qty button{background:none;border:none;color:#8E96B8;cursor:pointer;font-size:1.15rem;',
-      'width:42px;height:56px;transition:color .2s;}',
-    '.sh-qty button:hover{color:#F0DCC0;}',
-    '.sh-qty span{font-family:var(--f-mono,monospace);width:28px;text-align:center;font-size:.9rem;color:#FFF1E2;}',
-    '.sh-buy{flex:1 1 170px;min-width:0;min-height:56px;border:none;border-radius:14px;',
-      'padding:.7rem 1.2rem;cursor:pointer;background:linear-gradient(180deg,#F0DCC0,#E6CBA8);',
-      'color:#080C1F;font-family:var(--f-body,system-ui),sans-serif;font-size:1rem;font-weight:700;',
-      'display:flex;align-items:center;justify-content:center;gap:.45em;',
-      'transition:transform .25s,box-shadow .25s;}',
-    '.sh-buy:hover{transform:translateY(-2px);box-shadow:0 16px 34px -14px rgba(201,161,95,.6);}',
-    '.sh-bag{flex:0 1 145px;min-height:56px;border:1px solid #1A2142;background:rgba(255,255,255,.03);',
-      'border-radius:14px;padding:.7rem 1rem;cursor:pointer;color:#FFF1E2;',
-      'font-family:var(--f-body,system-ui),sans-serif;font-size:.95rem;white-space:nowrap;',
-      'display:flex;align-items:center;justify-content:center;transition:all .25s;}',
-    '.sh-bag:hover{border-color:#E6CBA8;color:#F0DCC0;}',
+    /* ── ACTIONS — float free below the text ── */
+    '.sh-acts{padding:.85rem 0 0;}',
+    '.sh-act-row{display:flex;gap:.5rem;align-items:stretch;}',
+    '.sh-qty{display:flex;align-items:center;flex:0 0 auto;overflow:hidden;',
+      'background:rgba(255,255,255,.06);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);',
+      'border:0.5px solid rgba(255,255,255,.11);border-radius:50px;',
+      'box-shadow:inset 0 1px 0 rgba(255,255,255,.16);}',
+    '.sh-qty button{background:transparent;border:none;color:#C9A84C;width:32px;align-self:stretch;',
+      'font-size:1.05rem;cursor:pointer;transition:background .15s;}',
+    '.sh-qty button:hover{background:rgba(201,168,76,.1);}',
+    '.sh-qty span{min-width:24px;text-align:center;color:#F4F2EC;',
+      'font-family:var(--f-mono,monospace);font-size:.82rem;}',
+    '.sh-btns{display:flex;gap:.5rem;flex:1;}',
+    /* primary CTA — gold with a light sweep */
+    '.sh-buy{position:relative;overflow:hidden;flex:1.4;cursor:pointer;',
+      'background:linear-gradient(180deg,rgba(255,255,255,.36),rgba(255,255,255,0) 46%),',
+        'linear-gradient(160deg,#E3C779,#C9A84C 52%,#A8842F);',
+      'color:#1a1305;border:0.5px solid rgba(255,255,255,.36);border-radius:13px;',
+      'box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 6px 20px rgba(201,168,76,.26);',
+      'padding:.72rem;font-family:var(--f-body,system-ui),sans-serif;font-size:.76rem;',
+      'font-weight:700;letter-spacing:.3px;transition:transform .12s;}',
+    '.sh-buy::before{content:"";position:absolute;top:0;left:-65%;width:48%;height:100%;',
+      'background:linear-gradient(105deg,transparent,rgba(255,255,255,.6),transparent);',
+      'transform:skewX(-18deg);transition:left .7s cubic-bezier(.25,.8,.3,1);pointer-events:none;}',
+    '.sh-buy:hover{transform:translateY(-1px);}',
+    '.sh-buy:hover::before{left:135%;}',
+    '.sh-bag{flex:1;cursor:pointer;background:rgba(255,255,255,.04);',
+      'backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);',
+      'border:0.5px solid rgba(255,255,255,.11);border-radius:13px;',
+      'color:rgba(244,242,236,.72);box-shadow:inset 0 1px 0 rgba(255,255,255,.14);',
+      'padding:.7rem;font-family:var(--f-body,system-ui),sans-serif;font-size:.74rem;',
+      'transition:background .18s,border-color .18s,color .18s;}',
+    '.sh-bag:hover{border-color:rgba(201,168,76,.28);color:#C9A84C;}',
 
     /* ── close ── */
-    '.sh-x{position:absolute;top:1.5rem;right:1.5rem;z-index:9002;width:40px;height:40px;',
-      'border-radius:50%;border:1px solid rgba(230,203,168,.22);cursor:pointer;',
-      'background:rgba(5,8,24,.75);color:#FFF1E2;font-size:1rem;',
-      'backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transition:all .25s;}',
-    '.sh-x:hover{background:#E6CBA8;color:#050818;border-color:#E6CBA8;}',
+    '.sh-x{position:fixed;top:max(3vh,.8rem);right:calc(50% - 210px + .6rem);z-index:9002;',
+      'width:31px;height:31px;border-radius:50%;cursor:pointer;',
+      'background:rgba(8,8,18,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);',
+      'border:0.5px solid rgba(255,255,255,.15);color:rgba(244,242,236,.85);font-size:.78rem;',
+      'display:flex;align-items:center;justify-content:center;transition:.18s;}',
+    '.sh-x:hover{background:rgba(6,6,12,.9);color:#F4F2EC;border-color:rgba(201,168,76,.4);}',
+    '@media (max-width:900px){.sh-x{right:1.2rem;}}',
 
     /* ── zoom ── */
-    '.sh-zoom{position:fixed;inset:0;z-index:9500;background:rgba(3,5,16,.94);display:flex;',
+    '.sh-zoom{position:fixed;inset:0;z-index:9500;background:rgba(3,3,8,.94);display:flex;',
       'align-items:center;justify-content:center;padding:1.5rem;cursor:zoom-out;opacity:0;',
       'transition:opacity .3s ease;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}',
     '.sh-zoom.on{opacity:1;}',
     '.sh-zoom img{max-width:100%;max-height:100%;object-fit:contain;border-radius:10px;}',
 
-    /* ── phones ── */
-    '@media (max-width:560px){',
-      '.sh{width:94vw;max-height:90vh;padding:.6rem;border-radius:18px;}',
-      '.sh-frame{padding:.85rem;border-radius:15px;}',
-      '.sh-frame .ck{width:13px;height:13px;}',
-      '.sh-frame .ck.tl,.sh-frame .ck.tr{top:9px;} .sh-frame .ck.bl,.sh-frame .ck.br{bottom:9px;}',
-      '.sh-frame .ck.tl,.sh-frame .ck.bl{left:9px;} .sh-frame .ck.tr,.sh-frame .ck.br{right:9px;}',
-      '.sh-ph img{max-height:38vh;}',
-      '.sh-main{left:15px;bottom:15px;font-size:.5rem;}',
-      '.sh-t{width:60px;height:60px;}',
-      '.sh-body{padding:1.3rem .35rem .35rem;gap:1rem;}',
-      '.sh-desc{font-size:.88rem;line-height:1.7;}',
-      /* quantity + buy share a row, bag full width beneath */
-      '.sh-qty{order:1;} .sh-buy{order:2;flex:1 1 auto;} .sh-bag{order:3;flex:1 1 100%;}',
-      '.sh-x{top:1.1rem;right:1.1rem;width:36px;height:36px;}',
+    /* graceful fallback where backdrop-filter is unsupported */
+    '@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){',
+      '.sh-scrim{background:rgba(3,3,8,.92);}',
+      '.sh-tile{background:linear-gradient(168deg,rgba(30,30,52,.97),rgba(12,12,26,.98));}',
+      '.sh-t,.sh-qty,.sh-bag,.sh-x{background:rgba(40,40,64,.9);}',
+    '}',
+
+    '@media (max-width:420px){',
+      '.sh{padding:max(2vh,.7rem) .75rem 2.5rem;}',
+      '.sh-t{width:60px;height:60px;flex:0 0 60px;}',
+      '.sh-name{font-size:1.18rem;}',
+      '.sh-price{font-size:1.45rem;}',
     '}',
     'body.sh-open{overflow:hidden;}'
   ].join('');
@@ -181,7 +218,7 @@
     document.body.classList.remove('sh-open');
     document.removeEventListener('keydown', esc);
     var s = sheet, c = scrim; sheet = scrim = null;
-    setTimeout(function(){ if(s) s.remove(); if(c) c.remove(); }, 400);
+    setTimeout(function(){ if(s) s.remove(); if(c) c.remove(); }, 380);
   }
 
   function open(p){
@@ -198,90 +235,108 @@
     sheet.setAttribute('role','dialog');
     sheet.setAttribute('aria-label', p.name);
 
-    /* video (if any) becomes the first slide in the gallery */
+    /* video (if any) becomes the first slide */
     var slides = [];
     if(p.video) slides.push({ type:'video', src:p.video, poster:imgs[0] });
     imgs.forEach(function(src){ slides.push({ type:'img', src:src }); });
 
-    /* same derived values the product page uses */
     var badgeText = p.badge || (p.isNew ? 'New' : '');
     var offPct = (p.mrp && p.mrp > p.price) ? Math.round((1 - p.price / p.mrp) * 100) : 0;
-    var stockCls = 'ok', stockTxt = 'In stock · ships in 1–2 days';
-    if(p.stock != null && p.stock <= 0){ stockCls = 'out'; stockTxt = 'Sold out'; }
-    else if(p.stock != null && p.stock <= 5){ stockCls = 'low'; stockTxt = 'Only ' + p.stock + ' left'; }
+    var stockTxt = 'In stock · ships in 1–2 days';
+    if(p.stock != null && p.stock <= 0) stockTxt = 'Sold out';
+    else if(p.stock != null && p.stock <= 5) stockTxt = 'Only ' + p.stock + ' left';
 
-    /* only show the tagline when it actually says something the
-       description doesn't — otherwise the same sentence prints twice */
+    /* the tagline only prints when it says something the
+       description doesn't — otherwise the same line appears twice */
     var tagline = '';
     if(p.short && p.desc && p.short.trim() !== p.desc.trim()) tagline = p.short;
     else if(p.short && !p.desc) tagline = p.short;
 
     sheet.innerHTML =
       '<button class="sh-x" aria-label="Close">✕</button>' +
+      '<div class="sh-card">' +
 
-      '<div class="sh-frame">' +
-        '<span class="ck tl"></span><span class="ck tr"></span>' +
-        '<span class="ck bl"></span><span class="ck br"></span>' +
-        '<div class="sh-ph" id="shStage">' +
-          '<img src="'+slides[0].src+'" alt="'+p.name+'" />' +
-        '</div>' +
-        '<button class="sh-main" id="shMainBtn">← Main photo</button>' +
-      '</div>' +
-
-      (slides.length > 1
-        ? '<div class="sh-rail">' +
-            slides.map(function(sl,i){
-              return '<button class="sh-t'+(i===0?' on':'')+(sl.type==='video'?' vid':'')+'" data-i="'+i+'">' +
-                     '<img src="'+(sl.type==='video' ? (sl.poster||'') : sl.src)+'" alt="" /></button>';
-            }).join('') +
-          '</div>'
-        : '') +
-
-      '<div class="sh-body">' +
-        '<div class="sh-seller">The AIM · Verified</div>' +
-        ((p.sku || badgeText)
-          ? '<div class="sh-skurow">' +
-              (p.sku ? '<span class="sh-sku">SKU '+p.sku+'</span>' : '') +
-              (badgeText ? '<span class="sh-badge">'+badgeText+'</span>' : '') +
-            '</div>'
-          : '') +
-        '<h2 class="sh-name">'+p.name+'</h2>' +
-        (tagline ? '<p class="sh-tagline">'+tagline+'</p>' : '') +
-
-        '<div class="sh-pricebox">' +
-          '<div class="sh-price-row">' +
-            '<span class="sh-price">'+money(p.price)+'</span>' +
-            (offPct
-              ? '<span class="sh-mrp">M.R.P. <s>'+money(p.mrp)+'</s> · <b>'+offPct+'% off</b></span>'
-              : '') +
+        /* IMAGE TILE — the one glass frame */
+        '<div class="sh-tile">' +
+          '<div class="sh-hero" id="shHero">' +
+            '<div class="sh-stage" id="shStage">' +
+              '<img src="'+slides[0].src+'" alt="'+p.name+'" />' +
+            '</div>' +
+            '<span class="sh-tick tl"></span><span class="sh-tick tr"></span>' +
+            '<span class="sh-tick bl"></span><span class="sh-tick br"></span>' +
+            '<button class="sh-main" id="shMainBtn">← Main photo</button>' +
           '</div>' +
-          '<div class="sh-taxline"><i>✓</i> Inclusive of all taxes · Free delivery above ₹499</div>' +
         '</div>' +
 
-        '<div class="sh-stock '+stockCls+'">'+stockTxt+'</div>' +
+        /* THUMBNAILS — outside the box, floating free */
+        (slides.length > 1
+          ? '<div class="sh-thumbs-wrap"><div class="sh-thumbs">' +
+              slides.map(function(sl,i){
+                return '<button class="sh-t'+(i===0?' on':'')+(sl.type==='video'?' vid':'')+'" data-i="'+i+'">' +
+                       '<img src="'+(sl.type==='video' ? (sl.poster||'') : sl.src)+'" alt="" /></button>';
+              }).join('') +
+            '</div></div>'
+          : '') +
 
-        (p.desc ? '<p class="sh-desc">'+p.desc+'</p>' : '') +
+        /* INFO — pure floating text */
+        '<div class="sh-info">' +
+          '<div class="sh-eyebrow">The AIM · Verified</div>' +
+          '<div class="sh-meta">' +
+            (p.sku ? '<span class="sh-sku">SKU '+p.sku+'</span>' : '') +
+            (badgeText ? '<span class="sh-chip">'+badgeText+'</span>' : '') +
+            '<span class="sh-chip">'+stockTxt+'</span>' +
+          '</div>' +
+          '<div class="sh-name">'+p.name+'</div>' +
 
-        '<button class="sh-more-btn" id="shMoreBtn">See full details ▾</button>' +
-        '<div class="sh-more" id="shMore"><div class="sh-more-in">' +
-          '<div><b>Category</b><span>'+(p.category||'—')+'</span></div>' +
-          '<div><b>Product code</b><span>'+(p.sku||'—')+'</span></div>' +
-          (p.stock != null ? '<div><b>Availability</b><span>'+(p.stock>0?'In stock':'Sold out')+'</span></div>' : '') +
-          '<div><b>Delivery</b><span>1–2 days, pan-India</span></div>' +
-          '<div><b>Returns</b><span>7 days</span></div>' +
+          '<div class="sh-price-strip">' +
+            '<div class="sh-price-row">' +
+              '<div class="sh-price">'+money(p.price)+'</div>' +
+              (offPct
+                ? '<div class="sh-mrp">M.R.P. <s>'+money(p.mrp)+'</s> · <b>'+offPct+'% off</b></div>'
+                : '') +
+            '</div>' +
+            '<div class="sh-tax">✓ Inclusive of all taxes · Free delivery above ₹499</div>' +
+          '</div>' +
+
+          (tagline ? '<div class="sh-desc">'+tagline+'</div>' : '') +
+          (p.desc ? '<div class="sh-desc">'+p.desc+'</div>' : '') +
+
+          '<button class="sh-more-btn" id="shMoreBtn">' +
+            '<span id="shMoreLabel">See full details</span>' +
+            '<span class="sh-chev">▼</span>' +
+          '</button>' +
+          '<div class="sh-more" id="shMore"><div class="sh-more-in">' +
+            '<h5>Specifications</h5>' +
+            '<div class="sh-spec"><span class="sh-spec-k">Category</span><span class="sh-spec-v">'+(p.category||'—')+'</span></div>' +
+            '<div class="sh-spec"><span class="sh-spec-k">Product code</span><span class="sh-spec-v">'+(p.sku||'—')+'</span></div>' +
+            (p.stock != null ? '<div class="sh-spec"><span class="sh-spec-k">Availability</span><span class="sh-spec-v">'+(p.stock>0?'In stock':'Sold out')+'</span></div>' : '') +
+            '<div class="sh-spec"><span class="sh-spec-k">Delivery</span><span class="sh-spec-v">1–2 days, pan-India</span></div>' +
+            '<div class="sh-spec"><span class="sh-spec-k">Returns</span><span class="sh-spec-v">7 days</span></div>' +
+          '</div></div>' +
+        '</div>' +
+
+        /* ACTIONS */
+        '<div class="sh-acts"><div class="sh-act-row">' +
+          '<div class="sh-qty">' +
+            '<button data-q="-1" aria-label="Decrease quantity">−</button>' +
+            '<span id="shQ">1</span>' +
+            '<button data-q="1" aria-label="Increase quantity">+</button>' +
+          '</div>' +
+          '<div class="sh-btns">' +
+            '<button class="sh-buy" id="shBuy">⚡ Buy Now</button>' +
+            '<button class="sh-bag" id="shBag">+ Cart</button>' +
+          '</div>' +
         '</div></div>' +
 
-        '<div class="sh-acts">' +
-          '<div class="sh-qty"><button data-q="-1" aria-label="Decrease quantity">−</button>' +
-            '<span id="shQ">1</span>' +
-            '<button data-q="1" aria-label="Increase quantity">+</button></div>' +
-          '<button class="sh-buy" id="shBuy">⚡ Buy now</button>' +
-          '<button class="sh-bag" id="shBag">+ Bag</button>' +
-        '</div>' +
       '</div>';
 
     document.body.appendChild(sheet);
     document.body.classList.add('sh-open');
+
+    /* clicking the backdrop (not the card) closes */
+    sheet.addEventListener('click', function(e){
+      if(e.target === sheet) close();
+    });
 
     requestAnimationFrame(function(){
       scrim.classList.add('on');
@@ -308,8 +363,9 @@
     });
     mainBtn.addEventListener('click', function(e){ e.stopPropagation(); showSlide(0); });
 
-    /* tap the main image → full-screen zoom */
-    stage.addEventListener('click', function(){
+    /* tap the photo → full-screen zoom */
+    sheet.querySelector('#shHero').addEventListener('click', function(e){
+      if(e.target.closest('.sh-main')) return;
       var img = stage.querySelector('img');
       if(!img) return;                        // video playing, don't zoom
       var z = document.createElement('div');
@@ -324,11 +380,13 @@
     });
 
     /* full details — expands in place */
-    var more = sheet.querySelector('#shMore');
-    var moreBtn = sheet.querySelector('#shMoreBtn');
+    var more     = sheet.querySelector('#shMore');
+    var moreBtn  = sheet.querySelector('#shMoreBtn');
+    var moreLbl  = sheet.querySelector('#shMoreLabel');
     moreBtn.addEventListener('click', function(){
-      var open = more.classList.toggle('open');
-      moreBtn.textContent = open ? 'Hide full details ▴' : 'See full details ▾';
+      var isOpen = more.classList.toggle('open');
+      moreBtn.classList.toggle('open', isOpen);
+      moreLbl.textContent = isOpen ? 'Hide details' : 'See full details';
     });
 
     /* quantity + actions */
@@ -342,7 +400,7 @@
     sheet.querySelector('#shBag').addEventListener('click', function(){
       if(window.Cart) Cart.add(p.id, q);
       this.textContent = 'Added ✓';
-      var self = this; setTimeout(function(){ self.textContent = '+ Bag'; }, 1400);
+      var self = this; setTimeout(function(){ self.textContent = '+ Cart'; }, 1400);
     });
     sheet.querySelector('#shBuy').addEventListener('click', function(){
       if(window.Cart) Cart.add(p.id, q);
