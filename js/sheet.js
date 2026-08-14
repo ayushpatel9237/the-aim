@@ -13,10 +13,10 @@
   var css = document.createElement('style');
   css.textContent = [
     /* ── overlay ── */
-    '.sh-scrim{position:fixed;inset:0;z-index:9000;background:rgba(4,4,10,.78);',
-      'backdrop-filter:blur(26px) brightness(.5) saturate(118%);',
-      '-webkit-backdrop-filter:blur(26px) brightness(.5) saturate(118%);',
-      'opacity:0;transition:opacity .3s ease;}',
+    '.sh-scrim{position:fixed;inset:0;z-index:9000;background:rgba(3,5,16,.55);',
+      'backdrop-filter:blur(30px) saturate(140%);',
+      '-webkit-backdrop-filter:blur(30px) saturate(140%);',
+      'opacity:0;transition:opacity .4s ease;}',
     '.sh-scrim.on{opacity:1;}',
 
     /* ── the card: no box at all, just a column ── */
@@ -49,7 +49,8 @@
         'radial-gradient(125% 85% at 50% 42%,transparent 56%,rgba(0,0,0,.42) 100%);}',
     '.sh-stage{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;',
       'background:#0c0c16;}',
-    '.sh-stage img{width:100%;height:100%;object-fit:cover;display:block;',
+    '.sh-stage img{width:100%;height:100%;object-fit:contain;display:block;padding:5%;',
+      'filter:drop-shadow(0 22px 26px rgba(0,0,0,.55));',
       'transition:transform .6s cubic-bezier(.2,.7,.3,1);}',
     '.sh-hero:hover .sh-stage img{transform:scale(1.02);}',
     '.sh-stage iframe,.sh-stage video{width:100%;height:100%;border:none;}',
@@ -176,13 +177,12 @@
     '.sh-bag:hover{border-color:rgba(201,168,76,.28);color:#C9A84C;}',
 
     /* ── close ── */
-    '.sh-x{position:fixed;top:max(3vh,.8rem);right:calc(50% - 210px + .6rem);z-index:9002;',
+    '.sh-x{position:fixed;top:max(3vh,.8rem);right:max(1rem,calc(50% - 210px + .6rem));z-index:9002;',
       'width:31px;height:31px;border-radius:50%;cursor:pointer;',
       'background:rgba(8,8,18,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);',
       'border:0.5px solid rgba(255,255,255,.15);color:rgba(244,242,236,.85);font-size:.78rem;',
       'display:flex;align-items:center;justify-content:center;transition:.18s;}',
     '.sh-x:hover{background:rgba(6,6,12,.9);color:#F4F2EC;border-color:rgba(201,168,76,.4);}',
-    '@media (max-width:900px){.sh-x{right:1.2rem;}}',
 
     /* ── zoom ── */
     '.sh-zoom{position:fixed;inset:0;z-index:9500;background:rgba(3,3,8,.94);display:flex;',
@@ -198,11 +198,25 @@
       '.sh-t,.sh-qty,.sh-bag,.sh-x{background:rgba(40,40,64,.9);}',
     '}',
 
-    '@media (max-width:420px){',
-      '.sh{padding:max(2vh,.7rem) .75rem 2.5rem;}',
-      '.sh-t{width:60px;height:60px;flex:0 0 60px;}',
-      '.sh-name{font-size:1.18rem;}',
-      '.sh-price{font-size:1.45rem;}',
+    '@media (max-width:560px){',
+      '.sh{padding:max(2vh,.7rem) .85rem calc(3.5rem + env(safe-area-inset-bottom));}',
+      '.sh-card{max-width:100%;}',
+      '.sh-t{width:74px;height:74px;flex:0 0 74px;}',
+      '.sh-info{padding:1.4rem .15rem 0;}',
+      '.sh-eyebrow{font-size:.62rem;letter-spacing:2.4px;}',
+      '.sh-sku{font-size:.62rem;}',
+      '.sh-chip{font-size:.62rem;padding:3px 10px;}',
+      '.sh-name{font-size:1.5rem;line-height:1.2;margin:.5rem 0 .9rem;}',
+      '.sh-price{font-size:1.9rem;}',
+      '.sh-mrp{font-size:.68rem;}',
+      '.sh-tax{font-size:.66rem;}',
+      '.sh-desc{font-size:.82rem;line-height:1.75;}',
+      '.sh-more-btn{font-size:.65rem;}',
+      '.sh-spec,.sh-spec-v{font-size:.78rem;}',
+      '.sh-buy,.sh-bag{font-size:.9rem;padding:.9rem .6rem;}',
+      '.sh-qty button{width:38px;font-size:1.2rem;}',
+      '.sh-qty span{font-size:.9rem;}',
+      '.sh-x{top:.9rem;right:.9rem;width:36px;height:36px;}',
     '}',
     'body.sh-open{overflow:hidden;}'
   ].join('');
@@ -249,8 +263,13 @@
     /* the tagline only prints when it says something the
        description doesn't — otherwise the same line appears twice */
     var tagline = '';
-    if(p.short && p.desc && p.short.trim() !== p.desc.trim()) tagline = p.short;
-    else if(p.short && !p.desc) tagline = p.short;
+    if(p.short){
+      var a = p.short.trim(), b = (p.desc||'').trim();
+      var norm = function(t){ return t.toLowerCase().replace(/[\s\u2026.]+$/,''); };
+      /* skip it when the description already opens with the same words —
+         short is often just a truncated version of desc */
+      if(!b || (norm(b).indexOf(norm(a)) !== 0 && norm(a) !== norm(b))) tagline = p.short;
+    }
 
     sheet.innerHTML =
       '<button class="sh-x" aria-label="Close">✕</button>' +
