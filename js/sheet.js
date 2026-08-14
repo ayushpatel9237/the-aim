@@ -13,10 +13,10 @@
   var css = document.createElement('style');
   css.textContent = [
     /* ── overlay ── */
-    '.sh-scrim{position:fixed;inset:0;z-index:9000;background:rgba(3,5,16,.55);',
-      'backdrop-filter:blur(30px) saturate(140%);',
-      '-webkit-backdrop-filter:blur(30px) saturate(140%);',
-      'opacity:0;transition:opacity .4s ease;}',
+    '.sh-scrim{position:fixed;inset:0;z-index:9000;background:rgba(6,7,16,.93);',
+      'backdrop-filter:blur(34px) brightness(.32) saturate(115%);',
+      '-webkit-backdrop-filter:blur(34px) brightness(.32) saturate(115%);',
+      'opacity:0;transition:opacity .35s ease;}',
     '.sh-scrim.on{opacity:1;}',
 
     /* ── the card: no box at all, just a column ── */
@@ -25,7 +25,7 @@
       'opacity:0;transition:opacity .3s ease;}',
     '.sh.on{opacity:1;}',
     '.sh::-webkit-scrollbar{display:none;}',
-    '.sh-card{max-width:420px;width:100%;margin:0 auto;display:flex;flex-direction:column;',
+    '.sh-card{position:relative;max-width:420px;width:100%;margin:0 auto;display:flex;flex-direction:column;',
       'transform:translateY(26px) scale(.93);',
       'transition:transform .35s cubic-bezier(.34,1.56,.64,1);}',
     '.sh.on .sh-card{transform:none;}',
@@ -157,14 +157,13 @@
     '.sh-btns{display:flex;gap:.5rem;flex:1;}',
     /* primary CTA — gold with a light sweep */
     '.sh-buy{position:relative;overflow:hidden;flex:1.4;cursor:pointer;',
-      'background:linear-gradient(180deg,rgba(255,255,255,.36),rgba(255,255,255,0) 46%),',
-        'linear-gradient(160deg,#E3C779,#C9A84C 52%,#A8842F);',
-      'color:#1a1305;border:0.5px solid rgba(255,255,255,.36);border-radius:13px;',
-      'box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 6px 20px rgba(201,168,76,.26);',
+      'background:linear-gradient(180deg,#FFFFFF,#EFECE4);',
+      'color:#0A0F26;border:0.5px solid rgba(255,255,255,.8);border-radius:13px;',
+      'box-shadow:inset 0 1px 0 rgba(255,255,255,1),0 6px 20px rgba(255,255,255,.16);',
       'padding:.72rem;font-family:var(--f-body,system-ui),sans-serif;font-size:.76rem;',
       'font-weight:700;letter-spacing:.3px;transition:transform .12s;}',
     '.sh-buy::before{content:"";position:absolute;top:0;left:-65%;width:48%;height:100%;',
-      'background:linear-gradient(105deg,transparent,rgba(255,255,255,.6),transparent);',
+      'background:linear-gradient(105deg,transparent,rgba(10,15,38,.07),transparent);',
       'transform:skewX(-18deg);transition:left .7s cubic-bezier(.25,.8,.3,1);pointer-events:none;}',
     '.sh-buy:hover{transform:translateY(-1px);}',
     '.sh-buy:hover::before{left:135%;}',
@@ -177,7 +176,7 @@
     '.sh-bag:hover{border-color:rgba(201,168,76,.28);color:#C9A84C;}',
 
     /* ── close ── */
-    '.sh-x{position:fixed;top:max(3vh,.8rem);right:max(1rem,calc(50% - 210px + .6rem));z-index:9002;',
+    '.sh-x{position:absolute;top:.75rem;right:.75rem;z-index:9002;',
       'width:31px;height:31px;border-radius:50%;cursor:pointer;',
       'background:rgba(8,8,18,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);',
       'border:0.5px solid rgba(255,255,255,.15);color:rgba(244,242,236,.85);font-size:.78rem;',
@@ -216,7 +215,9 @@
       '.sh-buy,.sh-bag{font-size:.9rem;padding:.9rem .6rem;}',
       '.sh-qty button{width:38px;font-size:1.2rem;}',
       '.sh-qty span{font-size:.9rem;}',
-      '.sh-x{top:.9rem;right:.9rem;width:36px;height:36px;}',
+      '.sh-x{top:.65rem;right:.65rem;width:34px;height:34px;}',
+      '.sh-tile{padding:.5rem .5rem .45rem;border-radius:20px;}',
+      '.sh-hero{border-radius:14px;}',
     '}',
     'body.sh-open{overflow:hidden;}'
   ].join('');
@@ -272,8 +273,8 @@
     }
 
     sheet.innerHTML =
-      '<button class="sh-x" aria-label="Close">✕</button>' +
       '<div class="sh-card">' +
+        '<button class="sh-x" aria-label="Close">✕</button>' +
 
         /* IMAGE TILE — the one glass frame */
         '<div class="sh-tile">' +
