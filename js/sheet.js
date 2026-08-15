@@ -230,6 +230,10 @@
 
   var scrim, sheet, esc;
 
+  /* cart.js publishes itself as window.AscentraCart — resolve it at call
+     time so it works no matter which script finishes loading first */
+  function cart(){ return window.AscentraCart || window.Cart || null; }
+
   function money(n){ return '₹' + Number(n).toLocaleString('en-IN'); }
 
   function close(){
@@ -423,13 +427,20 @@
       });
     });
     sheet.querySelector('#shBag').addEventListener('click', function(){
-      if(window.Cart) Cart.add(p.id, q);
+      var C = cart();
+      if(!C){ this.textContent = 'Unavailable'; return; }
+      C.add(p.id, q);
       this.textContent = 'Added ✓';
       var self = this; setTimeout(function(){ self.textContent = '+ Cart'; }, 1400);
     });
     sheet.querySelector('#shBuy').addEventListener('click', function(){
-      if(window.Cart) Cart.add(p.id, q);
-      window.location.href = 'checkout.html';
+      var C = cart();
+      if(!C){ this.textContent = 'Unavailable'; return; }
+      C.add(p.id, q);
+      /* only navigate once the item is really in the bag, otherwise
+         checkout opens empty */
+      if(C.count && C.count() > 0){ window.location.href = 'checkout.html'; }
+      else { this.textContent = 'Try again'; }
     });
     sheet.querySelector('.sh-x').addEventListener('click', close);
 
