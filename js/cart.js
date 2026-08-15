@@ -195,7 +195,11 @@
 
   /* hooks used by product.html */
   window.addToCart = function(p, qty){ Cart.add(p.id, qty); Cart.open(); };
-  window.buyNow    = function(p, qty){ Cart.add(p.id, qty); Cart.open(); };
+  /* Buy now means buy now — straight to checkout, not the drawer */
+  window.buyNow    = function(p, qty){
+    Cart.add(p.id, qty);
+    window.location.href = 'checkout.html';
+  };
   window.AscentraCart = Cart;
 
   /* keep tabs in sync */
