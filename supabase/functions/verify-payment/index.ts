@@ -43,37 +43,59 @@ Deno.serve(async (req) => {
     if (error || !order) throw new Error("Order not found");
     if (order.status === "paid") return json({ ok: true, order }); // idempotent
 
-    // mark paid
-    await sb.from("orders").update({
+    // mark paid — this one DOES matter, so surface a real failure
+    const { error: updErr } = await sb.from("orders").update({
       status: "paid", razorpay_payment_id,
     }).eq("id", order.id);
+    if (updErr) throw new Error("Could not record payment: " + updErr.message);
 
-    // decrement stock
-    for (const it of order.items) {
-      await sb.rpc("decrement_stock", { pid: it.id, qty: it.qty });
+    /* ── everything below this line is BOOKKEEPING ──
+       The payment is verified and the order is already marked paid.
+       Nothing here may throw, because a failure would tell a paying
+       customer their payment failed when it plainly didn't. Each step
+       is isolated and logged so a problem is visible to us without
+       ever being visible to them. */
+
+    // decrement stock — one item failing must not stop the others
+    for (const it of order.items ?? []) {
+      try {
+        const { error: stockErr } = await sb.rpc("decrement_stock", { pid: it.id, qty: it.qty });
+        if (stockErr) console.error("stock decrement failed", order.id, it.id, stockErr.message);
+      } catch (e) {
+        console.error("stock decrement threw", order.id, it.id, String(e));
+      }
     }
 
     // credit curator if this order came through a ref code
-    if (order.ref_code) {
-      const { data: cur } = await sb.from("curators")
-        .select("id, commission_pct").eq("ref_code", order.ref_code)
-        .eq("status", "active").maybeSingle();
-      if (cur) {
-        await sb.from("curator_sales").insert({
-          curator_id: cur.id, order_id: order.id,
-          order_total: order.total,
-          commission: Math.round(order.total * (cur.commission_pct / 100)),
-          status: "confirmed",
-        });
+    try {
+      if (order.ref_code) {
+        const { data: cur } = await sb.from("curators")
+          .select("id, commission_pct").eq("ref_code", order.ref_code)
+          .eq("status", "active").maybeSingle();
+        if (cur) {
+          await sb.from("curator_sales").insert({
+            curator_id: cur.id, order_id: order.id,
+            order_total: order.total,
+            commission: Math.round(order.total * (cur.commission_pct / 100)),
+            status: "confirmed",
+          });
+        }
       }
+    } catch (e) {
+      console.error("curator credit failed", order.id, String(e));
     }
 
 
     /* ── send the customer a confirmation email ──
        Uses Resend (resend.com) — free tier covers a new store.
        Set RESEND_API_KEY in Supabase secrets to switch this on.
-       If the key is missing we skip silently: a missing email must
-       never break a successful payment. */
+       If the key is missing we skip silently.
+
+       IMPORTANT: this must never delay the response. Resend is an
+       external service; if it is slow the edge worker is dropped
+       mid-request (EarlyDrop) and the customer is told their payment
+       failed when it plainly succeeded. So it runs after we respond. */
+    const sendEmails = async () => {
     try{
       const RESEND = Deno.env.get("RESEND_API_KEY");
       const FROM   = Deno.env.get("ORDER_FROM_EMAIL") || "orders@theaim.store";
@@ -114,7 +136,20 @@ Deno.serve(async (req) => {
         }
       }
     }catch(_e){ /* email must never block a paid order */ }
+    };
 
+    /* fire and forget: the runtime keeps it alive after we respond */
+    try {
+      // @ts-ignore EdgeRuntime is provided by Supabase
+      if (typeof EdgeRuntime !== "undefined" && EdgeRuntime.waitUntil) {
+        // @ts-ignore
+        EdgeRuntime.waitUntil(sendEmails());
+      } else {
+        sendEmails();               // no waitUntil available — still don't await
+      }
+    } catch (_e) { /* never block the response */ }
+
+    /* respond the moment the payment is recorded */
     return json({ ok: true, order: { id: order.id, total: order.total } });
   } catch (e) {
     return json({ ok: false, error: String(e.message || e) }, 400);
