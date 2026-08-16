@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Order confirmed — The AIM</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#050818"
+<meta name="theme-color" content="#050818" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -74,41 +74,58 @@ h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,
     return;
   }
 
-  var c = order.customer;
+  /* Be forgiving about what the saved order contains. A confirmation
+     page that renders nothing is worse than one missing a line — the
+     customer has already paid and needs to see that it worked. */
+  var c = order.customer || {};
+  var lines = Array.isArray(order.items) ? order.items : [];
   var payLabel = order.payment === 'cod' ? 'Cash on Delivery' :
                  order.status === 'paid' ? 'Paid online' : 'Online payment';
 
+  try{
   page.innerHTML =
     '<div class="tick">✓</div>' +
     '<h1>Order confirmed</h1>' +
-    '<p class="lead">Thank you, '+c.name.split(' ')[0]+'. We\'ve got your order and we\'re on it.</p>' +
+    '<p class="lead">Thank you'+(c.name ? ', '+c.name.split(' ')[0] : '')+'. We\'ve got your order and we\'re on it.</p>' +
     '<div class="ordno">Order '+order.id+'</div>' +
 
     '<div class="card"><h2>What happens next</h2><div class="steps">' +
-      '<div class="step"><span class="n">1</span><div><b>Confirmation</b> — you\'ll get an update on '+c.phone+(c.email?' and '+c.email:'')+'.</div></div>' +
+      '<div class="step"><span class="n">1</span><div><b>Confirmation</b> — you\'ll get an update '+(c.phone?'on '+c.phone:'')+(c.email?' and '+c.email:'')+'.</div></div>' +
       '<div class="step"><span class="n">2</span><div><b>Packed & shipped</b> — we dispatch your order and send you tracking.</div></div>' +
       '<div class="step"><span class="n">3</span><div><b>Delivered</b> — '+payLabel+(order.payment==='cod'?' — keep the amount ready.':'.')+'</div></div>' +
     '</div></div>' +
 
     '<div class="card"><h2>Order summary</h2>' +
-      order.items.map(function(i){ var p=PRODUCTS.find(function(x){return x.id===i.id;});
+      lines.map(function(i){ var p=(typeof PRODUCTS!=='undefined')?PRODUCTS.find(function(x){return x.id===i.id;}):null;
         return '<div class="o-row"><img src="'+(p?(p.thumb||p.hero):'')+'" alt="" />' +
-          '<div><div class="o-nm">'+i.name+'</div><div class="o-q">Qty '+i.qty+'</div></div>' +
-          '<div class="o-pr">'+fmt(i.line)+'</div></div>';
+          '<div><div class="o-nm">'+(i.name||'Item')+'</div><div class="o-q">Qty '+(i.qty||1)+'</div></div>' +
+          '<div class="o-pr">'+fmt(i.line!=null?i.line:(i.price||0)*(i.qty||1))+'</div></div>';
       }).join('') +
       '<div class="o-total"><span>Total ('+payLabel+')</span><span>'+fmt(order.total)+'</span></div>' +
     '</div>' +
 
-    '<div class="card"><h2>Delivering to</h2><p class="addr">' +
-      '<b>'+c.name+'</b><br/>'+c.address+'<br/>'+
-      (c.landmark?c.landmark+'<br/>':'')+c.city+', '+c.state+' — '+c.pincode+'<br/>'+
-      'Phone: '+c.phone+'</p></div>' +
+    (c.address
+      ? '<div class="card"><h2>Delivering to</h2><p class="addr">' +
+          '<b>'+(c.name||'')+'</b><br/>'+c.address+'<br/>'+
+          (c.landmark?c.landmark+'<br/>':'')+
+          [c.city,c.state].filter(Boolean).join(', ')+(c.pincode?' — '+c.pincode:'')+'<br/>'+
+          (c.phone?'Phone: '+c.phone:'')+'</p></div>'
+      : '') +
 
     '<div class="cta">' +
       '<a href="shop.html" class="btn btn-solid">Continue shopping</a>' +
       '<a href="index.html" class="btn btn-line">Back to home</a>' +
     '</div>' +
     '<p class="note">A copy of this order is saved to your device. Questions? See our Contact page.</p>';
+  }catch(e){
+    /* something in the saved order was not what we expected — still
+       tell the customer their order went through */
+    console.error('could not render full confirmation', e);
+    page.innerHTML = '<div class="tick">✓</div><h1>Order confirmed</h1>' +
+      '<p class="lead">Thank you. We\'ve got your order'+(order.id?' ('+order.id+')':'')+' and we\'re on it.</p>' +
+      '<div class="cta"><a href="shop.html" class="btn btn-solid">Continue shopping</a>' +
+      '<a href="track.html" class="btn btn-line">Track order</a></div>';
+  }
 })();
 </script>
 <p style="margin-top:2rem;font-size:.86rem;color:var(--muted);text-align:center">Track this order any time at <a href="track.html" style="color:var(--gold-hi)">itsaim.netlify.app/track</a></p>
