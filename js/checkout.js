@@ -453,8 +453,12 @@ var STATES = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh
           }
         }).then(function(vres){
           if(vres.data && vres.data.ok){
-            storeLocal({ id:d.order.id, customer:customer, total:d.order.total,
-                         status:'paid', payment:'upi' });
+            /* save the same fields COD does, otherwise order-confirmed
+               has no items to draw and renders blank */
+            storeLocal({ id:d.order.id, customer:customer, items:lineItems,
+                         subtotal:subtotal, shipping:ship, total:d.order.total,
+                         status:'paid', payment:'upi',
+                         razorpay_payment_id: resp.razorpay_payment_id });
             done();
           } else {
             showErr('Payment could not be verified. If money was deducted, contact us on WhatsApp \u2014 nothing is lost and we will sort it out.');
