@@ -406,14 +406,19 @@ var STATES = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh
         if(!d || !d.ok) throw new Error((d && d.error) || 'Could not create order');
 
         if(d.cod){                                   /* COD confirmed on the server */
-          storeLocal({ id:d.order.id, customer:customer, items:lineItems, subtotal:subtotal,
-                       shipping:ship, total:total, payment:'cod', status:'confirmed' });
-          done();
+          try{
+            storeLocal({ id:d.order.id, customer:customer, items:lineItems, subtotal:subtotal,
+                         shipping:ship, total:total, payment:'cod', status:'confirmed' });
+          }catch(e){ console.error('could not save local order copy', e); }
+          try{ if(Cart) Cart.clear(); }catch(e){ console.error('could not clear cart', e); }
+          window.location.href = 'order-confirmed.html';
           return;
         }
         openRazorpay(d, customer);
-      }).catch(function(err){
-        showErr(err.message || 'Something went wrong placing your order. Please try again.');
+      }, function(err){
+        /* second argument, not .catch — see the note on verify-payment */
+        console.error('create-order call failed', err);
+        showErr((err && err.message) || 'Something went wrong placing your order. Please try again.');
         resetBtn();
       });
       return;
@@ -451,23 +456,39 @@ var STATES = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh
             razorpay_payment_id: resp.razorpay_payment_id,
             razorpay_signature:  resp.razorpay_signature
           }
-        }).then(function(vres){
-          if(vres.data && vres.data.ok){
-            /* save the same fields COD does, otherwise order-confirmed
-               has no items to draw and renders blank */
-            storeLocal({ id:d.order.id, customer:customer, items:lineItems,
-                         subtotal:subtotal, shipping:ship, total:d.order.total,
-                         status:'paid', payment:'upi',
-                         razorpay_payment_id: resp.razorpay_payment_id });
-            done();
-          } else {
+        }).then(
+          /* ── SUCCESS ── */
+          function(vres){
+            var verified = !!(vres && vres.data && vres.data.ok);
+            if(!verified){
+              showErr('Payment could not be verified. If money was deducted, contact us on WhatsApp \u2014 nothing is lost and we will sort it out.');
+              resetBtn();
+              return;
+            }
+            /* The payment IS verified from here on. Nothing below may
+               report a failure to the customer — if saving a local copy
+               breaks, that is our problem, not theirs. */
+            try{
+              storeLocal({ id:d.order.id, customer:customer, items:lineItems,
+                           subtotal:subtotal, shipping:ship, total:d.order.total,
+                           status:'paid', payment:'upi',
+                           razorpay_payment_id: resp.razorpay_payment_id });
+            }catch(e){ console.error('could not save local order copy', e); }
+
+            try{ if(Cart) Cart.clear(); }catch(e){ console.error('could not clear cart', e); }
+            window.location.href = 'order-confirmed.html';
+          },
+          /* ── FAILURE ── only a genuine network/server failure lands here,
+             because it is the second argument to .then rather than a
+             .catch chained after it. A .catch would also swallow errors
+             thrown in the success handler and wrongly tell a paying
+             customer their payment failed. */
+          function(err){
+            console.error('verify-payment call failed', err);
             showErr('Payment could not be verified. If money was deducted, contact us on WhatsApp \u2014 nothing is lost and we will sort it out.');
             resetBtn();
           }
-        }).catch(function(){
-          showErr('Payment could not be verified. If money was deducted, contact us on WhatsApp \u2014 nothing is lost and we will sort it out.');
-          resetBtn();
-        });
+        );
       },
       modal: { ondismiss: function(){ resetBtn(); } }
     });
