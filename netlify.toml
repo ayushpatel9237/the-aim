@@ -1,13 +1,134 @@
 [build]
   publish = "."
 
-# ── long cache for images (they never change once uploaded) ──
+# ══════════════════════════════════════════════════════════════
+#  BLOCK SOURCE / CONFIG FILES
+#
+#  force = true is the important part. Without it Netlify serves
+#  any file that actually exists and never reaches the redirect —
+#  which is why /security-hardening.sql was still downloading.
+#
+#  Netlify's splat is only reliable at the END of a path, so
+#  "/*.sql" does not match what you would expect. Blocking whole
+#  folders is both simpler and safer: move the files into /sql and
+#  /docs and everything inside is covered, including files you add
+#  later and forget about.
+# ══════════════════════════════════════════════════════════════
+[[redirects]]
+  from = "/sql/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/docs/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/supabase/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# belt and braces: the loose files, by exact name, in case one is
+# left behind in the root during a deploy
+[[redirects]]
+  from = "/security-hardening.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/curator-schema.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/seed-products.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/seed-products-full.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/order-tracking.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/shipping-ops.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/site-content.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/SECURITY.md"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/GO-LIVE.md"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/LAUNCH-GUIDE.md"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/LAUNCH-CHECKLIST.md"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/CURATOR-SETUP.md"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/DEPLOY-README.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# ══════════════════════════════════════════════════════════════
+#  CACHING
+# ══════════════════════════════════════════════════════════════
 [[headers]]
   for = "/images/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# ── security headers on every page ──
+# never cache HTML, so a deploy shows up immediately
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# never cache JS either — a stale checkout.js cost hours of
+# debugging once; better a re-download than a wrong file
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# ══════════════════════════════════════════════════════════════
+#  SECURITY HEADERS
+# ══════════════════════════════════════════════════════════════
 [[headers]]
   for = "/*"
   [headers.values]
@@ -18,28 +139,26 @@
     # don't leak your URLs to other sites
     Referrer-Policy = "strict-origin-when-cross-origin"
     # force HTTPS for a year
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
-    # lock down what the page is allowed to use
-    Permissions-Policy = "geolocation=(), microphone=(), camera=(), payment=(self)"
-    # Content Security Policy — only load code/data from trusted sources
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://checkout.razorpay.com https://www.youtube-nocookie.com https://www.youtube.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' https:; connect-src 'self' https://*.supabase.co https://api.razorpay.com; frame-src https://www.youtube-nocookie.com https://www.youtube.com https://www.instagram.com https://www.facebook.com https://api.razorpay.com https://checkout.razorpay.com; object-src 'none'; base-uri 'self'; form-action 'self'"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    # the page may not use hardware it has no business using
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), usb=(), magnetometer=(), accelerometer=(), payment=(self)"
+    # stop other origins reading your pages via popups
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+    # Content Security Policy — where code, styles and data may come from.
+    # frame-ancestors is the modern replacement for X-Frame-Options;
+    # both are set so older browsers are covered too.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://checkout.razorpay.com https://www.youtube-nocookie.com https://www.youtube.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.razorpay.com https://lumberjack.razorpay.com; frame-src https://www.youtube-nocookie.com https://www.youtube.com https://www.instagram.com https://www.facebook.com https://api.razorpay.com https://checkout.razorpay.com; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
 
-# ── never cache HTML, so updates show immediately ──
+# the admin panel is yours alone — never let it be framed or indexed
 [[headers]]
-  for = "/*.html"
+  for = "/admin.html"
   [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
+    X-Frame-Options = "DENY"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Cache-Control = "no-store"
 
-# ── block access to source/config files ──
-[[redirects]]
-  from = "/*.sql"
-  to = "/404.html"
-  status = 404
-[[redirects]]
-  from = "/supabase/*"
-  to = "/404.html"
-  status = 404
-[[redirects]]
-  from = "/*.md"
-  to = "/404.html"
-  status = 404
+[[headers]]
+  for = "/curator.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
