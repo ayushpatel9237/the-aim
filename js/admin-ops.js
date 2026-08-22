@@ -101,7 +101,7 @@
     /* 1 ── database reachable */
     var products = [];
     try{
-      var r = await sb.from('products').select('id,name,stock,price,mrp,status,category').limit(500);
+      var r = await sb.from('products').select('id,name,stock,price,mrp,active,category').limit(500);
       if(r.error) throw r.error;
       products = r.data || [];
       setCheck('db','ok', products.length + ' products readable.');
@@ -152,7 +152,7 @@
 
     /* 5 ── does any live product have no stock? */
     try{
-      var live = products.filter(function(p){ return (p.status||'active')==='active'; });
+      var live = products.filter(function(p){ return p.active !== false; });
       var out  = live.filter(function(p){ return Number(p.stock||0) <= 0; });
       var low  = live.filter(function(p){ return Number(p.stock||0) > 0 && Number(p.stock) <= 3; });
       if(out.length)      setCheck('stockSane','warn', out.length+' live product'+(out.length>1?'s are':' is')+' out of stock: '+out.slice(0,4).map(function(p){return p.name;}).join(', ')+(out.length>4?'…':''));
@@ -208,7 +208,7 @@
   async function loadStockTable(){
     var wrap = el('opsStockWrap'); if(!wrap) return;
     try{
-      var r = await sb.from('products').select('id,name,stock,category,status').order('stock',{ascending:true}).limit(200);
+      var r = await sb.from('products').select('id,name,stock,category,active').order('stock',{ascending:true}).limit(200);
       if(r.error) throw r.error;
       var rows = r.data || [];
       if(!rows.length){ wrap.innerHTML = '<div class="empty-note">No products.</div>'; return; }
@@ -228,7 +228,7 @@
         var col = s<=0 ? '#E08A7A' : s<=3 ? '#E6CBA8' : '#5FA88C';
         return '<div class="ops-find"><b style="color:'+col+'">'+s+'</b> &nbsp;'+
                (p.name||p.id)+
-               '<span class="fix">'+(p.category||'—')+' · '+(p.status||'active')+
+               '<span class="fix">'+(p.category||'—')+' · '+(p.active===false?'hidden':'live')+
                ' &nbsp;<button class="ops-btn ghost" style="padding:.3rem .7rem;font-size:.55rem" data-setstock="'+p.id+'">Set…</button></span></div>';
       }).join('') + (rows.length>12 ? '<div class="empty-note" style="margin-top:.6rem">Showing the 12 lowest of '+rows.length+'.</div>' : '');
 
@@ -274,7 +274,7 @@
         var imgs = p.images;
         if(typeof imgs === 'string'){ try{ imgs = JSON.parse(imgs); }catch(e){ imgs = []; } }
         var n = Array.isArray(imgs) ? imgs.length : 0;
-        return (p.status||'active')==='active' && !n && !p.hero && !p.thumb;
+        return p.active !== false && !n && !p.hero && !p.thumb;
       }).forEach(function(p){ found.push(['Live product has no image', p.name||p.id,
           'It will show as a blank tile in the shop.']); });
 
