@@ -323,7 +323,7 @@
                 ? '<div class="sh-mrp">M.R.P. <s>'+money(p.mrp)+'</s> · <b>'+offPct+'% off</b></div>'
                 : '') +
             '</div>' +
-            '<div class="sh-tax">✓ Inclusive of all taxes · Free delivery above ₹499</div>' +
+            '<div class="sh-tax">✓ Inclusive of all taxes · Free delivery across India</div>' +
           '</div>' +
           '<div class="sh-stock">'+stockTxt+'</div>' +
 
@@ -340,7 +340,7 @@
             '<div class="sh-spec"><span class="sh-spec-k">Product code</span><span class="sh-spec-v">'+(p.sku||'—')+'</span></div>' +
             (p.stock != null ? '<div class="sh-spec"><span class="sh-spec-k">Availability</span><span class="sh-spec-v">'+(p.stock>0?'In stock':'Sold out')+'</span></div>' : '') +
             '<div class="sh-spec"><span class="sh-spec-k">Delivery</span><span class="sh-spec-v">1–2 days, pan-India</span></div>' +
-            '<div class="sh-spec"><span class="sh-spec-k">Returns</span><span class="sh-spec-v">7 days</span></div>' +
+            '<div class="sh-spec"><span class="sh-spec-k">Returns</span><span class="sh-spec-v">7 days · damaged or faulty</span></div>' +
           '</div></div>' +
         '</div>' +
 

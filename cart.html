@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Your bag — The AIM</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#050818"
+<meta name="theme-color" content="#050818" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -69,12 +69,17 @@ h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,
 <script src="js/cart.js"></script>
 <script>
 (function(){
+  var Cart = window.AscentraCart || window.Cart;
   var wrap = document.getElementById('bagWrap');
   function money(n){ return '\u20B9' + Number(n||0).toLocaleString('en-IN'); }
   function find(id){ return PRODUCTS.filter(function(p){ return p.id===id; })[0]; }
 
   function render(){
-    var items = (window.Cart ? Cart.read() : []).filter(function(i){ return find(i.id); });
+    /* cart.js publishes itself as window.AscentraCart, and its public
+       method is items() — there is no read(). Getting either wrong makes
+       this page show an empty bag no matter what the customer added. */
+    if(!Cart){ wrap.innerHTML = '<p class="lede">Cart unavailable — please refresh.</p>'; return; }
+    var items = Cart.items().filter(function(i){ return find(i.id); });
     if(!items.length){
       wrap.innerHTML =
         '<div class="tcard" style="text-align:center;padding:3rem 1.4rem">' +
@@ -104,7 +109,10 @@ h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,
       '</div>';
     }).join('');
 
-    var ship = subtotal >= 999 ? 0 : 49;
+    /* Delivery is free on every order — this must match SHIP_FEE in
+       cart.js and checkout.js, and the published Shipping Policy.
+       If you start charging, change it in all three places at once. */
+    var ship = 0;
     var total = subtotal + ship;
 
     wrap.innerHTML =
@@ -114,7 +122,7 @@ h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,
           '<h2 class="bsum-t">Summary</h2>' +
           '<div class="brow2"><span>Subtotal</span><b>'+money(subtotal)+'</b></div>' +
           '<div class="brow2"><span>Shipping</span><b>'+(ship? money(ship) : 'Free')+'</b></div>' +
-          (ship ? '<p class="bfree">Add '+money(999-subtotal)+' more for free shipping</p>' : '') +
+          '<p class="bfree">Free delivery across India</p>' +
           '<div class="brow2 btot"><span>Total</span><b>'+money(total)+'</b></div>' +
           '<a href="checkout.html" class="tbtn" style="display:block;text-align:center;text-decoration:none;margin-top:1rem">Checkout</a>' +
           '<a href="shop.html" class="bcont">Keep shopping</a>' +
@@ -125,7 +133,7 @@ h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,
       b.addEventListener('click', function(){ Cart.add(b.dataset.inc, 1); render(); }); });
     wrap.querySelectorAll('[data-dec]').forEach(function(b){
       b.addEventListener('click', function(){
-        var cur = Cart.read().filter(function(x){ return x.id===b.dataset.dec; })[0];
+        var cur = Cart.items().filter(function(x){ return x.id===b.dataset.dec; })[0];
         if(cur && cur.qty > 1){ Cart.setQty(b.dataset.dec, cur.qty-1); }
         else { Cart.remove(b.dataset.dec); }
         render();
