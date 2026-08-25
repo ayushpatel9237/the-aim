@@ -45,14 +45,68 @@ Deno.serve(async (req) => {
     });
 
     const total = subtotal + (Number(shipping) || 0);
-    const orderId = "AIM" + Date.now().toString().slice(-8);
+    // Order ids must not be guessable. The old form was
+    // "AIM" + the last 8 digits of the clock, so two orders placed
+    // minutes apart differed by a predictable amount — anyone with
+    // one id could guess their neighbours'. Now: date + random.
+    // Alphabet excludes I, O, 0 and 1 so a customer can read the id
+    // aloud on the phone without ambiguity.
+    const AB = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const bytes = crypto.getRandomValues(new Uint8Array(6));
+    let rnd = ""; for (let i = 0; i < 6; i++) rnd += AB[bytes[i] % AB.length];
+    const d = new Date();
+    const orderId = "AIM" + String(d.getFullYear()).slice(2) +
+      String(d.getMonth() + 1).padStart(2, "0") +
+      String(d.getDate()).padStart(2, "0") + rnd;
 
-    // ── COD: no Razorpay, just save the order as confirmed ──
+    // ── COD: no Razorpay, save the order as confirmed ──
     if (payment === "cod") {
-      await sb.from("orders").insert({
+      const ins = await sb.from("orders").insert({
         id: orderId, customer, items: lineItems, subtotal, shipping, total,
         payment: "cod", status: "confirmed", ref_code: ref_code || null,
       });
+      if (ins.error) throw new Error("Could not save order: " + ins.error.message);
+
+      /* Stock. A COD order never reaches verify-payment, so if we do not
+         decrement here it never happens at all — and the shop keeps
+         selling items that are already spoken for. Each item is isolated
+         so one failure cannot lose the whole order. */
+      for (const it of lineItems) {
+        try {
+          const { error: se } = await sb.rpc("decrement_stock", { pid: it.id, qty: it.qty });
+          if (se) console.error("stock decrement failed", orderId, it.id, se.message);
+        } catch (e) { console.error("stock decrement threw", orderId, it.id, String(e)); }
+      }
+
+      /* Credit the curator, same as a paid order would. */
+      try {
+        if (ref_code) {
+          const { data: cur } = await sb.from("curators")
+            .select("id, commission_pct").eq("ref_code", ref_code)
+            .eq("status", "active").maybeSingle();
+          if (cur) {
+            await sb.from("curator_sales").insert({
+              curator_id: cur.id, order_id: orderId, order_total: total,
+              commission: Math.round(total * (cur.commission_pct / 100)),
+              status: "confirmed",
+            });
+          }
+        }
+      } catch (e) { console.error("curator credit failed", orderId, String(e)); }
+
+      /* A COD customer paid nothing yet, but they still ordered — they
+         deserve the same confirmation email a paying customer gets.
+         Never awaited: a slow mail service must not drop the response. */
+      try {
+        // @ts-ignore EdgeRuntime is provided by Supabase
+        if (typeof EdgeRuntime !== "undefined" && EdgeRuntime.waitUntil) {
+          // @ts-ignore
+          EdgeRuntime.waitUntil(sendOrderEmail({ id: orderId, customer, items: lineItems, total, payment: "cod" }));
+        } else {
+          sendOrderEmail({ id: orderId, customer, items: lineItems, total, payment: "cod" });
+        }
+      } catch (_e) { /* never block the response */ }
+
       return json({ ok: true, cod: true, order: { id: orderId, total } });
     }
 
@@ -90,6 +144,56 @@ Deno.serve(async (req) => {
     return json({ ok: false, error: String(e.message || e) }, 400);
   }
 });
+
+
+/* ── confirmation email, shared by the COD path ──
+   Mirrors what verify-payment sends after a paid order. If
+   RESEND_API_KEY is not set this does nothing at all, silently —
+   a missing email must never break an order that succeeded. */
+async function sendOrderEmail(order: any) {
+  try {
+    const RESEND = Deno.env.get("RESEND_API_KEY");
+    const FROM   = Deno.env.get("ORDER_FROM_EMAIL") || "orders@theaim.store";
+    const ADMIN  = Deno.env.get("ADMIN_EMAIL");
+    const email  = order.customer?.email;
+    if (!RESEND || !email) return;
+
+    const rows = (order.items || []).map((i: any) =>
+      `<tr><td style="padding:8px 0">${i.qty}\u00d7 ${i.name}</td>
+           <td style="padding:8px 0;text-align:right">\u20b9${i.line}</td></tr>`).join("");
+
+    const html = `
+      <div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;margin:0 auto;color:#0A0F26">
+        <h1 style="font-size:20px;margin:0 0 4px">Thanks \u2014 your order is confirmed.</h1>
+        <p style="color:#5B6478;margin:0 0 20px">Order <b>${order.id}</b></p>
+        <table style="width:100%;border-collapse:collapse;font-size:14px">${rows}
+          <tr><td style="padding:12px 0;border-top:1px solid #E3E6EC"><b>Total</b></td>
+              <td style="padding:12px 0;border-top:1px solid #E3E6EC;text-align:right"><b>\u20b9${order.total}</b></td></tr>
+        </table>
+        <p style="font-size:14px;color:#5B6478;margin-top:20px">
+          This is a Cash on Delivery order \u2014 please keep \u20b9${order.total} ready when it arrives.
+          We dispatch within 2 working days and will send you tracking.</p>
+        <p style="font-size:12px;color:#8A93A6;margin-top:28px">THE AIM</p>
+      </div>`;
+
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${RESEND}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: `THE AIM <${FROM}>`, to: [email],
+                             subject: `Order confirmed \u2014 ${order.id}`, html }),
+    });
+
+    if (ADMIN) {
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${RESEND}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ from: `THE AIM <${FROM}>`, to: [ADMIN],
+          subject: `New COD order ${order.id} \u2014 \u20b9${order.total}`,
+          html: `<p><b>${order.customer?.name}</b> (${order.customer?.phone})</p>${html}` }),
+      });
+    }
+  } catch (_e) { /* email must never break an order */ }
+}
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {

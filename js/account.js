@@ -40,7 +40,13 @@
   }
 
   /* ── watchlist: local for guests, synced for signed-in ── */
-  function localWatch(){ try{ return JSON.parse(localStorage.getItem(WKEY)) || []; }catch(e){ return []; } }
+  /* poll.js writes {id:true}; this file works in arrays. Accept both. */
+  function asIds(raw){
+    if(Array.isArray(raw)) return raw.map(String);
+    if(raw && typeof raw === 'object') return Object.keys(raw).filter(function(k){ return raw[k]; });
+    return [];
+  }
+  function localWatch(){ try{ return asIds(JSON.parse(localStorage.getItem(WKEY))); }catch(e){ return []; } }
   function saveLocal(a){ try{ localStorage.setItem(WKEY, JSON.stringify(a)); }catch(e){} }
 
   async function pullWatch(){

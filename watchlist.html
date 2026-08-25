@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Your watchlist — The AIM</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#050818"
+<meta name="theme-color" content="#050818" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -77,7 +77,15 @@ h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.9rem,4.5vw,
   var KEY = 'ascentra_watch_v1';
   var wrap = document.getElementById('wlWrap');
 
-  function list(){ try{ return JSON.parse(localStorage.getItem(KEY)) || []; }catch(e){ return []; } }
+  /* poll.js saves the watchlist as an object {id:true}; older code
+     here expected an array. Accept either, so a customer who hearted
+     something before this fix does not land on a broken page. */
+  function asIds(raw){
+    if(Array.isArray(raw)) return raw.map(String);
+    if(raw && typeof raw === 'object') return Object.keys(raw).filter(function(k){ return raw[k]; });
+    return [];
+  }
+  function list(){ try{ return asIds(JSON.parse(localStorage.getItem(KEY))); }catch(e){ return []; } }
   function save2(a){ save(a); if(window.AimAccount && AimAccount.user()) AimAccount.pushWatch(a); }
   function save(a){ try{ localStorage.setItem(KEY, JSON.stringify(a)); }catch(e){} }
 

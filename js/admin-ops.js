@@ -64,6 +64,17 @@
     '.ops-log b{color:#5FA88C;font-weight:400;} .ops-log i{color:#E08A7A;font-style:normal;}',
     '.ops-log s{color:#5F678E;text-decoration:none;}',
     '.ops-manual{font-size:.8rem;color:var(--muted,#8E96B8);line-height:1.8;}',
+    '.ops-ready{display:flex;align-items:flex-start;gap:.75rem;padding:.7rem 0;',
+      'border-bottom:1px solid var(--line-soft,#111735);}',
+    '.ops-ready:last-child{border-bottom:none;}',
+    '.ops-ready .bx{width:17px;height:17px;flex:none;border-radius:5px;margin-top:.15rem;',
+      'border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;',
+      'font-size:.6rem;color:#050818;}',
+    '.ops-ready .bx.done{background:#5FA88C;border-color:#5FA88C;}',
+    '.ops-ready .bx.warn{background:#E6CBA8;border-color:#E6CBA8;}',
+    '.ops-ready .rt{font-size:.86rem;color:var(--text,#FFF1E2);}',
+    '.ops-ready .rn{font-size:.74rem;color:var(--muted,#8E96B8);margin-top:.15rem;line-height:1.55;}',
+    '.ops-ready.blocked .rt{color:#E08A7A;}',
     '.ops-manual code{display:block;font-family:var(--f-mono,monospace);font-size:.72rem;',
       'background:rgba(255,255,255,.04);border:1px solid var(--line-soft,#111735);border-radius:7px;',
       'padding:.6rem .8rem;margin:.4rem 0 .9rem;color:#E6CBA8;overflow-x:auto;white-space:pre;}'
@@ -373,6 +384,196 @@
     }
   }
 
+
+  /* ══════════════════════════════════════════════════════════
+     BACKUP
+     Losing the orders table is more likely than being hacked, and
+     there is no undo. This pulls everything into a file on your
+     Mac. Do it weekly; keep the file somewhere that is not this
+     laptop.
+     ══════════════════════════════════════════════════════════ */
+  function download(name, text, type){
+    var blob = new Blob([text], { type: type || 'application/json' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 500);
+  }
+
+  function stamp(){
+    var d = new Date();
+    return d.getFullYear() + '-' +
+           String(d.getMonth()+1).padStart(2,'0') + '-' +
+           String(d.getDate()).padStart(2,'0');
+  }
+
+  /* orders as CSV — one row per order, readable in Excel */
+  function ordersCsv(rows){
+    var head = ['order_id','date','status','payment','total','name','phone','email',
+                'address','city','state','pincode','items','razorpay_payment_id'];
+    var esc = function(v){
+      v = (v == null) ? '' : String(v);
+      return /[",\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v;
+    };
+    var lines = [head.join(',')];
+    rows.forEach(function(o){
+      var c = o.customer || {};
+      if(typeof c === 'string'){ try{ c = JSON.parse(c); }catch(e){ c = {}; } }
+      var its = o.items;
+      if(typeof its === 'string'){ try{ its = JSON.parse(its); }catch(e){ its = []; } }
+      var itemText = (Array.isArray(its)?its:[])
+        .map(function(i){ return (i.qty||1) + 'x ' + (i.name||i.id); }).join(' | ');
+      lines.push([
+        o.id, o.created_at, o.status, o.payment, o.total,
+        c.name, c.phone, c.email, c.address, c.city, c.state, c.pincode,
+        itemText, o.razorpay_payment_id
+      ].map(esc).join(','));
+    });
+    return lines.join('\n');
+  }
+
+  async function backup(what){
+    var b = el('opsBackupBtn'); if(b){ b.disabled = true; b.textContent = 'Exporting…'; }
+    try{
+      var tables = (what === 'all')
+        ? ['orders','products','curators','curator_sales','curator_payouts','feed_items','upcoming_items']
+        : ['orders'];
+      var out = { exported_at: new Date().toISOString(), site: 'THE AIM', tables: {} };
+      var counts = [];
+
+      for(var i=0; i<tables.length; i++){
+        var t = tables[i];
+        var r = await sb.from(t).select('*');
+        if(r.error){ counts.push(t + ': ' + r.error.message); continue; }
+        out.tables[t] = r.data || [];
+        counts.push(t + ': ' + (r.data||[]).length);
+      }
+
+      download('theaim-backup-' + stamp() + '.json', JSON.stringify(out, null, 2));
+
+      /* orders also as CSV, because a JSON file is no use in a hurry */
+      if(out.tables.orders && out.tables.orders.length){
+        download('theaim-orders-' + stamp() + '.csv', ordersCsv(out.tables.orders), 'text/csv');
+      }
+
+      say('opsBackupMsg', 'Downloaded — ' + counts.join(', '), 'ok');
+      log('backup exported (' + counts.join(', ') + ')', 'ok');
+      try{ localStorage.setItem('aim_last_backup', new Date().toISOString()); }catch(e){}
+      showLastBackup();
+    }catch(e){
+      say('opsBackupMsg', 'Export failed: ' + (e.message||e), 'bad');
+    }
+    if(b){ b.disabled = false; b.textContent = 'Download backup'; }
+  }
+
+  function showLastBackup(){
+    var n = el('opsLastBackup'); if(!n) return;
+    var t = null;
+    try{ t = localStorage.getItem('aim_last_backup'); }catch(e){}
+    if(!t){ n.innerHTML = '<b style="color:#E08A7A">Never backed up.</b> If the database went today, everything would be gone.'; return; }
+    var days = Math.floor((Date.now() - new Date(t)) / 86400000);
+    var col  = days > 14 ? '#E08A7A' : days > 7 ? '#E6CBA8' : '#5FA88C';
+    n.innerHTML = 'Last backup: <b style="color:'+col+'">' +
+      (days === 0 ? 'today' : days + ' day' + (days>1?'s':'') + ' ago') + '</b>' +
+      (days > 7 ? ' — worth doing another.' : '');
+  }
+
+
+  /* ══════════════════════════════════════════════════════════
+     LAUNCH READINESS
+     Not a list you tick yourself — it looks at the live site and
+     database and works out what is genuinely still missing.
+     ══════════════════════════════════════════════════════════ */
+  async function runReady(){
+    var wrap = el('opsReadyWrap');
+    var b = el('opsReadyBtn'); if(b){ b.disabled = true; b.textContent = 'Checking…'; }
+    wrap.innerHTML = '<div class="empty-note">Checking…</div>';
+
+    var rows = [];
+    var add = function(state, title, note, blocking){
+      rows.push({ state:state, title:title, note:note, blocking:!!blocking });
+    };
+
+    try{
+      var pr = await sb.from('products').select('id,name,active,stock,price,mrp,images');
+      var or = await sb.from('orders').select('id,status,total,created_at,razorpay_payment_id');
+      var products = pr.data || [], orders = or.data || [];
+
+      /* ── can you actually take money? ── */
+      var paid = orders.filter(function(o){ return o.status==='paid'; });
+      if(paid.length){
+        add('done','Payments verified end to end',
+            paid.length + ' paid order' + (paid.length>1?'s have':' has') +
+            ' completed, signature-checked on the server.');
+      } else {
+        add('warn','No completed online payment yet',
+            'Place one test order with a Razorpay test card to prove the whole path works.');
+      }
+
+      add('warn','Razorpay live keys',
+          'Cannot be read from a browser. If you are still on test keys, no real money moves. ' +
+          'Check with <code>supabase secrets list</code>, and switch once KYC clears.', true);
+
+      /* ── is there anything to sell? ── */
+      var live = products.filter(function(p){ return p.active !== false; });
+      var sellable = live.filter(function(p){ return Number(p.stock||0) > 0; });
+      if(!live.length)          add('warn','No live products','Nothing is visible in the shop.', true);
+      else if(!sellable.length) add('warn','Everything is out of stock',
+                                    live.length + ' live products, all at zero stock. Nobody can buy.', true);
+      else                      add('done','Products ready to sell',
+                                    sellable.length + ' of ' + live.length + ' live products have stock.');
+
+      /* ── would a customer get a receipt? ── */
+      add('warn','Order confirmation emails',
+          'The code is written and waiting. Until you set the two secrets below, a paying customer ' +
+          'gets no receipt at all — they just have to trust the confirmation page.');
+
+      /* ── could you survive losing the database? ── */
+      var lb = null; try{ lb = localStorage.getItem('aim_last_backup'); }catch(e){}
+      if(!lb) add('warn','No backup taken',
+                  orders.length + ' orders in the database and no copy anywhere else.', true);
+      else {
+        var d = Math.floor((Date.now()-new Date(lb))/86400000);
+        add(d>7?'warn':'done','Backup', d===0?'Taken today.':'Last taken '+d+' days ago.');
+      }
+
+      /* ── data problems that surface as customer complaints ── */
+      var noImg  = live.filter(function(p){
+        var i=p.images; if(typeof i==='string'){ try{ i=JSON.parse(i); }catch(e){ i=[]; } }
+        return !(Array.isArray(i)&&i.length);
+      });
+      var badMrp = products.filter(function(p){ return p.mrp && Number(p.mrp) < Number(p.price); });
+      if(noImg.length)  add('warn','Live products with no image',
+                            noImg.length + ' will show as blank tiles: ' +
+                            noImg.slice(0,3).map(function(p){return p.name;}).join(', '));
+      if(badMrp.length) add('warn','Price above MRP',
+                            badMrp.length + ' product' + (badMrp.length>1?'s':'') +
+                            ' would show a negative discount.');
+      if(!noImg.length && !badMrp.length) add('done','Product data is clean','No missing images, no negative discounts.');
+
+      /* ── the things only you can confirm ── */
+      add('warn','GST registration',
+          'Required for e-commerce sellers in most cases. Your GSTIN also needs adding to terms.html.', true);
+      add('warn','Legal pages carry real details',
+          'Contact, Terms, Privacy, Shipping and Returns should show your business name, address and phone. ' +
+          'Open one and check it is not still template text.');
+
+      wrap.innerHTML = rows.map(function(r){
+        var mark = r.state==='done' ? '✓' : '!';
+        return '<div class="ops-ready'+(r.blocking&&r.state!=='done'?' blocked':'')+'">' +
+               '<span class="bx '+(r.state==='done'?'done':'warn')+'">'+mark+'</span>' +
+               '<div><div class="rt">'+r.title+'</div><div class="rn">'+r.note+'</div></div></div>';
+      }).join('');
+
+      var left = rows.filter(function(r){ return r.state!=='done'; }).length;
+      log('launch check: ' + left + ' item' + (left===1?'':'s') + ' outstanding', left?'bad':'ok');
+    }catch(e){
+      wrap.innerHTML = '<div class="empty-note">Check failed: ' + (e.message||e) + '</div>';
+    }
+    if(b){ b.disabled=false; b.textContent='Re-check'; }
+  }
+
   /* ══════════════════════════════════════════════════════════
      BUILD THE PAGE
      ══════════════════════════════════════════════════════════ */
@@ -431,6 +632,29 @@
         '</div>' +
       '</div>' +
 
+      '<div class="card"><div class="card-header"><span class="card-title">Ready to launch?</span>' +
+        '<button class="ops-btn" id="opsReadyBtn">Re-check</button></div>' +
+        '<div id="opsReadyWrap"><div class="empty-note">Checking…</div></div>' +
+      '</div>' +
+
+      '<div class="ops-grid">' +
+        '<div class="card"><div class="card-header"><span class="card-title">Backup</span>' +
+          '<button class="ops-btn" id="opsBackupBtn">Download backup</button></div>' +
+          '<div class="ops-ck-note" id="opsLastBackup">—</div>' +
+          '<div class="ops-row" style="margin-top:.9rem">' +
+            '<button class="ops-btn ghost" id="opsBackupOrders">Orders only</button>' +
+            '<button class="ops-btn ghost" id="opsBackupAll">Everything</button>' +
+          '</div>' +
+          '<div class="ops-msg" id="opsBackupMsg"></div>' +
+          '<div class="ops-ck-note" style="margin-top:.6rem">Downloads a JSON file of your tables plus ' +
+          'a CSV of orders you can open in Excel. Keep a copy somewhere other than this laptop.</div>' +
+        '</div>' +
+
+        '<div class="card"><div class="card-header"><span class="card-title">Activity</span></div>' +
+          '<div class="ops-log" id="opsLog"><div><s>—</s> <s>nothing yet this session</s></div></div>' +
+        '</div>' +
+      '</div>' +
+
       '<div class="card ops-danger"><div class="card-header"><span class="card-title">Order cleanup</span></div>' +
         '<div id="opsOrdCount"><div class="empty-note">Loading…</div></div>' +
         '<div class="ops-row" style="margin-top:1rem">' +
@@ -443,10 +667,6 @@
       '</div>' +
 
       '<div class="ops-grid">' +
-        '<div class="card"><div class="card-header"><span class="card-title">Activity</span></div>' +
-          '<div class="ops-log" id="opsLog"><div><s>—</s> <s>nothing yet this session</s></div></div>' +
-        '</div>' +
-
         '<div class="card"><div class="card-header"><span class="card-title">Needs the Terminal</span></div>' +
           '<div class="ops-manual">' +
             'These cannot be done from a browser — they need the CLI or the Supabase dashboard.' +
@@ -454,7 +674,8 @@
             'Going live with real payments, once Razorpay KYC clears:' +
             '<code>supabase secrets set RAZORPAY_KEY_ID=rzp_live_xxxx\nsupabase secrets set RAZORPAY_KEY_SECRET=xxxx</code>' +
             'Switching on order emails — the code is already written and waiting:' +
-            '<code>supabase secrets set RESEND_API_KEY=re_xxxx\nsupabase secrets set ADMIN_EMAIL=you@theaim.store</code>' +
+            '<code>supabase secrets set RESEND_API_KEY=re_xxxx\nsupabase secrets set ADMIN_EMAIL=theaim.9237@gmail.com</code>' +
+            'A weekly backup, kept off this laptop, is the cheapest insurance you will ever buy.' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -473,7 +694,7 @@
       window.scrollTo({top:0});
       if(!v.dataset.loaded){
         v.dataset.loaded = '1';
-        runHealth(); loadStockTable(); countOrders();
+        runHealth(); loadStockTable(); countOrders(); runReady(); showLastBackup();
       }
     });
 
@@ -484,6 +705,10 @@
     el('opsWipeAband').addEventListener('click', function(){ wipeOrders('abandoned'); });
     el('opsWipeToday').addEventListener('click', function(){ wipeOrders('today'); });
     el('opsWipeAll').addEventListener('click', function(){ wipeOrders('all'); });
+    el('opsReadyBtn').addEventListener('click', runReady);
+    el('opsBackupBtn').addEventListener('click', function(){ backup('all'); });
+    el('opsBackupOrders').addEventListener('click', function(){ backup('orders'); });
+    el('opsBackupAll').addEventListener('click', function(){ backup('all'); });
 
     return true;
   }

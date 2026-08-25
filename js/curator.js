@@ -136,7 +136,16 @@
   async function renderDashboard(cur){
     var site = location.origin + location.pathname.replace(/curator\.html$/, '');
     var refLink = site + 'index.html?ref=' + cur.ref_code;
-    var available = cur.total_earned; // (minus already-paid — simplified; admin tracks payouts)
+    /* Available = everything earned, minus anything already paid out or
+       currently requested. The old code used total_earned on its own, so a
+       curator could request the same money again and again — every request
+       looked valid, and you would only notice when paying them twice. */
+    var priorPayouts = await A.myPayouts(cur.id);
+    var claimed = (priorPayouts || []).reduce(function(sum, p){
+      return ['paid','requested','processing'].indexOf(p.status) > -1
+        ? sum + Number(p.amount || 0) : sum;
+    }, 0);
+    var available = Math.max(0, Number(cur.total_earned || 0) - claimed);
 
     var hour = new Date().getHours();
     var greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
@@ -175,7 +184,8 @@
 
       '<div class="panel"><h2>Payouts</h2>' +
         '<div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1.2rem">' +
-          '<div style="font-family:var(--f-mono);font-size:.8rem;color:var(--muted)">Available: <b style="color:var(--gold-hi)">'+fmt(available)+'</b></div>' +
+          '<div style="font-family:var(--f-mono);font-size:.8rem;color:var(--muted)">Available: <b style="color:var(--gold-hi)">'+fmt(available)+'</b>' +
+          (claimed>0 ? '<span style="color:var(--faint)"> · '+fmt(claimed)+' already requested or paid</span>' : '') + '</div>' +
           '<button class="copy-btn" id="reqPayout" style="border-color:var(--gold);color:var(--gold-hi)">Request payout</button>' +
         '</div>' +
         '<div id="payoutsWrap"><div class="empty-note">Loading…</div></div>' +

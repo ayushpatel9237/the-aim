@@ -6,18 +6,18 @@
 <title>The AIM — Shop</title>
 <meta name="description" content="Every item in the current The AIM drop — hand-picked, limited, delivered fast across India." />
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="canonical" href="https://ascentra.netlify.app/shop.html">
+<link rel="canonical" href="https://itsaim.netlify.app/shop.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The AIM">
 <meta property="og:title" content="All Products — The AIM">
 <meta property="og:description" content="Browse every product at The AIM — room, desk, gadgets, storage and daily essentials.">
-<meta property="og:image" content="https://ascentra.netlify.app/images/products/22_butterfly_phone_stand_hero.webp">
-<meta property="og:url" content="https://ascentra.netlify.app/shop.html">
+<meta property="og:image" content="https://itsaim.netlify.app/images/products/22_butterfly_phone_stand_hero.webp">
+<meta property="og:url" content="https://itsaim.netlify.app/shop.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="All Products — The AIM">
 <meta name="twitter:description" content="Browse every product at The AIM — room, desk, gadgets, storage and daily essentials.">
-<meta name="twitter:image" content="https://ascentra.netlify.app/images/products/22_butterfly_phone_stand_hero.webp">
-<meta name="theme-color" content="#050818"
+<meta name="twitter:image" content="https://itsaim.netlify.app/images/products/22_butterfly_phone_stand_hero.webp">
+<meta name="theme-color" content="#050818" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -344,6 +344,16 @@ footer{ border-top:1px solid var(--line-soft); padding:3rem 0 2.4rem; }
 
   renderFilters();
   renderGrid();
+
+  /* live-products.js merges database prices in asynchronously and then
+     fires this. Without listening, the grid keeps showing the static
+     price it rendered a moment earlier. */
+  document.addEventListener('products:updated', function(){
+    cats = {};
+    PRODUCTS.forEach(function(p){ cats[p.category] = (cats[p.category]||0) + 1; });
+    catNames = Object.keys(cats).sort();
+    renderFilters(); renderGrid();
+  });
 })();
 </script>
 <script src="js/cart.js"></script>
