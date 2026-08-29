@@ -32,6 +32,20 @@
   function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g, function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
+  /* A filename with a space — "Docking Station Stand.MP4" — must be
+     percent-encoded before it goes in a src, or the browser requests a
+     path that does not exist and you get a black screen. Encode each
+     path segment, never the slashes, and leave full URLs alone since
+     those are already encoded. */
+  function safeUrl(u){
+    if(!u) return '';
+    if(/^https?:\/\//i.test(u) || /^data:/i.test(u)) return u;
+    return u.split('/').map(function(part){
+      try{ return encodeURIComponent(decodeURIComponent(part)); }
+      catch(e){ return encodeURIComponent(part); }
+    }).join('/');
+  }
+
   /* ── styling ─────────────────────────────────────────────── */
   var css = document.createElement('style');
   css.textContent = [
@@ -166,7 +180,7 @@
       return '<button class="st-item'+(s[v.id]?' seen':'')+'" data-i="'+i+'" ' +
              'aria-label="Watch '+esc(v.product_name)+'">' +
                '<span class="st-ring"><span class="st-cover">' +
-                 (cover ? '<img src="'+esc(cover)+'" alt="" loading="lazy" />' : '') +
+                 (cover ? '<img src="'+esc(safeUrl(cover))+'" alt="" loading="lazy" />' : '') +
                '</span></span>' +
                '<span class="st-name">'+esc(v.product_name || '')+'</span>' +
              '</button>';
@@ -241,10 +255,10 @@
     var isFile = kind === 'file';
 
     var media = !v.video_url
-      ? '<img class="st-poster" src="'+esc(v.poster_url||'')+'" alt="" />'
+      ? '<img class="st-poster" src="'+esc(safeUrl(v.poster_url||''))+'" alt="" />'
       : isFile
-        ? '<video src="'+esc(v.video_url)+'" autoplay playsinline muted ' +
-          (v.poster_url ? 'poster="'+esc(v.poster_url)+'" ' : '') + 'id="stVid"></video>'
+        ? '<video src="'+esc(safeUrl(v.video_url))+'" autoplay playsinline muted controls ' +
+          (v.poster_url ? 'poster="'+esc(safeUrl(v.poster_url))+'" ' : '') + 'id="stVid"></video>'
         : (window.AscentraVideo ? AscentraVideo.embedHTML(v.video_url) : '');
 
     view.innerHTML =
@@ -256,7 +270,7 @@
           }).join('') +
         '</div>' +
         '<div class="st-top">' +
-          '<span class="st-av">' + (v.poster_url ? '<img src="'+esc(v.poster_url)+'" alt="" />' : '') + '</span>' +
+          '<span class="st-av">' + (v.poster_url ? '<img src="'+esc(safeUrl(v.poster_url))+'" alt="" />' : '') + '</span>' +
           '<span class="st-who"><b>'+esc(v.curator_name || 'THE AIM')+'</b>' +
             '<span>'+(v.views ? v.views + ' views' : 'New')+'</span></span>' +
           '<button class="st-x" aria-label="Close">\u2715</button>' +
@@ -267,7 +281,7 @@
         '<div class="st-foot">' +
           (v.caption ? '<div class="st-cap">'+esc(v.caption)+'</div>' : '') +
           '<a class="st-buy" href="product.html?id='+encodeURIComponent(v.product_id)+'">' +
-            '<span class="th">'+(v.poster_url?'<img src="'+esc(v.poster_url)+'" alt="" />':'')+'</span>' +
+            '<span class="th">'+(v.poster_url?'<img src="'+esc(safeUrl(v.poster_url))+'" alt="" />':'')+'</span>' +
             '<span class="nm"><b>'+esc(v.product_name||'')+'</b>' +
               '<span>'+money(v.product_price)+'</span></span>' +
             '<span class="go">Shop this \u2192</span>' +
