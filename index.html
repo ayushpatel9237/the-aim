@@ -17,7 +17,7 @@
 <meta name="twitter:title" content="The AIM — Things you didn't know you needed">
 <meta name="twitter:description" content="Useful everyday items at honest prices — hand-picked and delivered across India.">
 <meta name="twitter:image" content="https://ascentra.netlify.app/images/products/01_starry_sky_moon_lamp_hero.webp">
-<meta name="theme-color" content="#050818"
+<meta name="theme-color" content="#050818" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -742,6 +742,9 @@ document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
 </script>
 <script src="js/cart.js"></script>
 <script src="js/feed.js"></script>
+<!-- stories.js takes over #feed when there are live videos in the
+     database; feed.js output stays as the fallback if there are none -->
+<script src="js/stories.js"></script>
 <script src="js/poll.js"></script>
 <script>
   // Watchlist button -> quick view of hearted upcoming items

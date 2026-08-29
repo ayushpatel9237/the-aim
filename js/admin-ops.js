@@ -574,6 +574,142 @@
     if(b){ b.disabled=false; b.textContent='Re-check'; }
   }
 
+
+  /* ══════════════════════════════════════════════════════════
+     VIDEOS
+     Add a clip, point it at a product, publish. It appears as a
+     story on the homepage and as the reel on that product page —
+     one record, two places.
+     ══════════════════════════════════════════════════════════ */
+  async function loadVideos(){
+    var wrap = el('opsVidWrap'); if(!wrap) return;
+    try{
+      var r = await sb.from('videos').select('*').order('sort_order');
+      if(r.error) throw r.error;
+      var rows = r.data || [];
+
+      /* fill the product dropdown once */
+      var sel = el('opsVidProduct');
+      if(sel && sel.options.length <= 1){
+        var p = await sb.from('products').select('id,name').eq('active', true).order('name');
+        (p.data||[]).forEach(function(x){
+          var o = document.createElement('option');
+          o.value = x.id; o.textContent = x.name;
+          sel.appendChild(o);
+        });
+      }
+
+      if(!rows.length){
+        wrap.innerHTML = '<div class="empty-note">No videos yet. Add one above and it appears ' +
+          'on the homepage story rail straight away.</div>';
+        return;
+      }
+
+      wrap.innerHTML = rows.map(function(v){
+        var col = v.status==='live' ? '#5FA88C' : v.status==='hidden' ? '#E08A7A' : '#E6CBA8';
+        return '<div class="ops-find">' +
+          '<b style="color:'+col+'">'+v.status.toUpperCase()+'</b> &nbsp;' +
+          (v.caption || v.video_url).slice(0,60) +
+          '<span class="fix">'+v.product_id+' · '+v.views+' views' +
+            ' &nbsp;<button class="ops-btn ghost" style="padding:.3rem .7rem;font-size:.55rem" ' +
+              'data-vidtoggle="'+v.id+'" data-now="'+v.status+'">' +
+              (v.status==='live'?'Hide':'Publish')+'</button>' +
+            ' <button class="ops-btn danger" style="padding:.3rem .7rem;font-size:.55rem" ' +
+              'data-viddel="'+v.id+'">Delete</button>' +
+          '</span></div>';
+      }).join('');
+
+      wrap.querySelectorAll('[data-vidtoggle]').forEach(function(b){
+        b.addEventListener('click', async function(){
+          var next = b.dataset.now === 'live' ? 'hidden' : 'live';
+          var u = await sb.from('videos').update({ status: next }).eq('id', b.dataset.vidtoggle);
+          if(u.error){ alert(u.error.message); return; }
+          log('video set to ' + next, 'ok');
+          loadVideos();
+        });
+      });
+      wrap.querySelectorAll('[data-viddel]').forEach(function(b){
+        b.addEventListener('click', async function(){
+          if(!confirm('Delete this video? Its likes and reviews go with it.')) return;
+          var u = await sb.from('videos').delete().eq('id', b.dataset.viddel);
+          if(u.error){ alert(u.error.message); return; }
+          log('video deleted', 'ok');
+          loadVideos();
+        });
+      });
+    }catch(e){
+      wrap.innerHTML = '<div class="empty-note">Could not load: ' + (e.message||e) + '</div>';
+    }
+  }
+
+  async function addVideo(){
+    var product = el('opsVidProduct').value;
+    var url     = el('opsVidUrl').value.trim();
+    var poster  = el('opsVidPoster').value.trim();
+    var caption = el('opsVidCaption').value.trim();
+
+    if(!product){ say('opsVidMsg','Pick which product this is for.','bad'); return; }
+    if(!url){ say('opsVidMsg','Paste the video link, or a path like videos/lamp.mp4','bad'); return; }
+
+    var b = el('opsVidAdd'); b.disabled = true; b.textContent = 'Adding…';
+    try{
+      var r = await sb.from('videos').insert({
+        product_id: product, video_url: url,
+        poster_url: poster || null, caption: caption || null,
+        status: 'live', show_story: true
+      }).select();
+      if(r.error) throw r.error;
+      say('opsVidMsg','Added and live. It is on the homepage now.','ok');
+      log('video added for ' + product, 'ok');
+      el('opsVidUrl').value=''; el('opsVidPoster').value=''; el('opsVidCaption').value='';
+      loadVideos();
+    }catch(e){
+      say('opsVidMsg','Failed: ' + (e.message||e), 'bad');
+    }
+    b.disabled = false; b.textContent = 'Add video';
+  }
+
+  /* ── reviews awaiting your approval ── */
+  async function loadReviews(){
+    var wrap = el('opsRevWrap'); if(!wrap) return;
+    try{
+      var r = await sb.from('video_comments').select('*').order('created_at',{ascending:false}).limit(50);
+      if(r.error) throw r.error;
+      var rows = r.data || [];
+      var pending = rows.filter(function(x){ return x.status === 'pending'; });
+
+      wrap.innerHTML =
+        '<div class="ops-find"><b>'+rows.length+'</b> reviews' +
+        '<span class="fix">'+rows.filter(function(x){return x.status==='verified';}).length +
+        ' live · '+pending.length+' waiting on you</span></div>' +
+        rows.slice(0,10).map(function(c){
+          var stars = c.rating ? '★'.repeat(c.rating) + '☆'.repeat(5-c.rating) : '';
+          return '<div class="ops-find"><b>'+(c.author_name||'—')+'</b> '+stars+
+            '<span class="fix">'+(c.body||'').slice(0,90)+
+            (c.status==='pending'
+              ? ' &nbsp;<button class="ops-btn ghost" style="padding:.3rem .7rem;font-size:.55rem" data-revok="'+c.id+'">Approve</button>'
+              : '') +
+            ' <button class="ops-btn danger" style="padding:.3rem .7rem;font-size:.55rem" data-revhide="'+c.id+'">Hide</button>' +
+            '</span></div>';
+        }).join('');
+
+      wrap.querySelectorAll('[data-revok]').forEach(function(b){
+        b.addEventListener('click', async function(){
+          await sb.from('video_comments').update({status:'verified'}).eq('id', b.dataset.revok);
+          log('review approved','ok'); loadReviews();
+        });
+      });
+      wrap.querySelectorAll('[data-revhide]').forEach(function(b){
+        b.addEventListener('click', async function(){
+          await sb.from('video_comments').update({status:'hidden'}).eq('id', b.dataset.revhide);
+          log('review hidden','ok'); loadReviews();
+        });
+      });
+    }catch(e){
+      wrap.innerHTML = '<div class="empty-note">Could not load: ' + (e.message||e) + '</div>';
+    }
+  }
+
   /* ══════════════════════════════════════════════════════════
      BUILD THE PAGE
      ══════════════════════════════════════════════════════════ */
@@ -630,6 +766,29 @@
           '<div id="opsScanWrap"><div class="empty-note">Checks for negative discounts, imageless products, ' +
           'paid orders missing a payment id, possible double payments and orders pointing at deleted products.</div></div>' +
         '</div>' +
+      '</div>' +
+
+      '<div class="card"><div class="card-header"><span class="card-title">Videos</span></div>' +
+        '<div class="ops-row">' +
+          '<select id="opsVidProduct" style="min-width:190px"><option value="">Which product?</option></select>' +
+          '<input id="opsVidUrl" placeholder="Video link or videos/clip.mp4" style="min-width:230px" />' +
+        '</div>' +
+        '<div class="ops-row">' +
+          '<input id="opsVidPoster" placeholder="Poster image URL (the story cover)" style="min-width:250px" />' +
+          '<input id="opsVidCaption" placeholder="Caption" style="min-width:190px" />' +
+          '<button class="ops-btn" id="opsVidAdd">Add video</button>' +
+        '</div>' +
+        '<div class="ops-msg" id="opsVidMsg"></div>' +
+        '<div class="ops-ck-note" style="margin-top:.3rem">Instagram, YouTube and Facebook links all work, ' +
+        'or upload an .mp4 to your site and use its path. The poster is the circle on the homepage — ' +
+        'use the product photo if you have nothing better.</div>' +
+        '<div style="margin-top:.9rem" id="opsVidWrap"><div class="empty-note">Loading…</div></div>' +
+      '</div>' +
+
+      '<div class="card"><div class="card-header"><span class="card-title">Reviews</span></div>' +
+        '<div id="opsRevWrap"><div class="empty-note">Loading…</div></div>' +
+        '<div class="ops-ck-note" style="margin-top:.6rem">Reviews from a verified purchase publish ' +
+        'straight away. Anything else waits here for you.</div>' +
       '</div>' +
 
       '<div class="card"><div class="card-header"><span class="card-title">Ready to launch?</span>' +
@@ -695,6 +854,7 @@
       if(!v.dataset.loaded){
         v.dataset.loaded = '1';
         runHealth(); loadStockTable(); countOrders(); runReady(); showLastBackup();
+        loadVideos(); loadReviews();
       }
     });
 
@@ -709,6 +869,7 @@
     el('opsBackupBtn').addEventListener('click', function(){ backup('all'); });
     el('opsBackupOrders').addEventListener('click', function(){ backup('orders'); });
     el('opsBackupAll').addEventListener('click', function(){ backup('all'); });
+    el('opsVidAdd').addEventListener('click', addVideo);
 
     return true;
   }
