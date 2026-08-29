@@ -400,21 +400,4 @@ const PRODUCTS = [
     "thumb": "images/products/travel_duffel_bag_with_trolley_rod_hero.thumb.webp",
     "video": ""
   },
-  {
-    "id": "wireless_remote_light_switch",
-    "sku": "AIM-027",
-    "name": "Wireless Remote Light Switch",
-    "category": "Room",
-    "price": 1499,
-    "desc": "Control any light switch from your bed — sticks on, no wiring needed.",
-    "hero": "images/products/wireless_remote_light_switch_hero.webp",
-    "gallery": [
-      "images/products/wireless_remote_light_switch_hero.webp",
-      "images/products/wireless_remote_light_switch_01.webp",
-      "images/products/wireless_remote_light_switch_02.webp",
-      "images/products/wireless_remote_light_switch_03.webp"
-    ],
-    "thumb": "images/products/wireless_remote_light_switch_hero.thumb.webp",
-    "video": ""
-  }
 ];
