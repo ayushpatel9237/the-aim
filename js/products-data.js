@@ -4,27 +4,6 @@
 //        "videos/clip.mp4". Leave "" for photos-only. Any product can have one.
 const PRODUCTS = [
   {
-    "id": "01_starry_sky_moon_lamp",
-    "sku": "AIM-001",
-    "name": "Starry Sky Moon Lamp",
-    "category": "Room",
-    "price": 1299,
-    "desc": "3D-printed moon lamp with starry-sky projection modes — touch control, USB rechargeable.",
-    "hero": "images/products/01_starry_sky_moon_lamp_hero.webp",
-    "gallery": [
-      "images/products/01_starry_sky_moon_lamp_hero.webp",
-      "images/products/01_starry_sky_moon_lamp_02.webp",
-      "images/products/01_starry_sky_moon_lamp_05.webp",
-      "images/products/01_starry_sky_moon_lamp_06.webp",
-      "images/products/01_starry_sky_moon_lamp_07.webp",
-      "images/products/01_starry_sky_moon_lamp_08.webp",
-      "images/products/01_starry_sky_moon_lamp_09.webp",
-      "images/products/01_starry_sky_moon_lamp_10.webp"
-    ],
-    "thumb": "images/products/01_starry_sky_moon_lamp_hero.thumb.webp",
-    "video": ""
-  },
-  {
     "id": "11_magnetic_pocket_phone_stand",
     "sku": "AIM-002",
     "name": "Magnetic Pocket Phone Stand",
