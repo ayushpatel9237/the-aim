@@ -137,24 +137,28 @@
     /* progress bars */
     /* explicit sizing and radius: a page stylesheet applying a radius to
        spans was turning these thin bars into large ovals */
-    '.st-bars{position:absolute;top:0;left:0;right:0;z-index:7;display:flex;gap:3px;',
-      'padding:.7rem .7rem 0;height:auto;}',
-    '.st-bar{flex:1 1 0;height:2.5px!important;min-height:2.5px;max-height:2.5px;',
-      'border-radius:2px!important;background:rgba(255,255,255,.32)!important;overflow:hidden;',
+    '.st-bars{position:absolute;top:0;left:0;right:0;z-index:7;display:flex;gap:4px;',
+      'padding:.85rem .85rem 0;height:auto;}',
+    '.st-bar{flex:1 1 0;height:3px!important;min-height:3px;max-height:3px;',
+      'border-radius:3px!important;background:rgba(255,255,255,.22)!important;overflow:hidden;',
       'display:block!important;padding:0!important;margin:0!important;border:none!important;}',
-    '.st-bar i{display:block!important;height:100%;width:0;background:#fff!important;',
-      'border-radius:2px!important;padding:0!important;margin:0!important;}',
+    '.st-bar i{display:block!important;height:100%;width:0;background:#F0DCC0!important;',
+      'border-radius:3px!important;padding:0!important;margin:0!important;}',
+    '.st-bar.done i{background:rgba(240,220,192,.55)!important;}',
     '.st-bar.done i{width:100%;}',
 
     /* top row */
-    '.st-top{position:absolute;top:1.5rem;left:0;right:0;z-index:6;display:flex;align-items:center;',
-      'gap:.7rem;padding:.5rem .9rem;',
+    '.st-top{position:absolute;top:1.7rem;left:0;right:0;z-index:6;display:flex;align-items:center;',
+      'gap:.7rem;padding:.55rem .9rem 1.2rem;',
       'background-image:linear-gradient(180deg,rgba(0,0,0,.55),transparent)!important;}',
     '.st-who{min-width:0;flex:1;}',
-    '.st-who b{display:block;font-size:.8rem;color:#fff;font-weight:500;line-height:1.2;',
+    '.st-who b{display:block;font-family:Fraunces,Georgia,serif;font-size:.82rem;color:#fff;',
+      'font-weight:400;letter-spacing:.22em;text-transform:uppercase;line-height:1.2;',
       'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}',
-    '.st-who span{display:block;font-family:var(--f-mono,monospace);font-size:.55rem;',
-      'color:rgba(255,255,255,.62);margin-top:.1rem;}',
+    '.st-who span{display:block;font-family:var(--f-mono,monospace);font-size:.5rem;',
+      'letter-spacing:.16em;text-transform:uppercase;color:rgba(240,220,192,.6);margin-top:.22rem;}',
+    '.st-who span b{display:inline;font-family:var(--f-mono,monospace);font-size:inherit;',
+      'letter-spacing:inherit;color:rgba(255,255,255,.85);}',
     '.st-x{background:none;border:none;color:#fff;font-size:1.3rem;cursor:pointer;',
       'padding:.2rem .4rem;line-height:1;opacity:.85;}',
     '.st-x:hover{opacity:1;}',
@@ -191,19 +195,21 @@
 
     /* playback controls — only for real video files, since we cannot
        scrub an Instagram or YouTube embed */
-    '.st-ctrl{position:absolute;left:50%;bottom:8.4rem;transform:translateX(-50%);z-index:7;',
-      'display:flex;align-items:center;gap:.5rem;padding:.4rem .5rem;border-radius:999px;',
-      'background:rgba(0,0,0,.42)!important;',
-      'backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);',
-      'opacity:0;transition:opacity .25s ease;pointer-events:none;}',
-    '.st-stage:hover .st-ctrl,.st-ctrl.show{opacity:1;pointer-events:auto;}',
-    '.st-cbtn{background:none;border:none;color:#fff;cursor:pointer;line-height:1;',
-      'font-family:var(--f-mono,monospace);font-size:.62rem;letter-spacing:.06em;',
-      'padding:.42rem .6rem;border-radius:999px;transition:background .2s;white-space:nowrap;}',
-    '.st-cbtn:hover{background:rgba(255,255,255,.16)!important;}',
-    '.st-cbtn.big{font-size:.95rem;padding:.3rem .55rem;}',
-    '.st-time{font-family:var(--f-mono,monospace);font-size:.55rem;color:rgba(255,255,255,.75);',
-      'padding:0 .25rem;min-width:66px;text-align:center;}',
+    /* One button, centred, the shape everyone recognises from a player.
+       It fades away while the video runs and returns on tap or pause,
+       so nothing sits on top of the product for longer than it needs to. */
+    '.st-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);',
+      'z-index:7;width:72px;height:72px;border-radius:50%;border:none;cursor:pointer;',
+      'display:flex;align-items:center;justify-content:center;',
+      'background:rgba(240,220,192,.86)!important;color:#050818;',
+      'backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);',
+      'box-shadow:0 12px 40px -10px rgba(0,0,0,.65)!important;',
+      'opacity:0;pointer-events:none;',
+      'transition:opacity .3s ease,transform .3s cubic-bezier(.34,1.5,.64,1);}',
+    '.st-play.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}',
+    '.st-play:hover{background:#F0DCC0!important;}',
+    '.st-play svg{width:26px;height:26px;display:block;margin-left:2px;}',
+    '.st-play.playing svg{margin-left:0;}',
 
     '.st-low{display:inline-block;font-family:var(--f-mono,monospace);font-size:.5rem;',
       'letter-spacing:.18em;text-transform:uppercase;color:#E08A7A;',
@@ -426,18 +432,15 @@
         '</div>' +
         '<div class="st-top">' +
           '<span class="st-who"><b>'+esc(v.curator_name || 'THE AIM')+'</b>' +
-            '<span>'+(v.views ? v.views + ' views' : 'New')+'</span></span>' +
+            '<span>' + (idx+1) + ' / ' + STORIES.length +
+              (v.views > 2 ? ' \u00b7 <b>'+v.views+'</b> watched' : ' \u00b7 New') +
+            '</span></span>' +
           '<button class="st-x" aria-label="Close">\u2715</button>' +
         '</div>' +
         '<button class="st-tap prev" aria-label="Previous"></button>' +
         '<button class="st-tap next" aria-label="Next"></button>' +
         (isFile
-          ? '<div class="st-ctrl" id="stCtrl">' +
-              '<button class="st-cbtn" id="stBack" aria-label="Back 5 seconds">\u21ba 5</button>' +
-              '<button class="st-cbtn big" id="stPlay" aria-label="Play or pause">\u23f8</button>' +
-              '<button class="st-cbtn" id="stFwd" aria-label="Forward 5 seconds">5 \u21bb</button>' +
-              '<span class="st-time" id="stTime">0:00 / 0:00</span>' +
-            '</div>'
+          ? '<button class="st-play" id="stPlay" aria-label="Play or pause"></button>'
           : '') +
         '<button class="st-like" id="stLike" aria-label="Like">\u2661<small>'+(v.likes||0)+'</small></button>' +
         '<div class="st-foot">' +
@@ -471,7 +474,19 @@
       e.stopPropagation();
       var to = buy.getAttribute('data-go');
       close();
-      setTimeout(function(){ window.location.assign(to); }, 200);
+      /* sheet.js watches for clicks on product.html links and opens the
+         quick-view popup — the same one the shop grid uses. Firing a
+         real link after the story has closed gets that popup, so both
+         routes into a product look identical. If sheet.js is not on the
+         page the click just navigates, which is the right fallback. */
+      setTimeout(function(){
+        var a = document.createElement('a');
+        a.href = to;
+        a.style.cssText = 'position:absolute;left:-9999px';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function(){ a.remove(); }, 50);
+      }, 220);
     });
     view.querySelector('.st-tap.prev').addEventListener('click', prev);
     view.querySelector('.st-tap.next').addEventListener('click', next);
@@ -492,56 +507,43 @@
     var vid  = view.querySelector('#stVid');
 
     if(vid){
-      var ctrl = view.querySelector('#stCtrl');
       var play = view.querySelector('#stPlay');
-      var time = view.querySelector('#stTime');
-      var clock = function(t){
-        t = Math.max(0, t|0);
-        return Math.floor(t/60) + ':' + String(t%60).padStart(2,'0');
-      };
+      var PLAY_ICON  = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+      var PAUSE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+
+      function setIcon(playing){
+        if(!play) return;
+        play.innerHTML = playing ? PAUSE_ICON : PLAY_ICON;
+        play.classList.toggle('playing', playing);
+      }
+      function flash(ms){
+        if(!play) return;
+        play.classList.add('show');
+        clearTimeout(play._h);
+        if(ms) play._h = setTimeout(function(){
+          if(!vid.paused) play.classList.remove('show');
+        }, ms);
+      }
+      setIcon(true);
 
       vid.addEventListener('timeupdate', function(){
-        if(vid.duration){
-          fill.style.width = (vid.currentTime / vid.duration * 100) + '%';
-          if(time) time.textContent = clock(vid.currentTime) + ' / ' + clock(vid.duration);
-        }
+        if(vid.duration) fill.style.width = (vid.currentTime / vid.duration * 100) + '%';
       });
       vid.addEventListener('ended', next);
 
-      /* the controls sit over the tap zones, so stop clicks bubbling or
-         every press would also advance to the next story */
-      if(ctrl) ctrl.addEventListener('click', function(e){ e.stopPropagation(); });
-
       if(play) play.addEventListener('click', function(e){
-        e.stopPropagation();
-        if(vid.paused){ vid.play().catch(function(){}); play.textContent = '\u23f8'; paused = false; }
-        else          { vid.pause();                    play.textContent = '\u25b6'; paused = true;  }
+        e.stopPropagation();                   // never advance the story
+        if(vid.paused){ vid.play().catch(function(){}); setIcon(true);  paused = false; flash(900); }
+        else          { vid.pause();                    setIcon(false); paused = true;  flash(0);   }
       });
 
-      var seek = function(by){
-        return function(e){
-          e.stopPropagation();
-          vid.currentTime = Math.min(vid.duration || 0, Math.max(0, vid.currentTime + by));
-          if(ctrl){ ctrl.classList.add('show'); clearTimeout(ctrl._h);
-                    ctrl._h = setTimeout(function(){ ctrl.classList.remove('show'); }, 1800); }
-        };
-      };
-      var bk = view.querySelector('#stBack'), fw = view.querySelector('#stFwd');
-      if(bk) bk.addEventListener('click', seek(-5));
-      if(fw) fw.addEventListener('click', seek(5));
-
-      /* touch has no hover, so a tap reveals the controls briefly */
+      /* tapping the video brings the button back for a moment */
       var stage = view.querySelector('.st-stage');
-      if(stage) stage.addEventListener('click', function(){
-        if(!ctrl) return;
-        ctrl.classList.add('show'); clearTimeout(ctrl._h);
-        ctrl._h = setTimeout(function(){ ctrl.classList.remove('show'); }, 2600);
-      });
+      if(stage) stage.addEventListener('click', function(){ flash(1600); });
 
       vid.play().catch(function(){
-        /* autoplay blocked \u2014 surface the controls so there is a way in */
-        if(play) play.textContent = '\u25b6';
-        if(ctrl) ctrl.classList.add('show');
+        /* autoplay blocked — leave the button showing so there is a way in */
+        setIcon(false); paused = true; flash(0);
       });
     } else {
       var ms = v.video_url ? EMBED_MS : IMG_MS;

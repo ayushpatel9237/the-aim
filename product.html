@@ -379,6 +379,22 @@ header{ position:sticky; top:0; z-index:50; background:transparent; transition:b
 <script src="js/expand.js"></script>
 <link rel="stylesheet" href="css/responsive.css">
 <link rel="stylesheet" href="css/layout-fix.css">
+<style>
+/* Keep the product page centred. #page carries both .wrap and the grid,
+   and a later stylesheet was releasing the max-width, which pushed the
+   whole layout to the left edge on narrow screens. Declared last so it
+   wins, without touching anything else. */
+#page.wrap{
+  max-width:1180px;
+  margin-left:auto;
+  margin-right:auto;
+  width:100%;
+}
+@media (max-width:900px){
+  #page.wrap{ justify-items:center; }
+  #page.wrap > *{ width:100%; max-width:560px; }
+}
+</style>
 </head>
 <body>
 
