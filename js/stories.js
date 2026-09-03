@@ -29,6 +29,19 @@
     try{ var s = seen(); s[id] = Date.now(); localStorage.setItem(SEEN_KEY, JSON.stringify(s)); }catch(e){}
   }
   function money(n){ return '\u20b9' + Number(n||0).toLocaleString('en-IN'); }
+
+  /* The poster is the video's cover frame, which often is not a clean
+     shot of the product. products-data.js is already loaded on this
+     page, so take the real product photo from there when we can. */
+  function productThumb(id, fallback){
+    try{
+      if(typeof PRODUCTS !== 'undefined'){
+        var p = PRODUCTS.filter(function(x){ return x.id === id; })[0];
+        if(p) return p.thumb || p.hero || (p.gallery && p.gallery[0]) || fallback || '';
+      }
+    }catch(e){}
+    return fallback || '';
+  }
   function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g, function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
@@ -68,6 +81,19 @@
       'display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}',
     '.st-item.seen .st-name{color:var(--faint,#5F678E);}',
 
+    /* ── hard reset inside the viewer ──
+       Something in the page stylesheets was drawing large dark ovals
+       behind the progress bars. Rather than hunt it down across files
+       I do not control, everything inside the overlay starts from
+       nothing: no inherited pseudo-elements, no stray radii, no
+       animations. The viewer then styles only what it needs. */
+    '.st-view *,.st-view *::before,.st-view *::after{',
+      'animation:none!important;box-shadow:none!important;', 
+      'background-image:none!important;}',
+    '.st-view *::before,.st-view *::after{content:none!important;display:none!important;}',
+    '.st-view span,.st-view i,.st-view b,.st-view small{border-radius:0;',
+      'background:none;box-shadow:none;}',
+
     /* the viewer */
     '.st-view{position:fixed;inset:0;z-index:9600;background:#05060F;display:flex;',
       'align-items:center;justify-content:center;opacity:0;transition:opacity .28s ease;}',
@@ -86,16 +112,16 @@
     '.st-bars{position:absolute;top:0;left:0;right:0;z-index:7;display:flex;gap:3px;',
       'padding:.7rem .7rem 0;height:auto;}',
     '.st-bar{flex:1 1 0;height:2.5px!important;min-height:2.5px;max-height:2.5px;',
-      'border-radius:2px!important;background:rgba(255,255,255,.3);overflow:hidden;',
-      'display:block;padding:0;margin:0;border:none;}',
-    '.st-bar i{display:block;height:100%;width:0;background:#fff;border-radius:2px!important;',
-      'padding:0;margin:0;}',
+      'border-radius:2px!important;background:rgba(255,255,255,.32)!important;overflow:hidden;',
+      'display:block!important;padding:0!important;margin:0!important;border:none!important;}',
+    '.st-bar i{display:block!important;height:100%;width:0;background:#fff!important;',
+      'border-radius:2px!important;padding:0!important;margin:0!important;}',
     '.st-bar.done i{width:100%;}',
 
     /* top row */
     '.st-top{position:absolute;top:1.5rem;left:0;right:0;z-index:6;display:flex;align-items:center;',
       'gap:.7rem;padding:.5rem .9rem;',
-      'background:linear-gradient(180deg,rgba(0,0,0,.55),transparent);}',
+      'background-image:linear-gradient(180deg,rgba(0,0,0,.55),transparent)!important;}',
     '.st-who{min-width:0;flex:1;}',
     '.st-who b{display:block;font-size:.8rem;color:#fff;font-weight:500;line-height:1.2;',
       'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}',
@@ -112,7 +138,7 @@
 
     /* bottom */
     '.st-foot{position:absolute;left:0;right:0;bottom:0;z-index:6;padding:2.4rem .9rem 1.1rem;',
-      'background:linear-gradient(0deg,rgba(0,0,0,.82),transparent);}',
+      'background-image:linear-gradient(0deg,rgba(0,0,0,.85),transparent)!important;}',
     '.st-cap{color:#fff;font-size:.88rem;line-height:1.45;margin-bottom:.85rem;',
       'display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}',
     '.st-buy{display:flex;align-items:center;gap:.8rem;text-decoration:none;',
@@ -130,6 +156,22 @@
       'color:#F0DCC0;margin-top:.15rem;}',
     '.st-buy .go{font-family:var(--f-mono,monospace);font-size:.55rem;letter-spacing:.14em;',
       'text-transform:uppercase;color:#fff;white-space:nowrap;}',
+
+    /* playback controls — only for real video files, since we cannot
+       scrub an Instagram or YouTube embed */
+    '.st-ctrl{position:absolute;left:50%;bottom:8.4rem;transform:translateX(-50%);z-index:7;',
+      'display:flex;align-items:center;gap:.5rem;padding:.4rem .5rem;border-radius:999px;',
+      'background:rgba(0,0,0,.42)!important;',
+      'backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);',
+      'opacity:0;transition:opacity .25s ease;pointer-events:none;}',
+    '.st-stage:hover .st-ctrl,.st-ctrl.show{opacity:1;pointer-events:auto;}',
+    '.st-cbtn{background:none;border:none;color:#fff;cursor:pointer;line-height:1;',
+      'font-family:var(--f-mono,monospace);font-size:.62rem;letter-spacing:.06em;',
+      'padding:.42rem .6rem;border-radius:999px;transition:background .2s;white-space:nowrap;}',
+    '.st-cbtn:hover{background:rgba(255,255,255,.16)!important;}',
+    '.st-cbtn.big{font-size:.95rem;padding:.3rem .55rem;}',
+    '.st-time{font-family:var(--f-mono,monospace);font-size:.55rem;color:rgba(255,255,255,.75);',
+      'padding:0 .25rem;min-width:66px;text-align:center;}',
 
     /* like */
     '.st-like{position:absolute;right:.9rem;bottom:7.4rem;z-index:6;background:none;border:none;',
@@ -327,11 +369,22 @@
         '</div>' +
         '<button class="st-tap prev" aria-label="Previous"></button>' +
         '<button class="st-tap next" aria-label="Next"></button>' +
+        (isFile
+          ? '<div class="st-ctrl" id="stCtrl">' +
+              '<button class="st-cbtn" id="stBack" aria-label="Back 5 seconds">\u21ba 5</button>' +
+              '<button class="st-cbtn big" id="stPlay" aria-label="Play or pause">\u23f8</button>' +
+              '<button class="st-cbtn" id="stFwd" aria-label="Forward 5 seconds">5 \u21bb</button>' +
+              '<span class="st-time" id="stTime">0:00 / 0:00</span>' +
+            '</div>'
+          : '') +
         '<button class="st-like" id="stLike" aria-label="Like">\u2661<small>'+(v.likes||0)+'</small></button>' +
         '<div class="st-foot">' +
           (v.caption ? '<div class="st-cap">'+esc(v.caption)+'</div>' : '') +
           '<a class="st-buy" href="product.html?id='+encodeURIComponent(v.product_id)+'">' +
-            '<span class="th">'+(v.poster_url?'<img src="'+esc(safeUrl(v.poster_url))+'" alt="" />':'')+'</span>' +
+            (function(){
+              var th = productThumb(v.product_id, v.poster_url);
+              return '<span class="th">' + (th ? '<img src="'+esc(safeUrl(th))+'" alt="" />' : '') + '</span>';
+            })() +
             '<span class="nm"><b>'+esc(v.product_name||'')+'</b>' +
               '<span>'+money(v.product_price)+'</span></span>' +
             '<span class="go">Shop this \u2192</span>' +
@@ -340,6 +393,18 @@
       '</div>';
 
     view.querySelector('.st-x').addEventListener('click', close);
+
+    /* transitions.js swaps pages without a full reload, so the overlay
+       would otherwise stay on top of the product page. Close it first,
+       then navigate. */
+    var buy = view.querySelector('.st-buy');
+    if(buy) buy.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      var href = buy.getAttribute('href');
+      close();
+      setTimeout(function(){ location.href = href; }, 180);
+    });
     view.querySelector('.st-tap.prev').addEventListener('click', prev);
     view.querySelector('.st-tap.next').addEventListener('click', next);
 
@@ -359,11 +424,57 @@
     var vid  = view.querySelector('#stVid');
 
     if(vid){
+      var ctrl = view.querySelector('#stCtrl');
+      var play = view.querySelector('#stPlay');
+      var time = view.querySelector('#stTime');
+      var clock = function(t){
+        t = Math.max(0, t|0);
+        return Math.floor(t/60) + ':' + String(t%60).padStart(2,'0');
+      };
+
       vid.addEventListener('timeupdate', function(){
-        if(vid.duration) fill.style.width = (vid.currentTime / vid.duration * 100) + '%';
+        if(vid.duration){
+          fill.style.width = (vid.currentTime / vid.duration * 100) + '%';
+          if(time) time.textContent = clock(vid.currentTime) + ' / ' + clock(vid.duration);
+        }
       });
       vid.addEventListener('ended', next);
-      vid.play().catch(function(){ /* autoplay blocked — the customer can tap */ });
+
+      /* the controls sit over the tap zones, so stop clicks bubbling or
+         every press would also advance to the next story */
+      if(ctrl) ctrl.addEventListener('click', function(e){ e.stopPropagation(); });
+
+      if(play) play.addEventListener('click', function(e){
+        e.stopPropagation();
+        if(vid.paused){ vid.play().catch(function(){}); play.textContent = '\u23f8'; paused = false; }
+        else          { vid.pause();                    play.textContent = '\u25b6'; paused = true;  }
+      });
+
+      var seek = function(by){
+        return function(e){
+          e.stopPropagation();
+          vid.currentTime = Math.min(vid.duration || 0, Math.max(0, vid.currentTime + by));
+          if(ctrl){ ctrl.classList.add('show'); clearTimeout(ctrl._h);
+                    ctrl._h = setTimeout(function(){ ctrl.classList.remove('show'); }, 1800); }
+        };
+      };
+      var bk = view.querySelector('#stBack'), fw = view.querySelector('#stFwd');
+      if(bk) bk.addEventListener('click', seek(-5));
+      if(fw) fw.addEventListener('click', seek(5));
+
+      /* touch has no hover, so a tap reveals the controls briefly */
+      var stage = view.querySelector('.st-stage');
+      if(stage) stage.addEventListener('click', function(){
+        if(!ctrl) return;
+        ctrl.classList.add('show'); clearTimeout(ctrl._h);
+        ctrl._h = setTimeout(function(){ ctrl.classList.remove('show'); }, 2600);
+      });
+
+      vid.play().catch(function(){
+        /* autoplay blocked \u2014 surface the controls so there is a way in */
+        if(play) play.textContent = '\u25b6';
+        if(ctrl) ctrl.classList.add('show');
+      });
     } else {
       var ms = v.video_url ? EMBED_MS : IMG_MS;
       var t0 = Date.now(), elapsed = 0;
