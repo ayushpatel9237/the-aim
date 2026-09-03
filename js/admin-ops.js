@@ -649,7 +649,16 @@
     var caption = el('opsVidCaption').value.trim();
 
     if(!product){ say('opsVidMsg','Pick which product this is for.','bad'); return; }
-    if(!url){ say('opsVidMsg','Paste the video link, or a path like videos/lamp.mp4','bad'); return; }
+    if(!url){ say('opsVidMsg','Upload a file, or paste a link / a path like videos/clip.mp4','bad'); return; }
+
+    /* A path from your own Mac cannot work — the website has no idea what
+       /Users/... means, so it asks its own server and gets a 404. Catch
+       it here rather than let it fail silently on the homepage. */
+    if(/^\/Users\/|^[A-Za-z]:\\|^file:\/\//.test(url)){
+      say('opsVidMsg','That is a path on your computer. Use Upload, or the path on your site like videos/clip.mp4','bad');
+      return;
+    }
+    url = url.replace(/^\/+(?!\/)/, '');       // a leading slash also breaks it
 
     var b = el('opsVidAdd'); b.disabled = true; b.textContent = 'Adding…';
     try{
@@ -771,7 +780,9 @@
       '<div class="card"><div class="card-header"><span class="card-title">Videos</span></div>' +
         '<div class="ops-row">' +
           '<select id="opsVidProduct" style="min-width:190px"><option value="">Which product?</option></select>' +
-          '<input id="opsVidUrl" placeholder="Video link or videos/clip.mp4" style="min-width:230px" />' +
+          '<input id="opsVidUrl" placeholder="Video link, or Upload \u2192" style="min-width:230px" />' +
+          '<label class="ops-btn ghost" for="opsVidFile" style="cursor:pointer">Upload video</label>' +
+          '<input type="file" id="opsVidFile" accept="video/*" style="display:none" />' +
         '</div>' +
         '<div class="ops-row">' +
           '<input id="opsVidPoster" placeholder="Poster image URL (the story cover)" style="min-width:250px" />' +
@@ -780,7 +791,7 @@
         '</div>' +
         '<div class="ops-msg" id="opsVidMsg"></div>' +
         '<div class="ops-ck-note" style="margin-top:.3rem">Instagram, YouTube and Facebook links all work, ' +
-        'or upload an .mp4 to your site and use its path. The poster is the circle on the homepage — ' +
+        'or use Upload to send a file straight to storage. The poster is the circle on the homepage \u2014 ' +
         'use the product photo if you have nothing better.</div>' +
         '<div style="margin-top:.9rem" id="opsVidWrap"><div class="empty-note">Loading…</div></div>' +
       '</div>' +
@@ -870,6 +881,16 @@
     el('opsBackupOrders').addEventListener('click', function(){ backup('orders'); });
     el('opsBackupAll').addEventListener('click', function(){ backup('all'); });
     el('opsVidAdd').addEventListener('click', addVideo);
+    el('opsVidFile').addEventListener('change', async function(){
+      var f = this.files && this.files[0];
+      if(!f) return;
+      var url = await uploadVideo(f);
+      if(url){
+        el('opsVidUrl').value = url;
+        say('opsVidMsg', 'Uploaded. Now pick the product and press Add video.', 'ok');
+      }
+      this.value = '';
+    });
 
     return true;
   }

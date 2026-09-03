@@ -81,17 +81,21 @@
     '.st-stage .st-poster{width:100%;height:100%;object-fit:cover;display:block;}',
 
     /* progress bars */
-    '.st-bars{position:absolute;top:0;left:0;right:0;z-index:6;display:flex;gap:3px;padding:.7rem .7rem 0;}',
-    '.st-bar{flex:1;height:2.5px;border-radius:2px;background:rgba(255,255,255,.28);overflow:hidden;}',
-    '.st-bar i{display:block;height:100%;width:0;background:#fff;border-radius:2px;}',
+    /* explicit sizing and radius: a page stylesheet applying a radius to
+       spans was turning these thin bars into large ovals */
+    '.st-bars{position:absolute;top:0;left:0;right:0;z-index:7;display:flex;gap:3px;',
+      'padding:.7rem .7rem 0;height:auto;}',
+    '.st-bar{flex:1 1 0;height:2.5px!important;min-height:2.5px;max-height:2.5px;',
+      'border-radius:2px!important;background:rgba(255,255,255,.3);overflow:hidden;',
+      'display:block;padding:0;margin:0;border:none;}',
+    '.st-bar i{display:block;height:100%;width:0;background:#fff;border-radius:2px!important;',
+      'padding:0;margin:0;}',
     '.st-bar.done i{width:100%;}',
 
     /* top row */
     '.st-top{position:absolute;top:1.5rem;left:0;right:0;z-index:6;display:flex;align-items:center;',
       'gap:.7rem;padding:.5rem .9rem;',
       'background:linear-gradient(180deg,rgba(0,0,0,.55),transparent);}',
-    '.st-av{width:32px;height:32px;border-radius:50%;overflow:hidden;flex:none;border:1px solid rgba(255,255,255,.4);}',
-    '.st-av img{width:100%;height:100%;object-fit:cover;}',
     '.st-who{min-width:0;flex:1;}',
     '.st-who b{display:block;font-size:.8rem;color:#fff;font-weight:500;line-height:1.2;',
       'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}',
@@ -201,7 +205,8 @@
   }
 
   /* ── the viewer ──────────────────────────────────────────── */
-  var view = null, idx = 0, timer = null, startY = 0;
+  var view = null, idx = 0, timer = null;
+  var startX = 0, startY = 0, startT = 0, held = false, holdTimer = null;
 
   function open(i){
     if(view) return;
@@ -214,10 +219,38 @@
     requestAnimationFrame(function(){ if(view) view.classList.add('on'); });
 
     document.addEventListener('keydown', onKey);
-    view.addEventListener('touchstart', function(e){ startY = e.touches[0].clientY; }, {passive:true});
+
+    /* Gestures, the ones people already expect from a story:
+         swipe left/right  → next / previous
+         swipe down        → close
+         press and hold    → pause, so you can actually read the screen */
+    view.addEventListener('touchstart', function(e){
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      startT = Date.now();
+      held = false;
+      holdTimer = setTimeout(function(){ held = true; pause(true); }, 260);
+    }, {passive:true});
+
+    view.addEventListener('touchmove', function(e){
+      /* a real drag is not a hold */
+      var dx = Math.abs(e.touches[0].clientX - startX);
+      var dy = Math.abs(e.touches[0].clientY - startY);
+      if(dx > 12 || dy > 12) clearTimeout(holdTimer);
+    }, {passive:true});
+
     view.addEventListener('touchend', function(e){
+      clearTimeout(holdTimer);
+      if(held){ held = false; pause(false); return; }   // it was a hold, not a swipe
+
+      var dx = e.changedTouches[0].clientX - startX;
       var dy = e.changedTouches[0].clientY - startY;
-      if(dy > 90) close();                        // swipe down to dismiss
+      var quick = Date.now() - startT < 600;
+
+      if(dy > 90 && Math.abs(dy) > Math.abs(dx)) return close();          // down
+      if(quick && Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)){
+        return dx < 0 ? next() : prev();                                  // left / right
+      }
     }, {passive:true});
 
     show();
@@ -233,10 +266,27 @@
     setTimeout(function(){ if(v) v.remove(); renderRail(); }, 280);
   }
 
+  /* after a hold, the browser still fires a click — swallow it so the
+     story does not jump forward the moment you let go */
+  function swallowIfHeld(e){ if(held){ e.stopPropagation(); e.preventDefault(); } }
+
   function onKey(e){
     if(e.key === 'Escape')     close();
     if(e.key === 'ArrowRight') next();
     if(e.key === 'ArrowLeft')  prev();
+  }
+
+  /* pause both kinds of story: a real <video>, and the timer that
+     drives poster-only and embedded ones */
+  var paused = false, pausedAt = 0;
+  function pause(on){
+    if(!view) return;
+    paused = on;
+    var vid = view.querySelector('#stVid');
+    if(vid){ on ? vid.pause() : vid.play().catch(function(){}); }
+    if(on){ clearTimeout(timer); pausedAt = Date.now(); }
+    var stage = view.querySelector('.st-stage');
+    if(stage) stage.style.opacity = on ? '.82' : '1';
   }
 
   function next(){ if(idx < STORIES.length - 1){ idx++; show(); } else close(); }
@@ -245,6 +295,7 @@
   function show(){
     if(!view) return;
     clearTimeout(timer);
+    paused = false;
     var v = STORIES[idx];
     markSeen(v.id);
 
@@ -257,7 +308,7 @@
     var media = !v.video_url
       ? '<img class="st-poster" src="'+esc(safeUrl(v.poster_url||''))+'" alt="" />'
       : isFile
-        ? '<video src="'+esc(safeUrl(v.video_url))+'" autoplay playsinline muted controls ' +
+        ? '<video src="'+esc(safeUrl(v.video_url))+'" autoplay playsinline muted ' +
           (v.poster_url ? 'poster="'+esc(safeUrl(v.poster_url))+'" ' : '') + 'id="stVid"></video>'
         : (window.AscentraVideo ? AscentraVideo.embedHTML(v.video_url) : '');
 
@@ -270,7 +321,6 @@
           }).join('') +
         '</div>' +
         '<div class="st-top">' +
-          '<span class="st-av">' + (v.poster_url ? '<img src="'+esc(safeUrl(v.poster_url))+'" alt="" />' : '') + '</span>' +
           '<span class="st-who"><b>'+esc(v.curator_name || 'THE AIM')+'</b>' +
             '<span>'+(v.views ? v.views + ' views' : 'New')+'</span></span>' +
           '<button class="st-x" aria-label="Close">\u2715</button>' +
@@ -292,6 +342,14 @@
     view.querySelector('.st-x').addEventListener('click', close);
     view.querySelector('.st-tap.prev').addEventListener('click', prev);
     view.querySelector('.st-tap.next').addEventListener('click', next);
+
+    /* desktop equivalent of press-and-hold */
+    ['.st-tap.prev','.st-tap.next'].forEach(function(sel){
+      var z = view.querySelector(sel);
+      z.addEventListener('mousedown', function(){ holdTimer = setTimeout(function(){ held = true; pause(true); }, 260); });
+      z.addEventListener('mouseup',   function(){ clearTimeout(holdTimer); if(held){ held = false; pause(false); } });
+      z.addEventListener('mouseleave',function(){ clearTimeout(holdTimer); if(held){ held = false; pause(false); } });
+    });
     view.querySelector('#stLike').addEventListener('click', function(e){
       e.stopPropagation(); like(v, this);
     });
@@ -308,10 +366,12 @@
       vid.play().catch(function(){ /* autoplay blocked — the customer can tap */ });
     } else {
       var ms = v.video_url ? EMBED_MS : IMG_MS;
-      var t0 = Date.now();
+      var t0 = Date.now(), elapsed = 0;
       (function tick(){
         if(!view) return;
-        var pct = Math.min(100, (Date.now() - t0) / ms * 100);
+        if(paused){ timer = setTimeout(tick, 120); return; }   // held: hold the bar too
+        elapsed += 60;
+        var pct = Math.min(100, elapsed / ms * 100);
         if(fill) fill.style.width = pct + '%';
         if(pct >= 100) return next();
         timer = setTimeout(tick, 60);
