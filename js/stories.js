@@ -33,6 +33,23 @@
   /* The poster is the video's cover frame, which often is not a clean
      shot of the product. products-data.js is already loaded on this
      page, so take the real product photo from there when we can. */
+  /* Stock for the ring. products-data.js is on the page and
+     live-products.js has already merged the database values into it,
+     so this is the real number, not a guess. */
+  function stockOf(id){
+    try{
+      if(typeof PRODUCTS !== 'undefined'){
+        var p = PRODUCTS.filter(function(x){ return x.id === id; })[0];
+        if(p && p.stock != null){
+          var left = Number(p.stock);
+          var full = Math.max(10, left);           // 10 is a full ring
+          return { left: left, pct: Math.max(6, Math.min(100, left / full * 100)) };
+        }
+      }
+    }catch(e){}
+    return { left: null, pct: 100 };
+  }
+
   function productThumb(id, fallback){
     try{
       if(typeof PRODUCTS !== 'undefined'){
@@ -60,6 +77,7 @@
   }
 
   /* ── styling ─────────────────────────────────────────────── */
+  /* ── rail styles: these live in the page ── */
   var css = document.createElement('style');
   css.textContent = [
     /* the rail */
@@ -68,10 +86,20 @@
     '.st-rail::-webkit-scrollbar{display:none;}',
     '.st-item{flex:0 0 auto;width:86px;background:none;border:none;padding:0;cursor:pointer;',
       'display:flex;flex-direction:column;align-items:center;gap:.55rem;}',
-    '.st-ring{width:82px;height:82px;border-radius:50%;padding:2.5px;',
-      'background:linear-gradient(140deg,#F0DCC0,#D8C3A0 40%,#A98F6B);',
+    /* The ring is not decoration. It depletes as stock sells, so the
+       circle itself tells you how much is left — real scarcity from
+       your own inventory, not a fake countdown. Only possible because
+       we own the whole stack. */
+    '.st-ring{width:82px;height:82px;border-radius:50%;padding:2.5px;position:relative;',
+      'background:conic-gradient(#F0DCC0 var(--stock,100%), rgba(255,255,255,.10) 0);',
       'transition:transform .25s cubic-bezier(.34,1.4,.64,1);}',
-    '.st-item:hover .st-ring{transform:scale(1.05);}',
+    '.st-item:hover .st-ring{transform:scale(1.06);}',
+    '.st-item.low .st-ring{background:conic-gradient(#E08A7A var(--stock,20%), rgba(255,255,255,.10) 0);}',
+    '.st-badge{position:absolute;inset:auto 0 -2px 0;margin:0 auto;width:max-content;',
+      'font-family:var(--f-mono,monospace);font-size:.44rem;letter-spacing:.1em;',
+      'text-transform:uppercase;padding:.16em .5em;border-radius:999px;',
+      'background:#050818;border:1px solid rgba(230,203,168,.5);color:#F0DCC0;}',
+    '.st-item.low .st-badge{border-color:rgba(224,138,122,.6);color:#E08A7A;}',
     '.st-item.seen .st-ring{background:#2A2F4A;}',
     '.st-cover{width:100%;height:100%;border-radius:50%;overflow:hidden;',
       'border:2.5px solid #050818;background:#0A0F26;display:block;}',
@@ -80,20 +108,20 @@
       'color:var(--muted,#8E96B8);text-align:center;line-height:1.35;max-width:86px;',
       'display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}',
     '.st-item.seen .st-name{color:var(--faint,#5F678E);}',
+    'body.st-open{overflow:hidden;}'
+  ].join('');
+  document.head.appendChild(css);
 
-    /* ── hard reset inside the viewer ──
-       Something in the page stylesheets was drawing large dark ovals
-       behind the progress bars. Rather than hunt it down across files
-       I do not control, everything inside the overlay starts from
-       nothing: no inherited pseudo-elements, no stray radii, no
-       animations. The viewer then styles only what it needs. */
-    '.st-view *,.st-view *::before,.st-view *::after{',
-      'animation:none!important;box-shadow:none!important;', 
-      'background-image:none!important;}',
-    '.st-view *::before,.st-view *::after{content:none!important;display:none!important;}',
-    '.st-view span,.st-view i,.st-view b,.st-view small{border-radius:0;',
-      'background:none;box-shadow:none;}',
-
+  /* ── viewer styles: these live inside a shadow root ──
+     Twice a stylesheet elsewhere in the site reached into this overlay
+     and drew shapes I never asked for. A shadow root ends that
+     argument: page CSS cannot cross into it, so the viewer renders
+     identically whatever the rest of the site does. */
+  var VIEW_CSS = [
+    ':host{all:initial;}',
+    '*{box-sizing:border-box;margin:0;padding:0;font-family:'
+      + '"Space Grotesk",system-ui,-apple-system,sans-serif;}',
+    'button{font:inherit;cursor:pointer;background:none;border:none;color:inherit;}',
     /* the viewer */
     '.st-view{position:fixed;inset:0;z-index:9600;background:#05060F;display:flex;',
       'align-items:center;justify-content:center;opacity:0;transition:opacity .28s ease;}',
@@ -139,9 +167,10 @@
     /* bottom */
     '.st-foot{position:absolute;left:0;right:0;bottom:0;z-index:6;padding:2.4rem .9rem 1.1rem;',
       'background-image:linear-gradient(0deg,rgba(0,0,0,.85),transparent)!important;}',
-    '.st-cap{color:#fff;font-size:.88rem;line-height:1.45;margin-bottom:.85rem;',
+    '.st-cap{color:#fff;font-size:1rem;line-height:1.4;margin-bottom:.85rem;',
+      'font-family:Fraunces,Georgia,serif;font-weight:300;letter-spacing:-.01em;',
       'display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}',
-    '.st-buy{display:flex;align-items:center;gap:.8rem;text-decoration:none;',
+    '.st-buy{display:flex;width:100%;text-align:left;align-items:center;gap:.8rem;text-decoration:none;',
       'background:rgba(255,255,255,.12);backdrop-filter:blur(18px) saturate(160%);',
       '-webkit-backdrop-filter:blur(18px) saturate(160%);',
       'border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:.6rem .7rem;',
@@ -153,7 +182,10 @@
     '.st-buy .nm b{display:block;color:#fff;font-size:.84rem;font-weight:500;line-height:1.25;',
       'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}',
     '.st-buy .nm span{display:block;font-family:var(--f-mono,monospace);font-size:.7rem;',
-      'color:#F0DCC0;margin-top:.15rem;}',
+      'color:#F0DCC0;margin-top:.25rem;padding-top:.25rem;',
+      /* the same gold rule that sits above prices on the product page,
+         so the two surfaces read as one shop rather than two designs */
+      'border-top:1px solid rgba(230,203,168,.28);display:inline-block;}',
     '.st-buy .go{font-family:var(--f-mono,monospace);font-size:.55rem;letter-spacing:.14em;',
       'text-transform:uppercase;color:#fff;white-space:nowrap;}',
 
@@ -173,6 +205,11 @@
     '.st-time{font-family:var(--f-mono,monospace);font-size:.55rem;color:rgba(255,255,255,.75);',
       'padding:0 .25rem;min-width:66px;text-align:center;}',
 
+    '.st-low{display:inline-block;font-family:var(--f-mono,monospace);font-size:.5rem;',
+      'letter-spacing:.18em;text-transform:uppercase;color:#E08A7A;',
+      'border:1px solid rgba(224,138,122,.45);border-radius:999px;',
+      'padding:.25em .7em;margin-bottom:.7rem;}',
+
     /* like */
     '.st-like{position:absolute;right:.9rem;bottom:7.4rem;z-index:6;background:none;border:none;',
       'cursor:pointer;font-size:1.5rem;line-height:1;color:rgba(255,255,255,.9);',
@@ -184,10 +221,8 @@
 
     '@media (prefers-reduced-motion:reduce){',
       '.st-ring,.st-stage,.st-like{transition:none;}',
-    '}',
-    'body.st-open{overflow:hidden;}'
+    '}'
   ].join('');
-  document.head.appendChild(css);
 
   /* ── device id, so a guest can like without an account ──── */
   function deviceId(){
@@ -223,11 +258,17 @@
     mount.className = 'st-rail';
     mount.innerHTML = STORIES.map(function(v, i){
       var cover = v.poster_url || '';
-      return '<button class="st-item'+(s[v.id]?' seen':'')+'" data-i="'+i+'" ' +
+      var st    = stockOf(v.product_id);
+      var pct   = st.pct;
+      var low   = st.left != null && st.left > 0 && st.left <= 3;
+      return '<button class="st-item'+(s[v.id]?' seen':'')+(low?' low':'')+'" data-i="'+i+'" ' +
+             'style="--stock:'+pct+'%" ' +
              'aria-label="Watch '+esc(v.product_name)+'">' +
                '<span class="st-ring"><span class="st-cover">' +
                  (cover ? '<img src="'+esc(safeUrl(cover))+'" alt="" loading="lazy" />' : '') +
-               '</span></span>' +
+               '</span>' +
+               (low ? '<span class="st-badge">'+st.left+' left</span>' : '') +
+               '</span>' +
                '<span class="st-name">'+esc(v.product_name || '')+'</span>' +
              '</button>';
     }).join('');
@@ -247,15 +288,36 @@
   }
 
   /* ── the viewer ──────────────────────────────────────────── */
-  var view = null, idx = 0, timer = null;
+  var view = null, host = null, shadow = null, idx = 0, timer = null;
   var startX = 0, startY = 0, startT = 0, held = false, holdTimer = null;
 
   function open(i){
     if(view) return;
     idx = i;
-    view = document.createElement('div');
-    view.className = 'st-view';
-    document.body.appendChild(view);
+    /* host stays in the page; everything visible lives in the shadow
+       root, out of reach of the site's stylesheets */
+    host = document.createElement('div');
+    host.setAttribute('data-aim-stories', '');
+    host.style.cssText = 'position:fixed;inset:0;z-index:9600;';
+    shadow = host.attachShadow ? host.attachShadow({ mode:'open' }) : null;
+
+    if(shadow){
+      var st = document.createElement('style');
+      st.textContent = VIEW_CSS;
+      shadow.appendChild(st);
+      view = document.createElement('div');
+      view.className = 'st-view';
+      shadow.appendChild(view);
+    } else {
+      /* very old browser: fall back to the page, styles and all */
+      var st2 = document.createElement('style');
+      st2.textContent = VIEW_CSS;
+      document.head.appendChild(st2);
+      view = document.createElement('div');
+      view.className = 'st-view';
+      host.appendChild(view);
+    }
+    document.body.appendChild(host);
     document.body.classList.add('st-open');
     /* guard: a fast close before this frame fires would leave view null */
     requestAnimationFrame(function(){ if(view) view.classList.add('on'); });
@@ -303,9 +365,9 @@
     clearTimeout(timer);
     document.removeEventListener('keydown', onKey);
     view.classList.remove('on');
-    var v = view; view = null;
+    var h = host; view = null; host = null; shadow = null;
     document.body.classList.remove('st-open');
-    setTimeout(function(){ if(v) v.remove(); renderRail(); }, 280);
+    setTimeout(function(){ if(h) h.remove(); renderRail(); }, 280);
   }
 
   /* after a hold, the browser still fires a click — swallow it so the
@@ -379,8 +441,14 @@
           : '') +
         '<button class="st-like" id="stLike" aria-label="Like">\u2661<small>'+(v.likes||0)+'</small></button>' +
         '<div class="st-foot">' +
+          (function(){
+            var st = stockOf(v.product_id);
+            if(st.left != null && st.left > 0 && st.left <= 3)
+              return '<div class="st-low">Only '+st.left+' left</div>';
+            return '';
+          })() +
           (v.caption ? '<div class="st-cap">'+esc(v.caption)+'</div>' : '') +
-          '<a class="st-buy" href="product.html?id='+encodeURIComponent(v.product_id)+'">' +
+          '<button class="st-buy" type="button" data-go="product.html?id='+encodeURIComponent(v.product_id)+'">' +
             (function(){
               var th = productThumb(v.product_id, v.poster_url);
               return '<span class="th">' + (th ? '<img src="'+esc(safeUrl(th))+'" alt="" />' : '') + '</span>';
@@ -388,22 +456,22 @@
             '<span class="nm"><b>'+esc(v.product_name||'')+'</b>' +
               '<span>'+money(v.product_price)+'</span></span>' +
             '<span class="go">Shop this \u2192</span>' +
-          '</a>' +
+          '</button>' +
         '</div>' +
       '</div>';
 
     view.querySelector('.st-x').addEventListener('click', close);
 
-    /* transitions.js swaps pages without a full reload, so the overlay
-       would otherwise stay on top of the product page. Close it first,
-       then navigate. */
+    /* Close the viewer, then navigate. It is a button rather than a
+       link on purpose: transitions.js intercepts link clicks to run its
+       page animation, which left this overlay sitting on top of the
+       product page. Nothing intercepts a button. */
     var buy = view.querySelector('.st-buy');
     if(buy) buy.addEventListener('click', function(e){
-      e.preventDefault();
       e.stopPropagation();
-      var href = buy.getAttribute('href');
+      var to = buy.getAttribute('data-go');
       close();
-      setTimeout(function(){ location.href = href; }, 180);
+      setTimeout(function(){ window.location.assign(to); }, 200);
     });
     view.querySelector('.st-tap.prev').addEventListener('click', prev);
     view.querySelector('.st-tap.next').addEventListener('click', next);
