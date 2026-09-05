@@ -75,6 +75,10 @@
     '.ops-ready .rt{font-size:.86rem;color:var(--text,#FFF1E2);}',
     '.ops-ready .rn{font-size:.74rem;color:var(--muted,#8E96B8);margin-top:.15rem;line-height:1.55;}',
     '.ops-ready.blocked .rt{color:#E08A7A;}',
+    '.ops-edit{margin-top:.9rem;padding:.9rem;border-radius:12px;',
+      'border:1px solid rgba(230,203,168,.28);background:rgba(230,203,168,.04);}',
+    '.ops-edit .ops-row{margin-bottom:.6rem;}',
+    '.ops-edit .ops-row:last-of-type{margin-bottom:0;}',
     '.ops-manual code{display:block;font-family:var(--f-mono,monospace);font-size:.72rem;',
       'background:rgba(255,255,255,.04);border:1px solid var(--line-soft,#111735);border-radius:7px;',
       'padding:.6rem .8rem;margin:.4rem 0 .9rem;color:#E6CBA8;overflow-x:auto;white-space:pre;}'
@@ -581,6 +585,114 @@
      story on the homepage and as the reel on that product page —
      one record, two places.
      ══════════════════════════════════════════════════════════ */
+
+  /* ── edit a video in place ───────────────────────────────
+     Everything about a clip is changeable after the fact: which
+     product it belongs to, the caption, the order it appears in, and
+     the poster — the circle people actually tap on the homepage. The
+     poster matters more than the video for whether anyone watches, so
+     it should not take a database edit to change it. */
+  var editingVideo = null;
+
+  function videoEditor(v){
+    return '<div class="ops-edit" id="opsVidEdit">' +
+      '<div class="ops-row">' +
+        '<select id="veProduct" style="min-width:180px"></select>' +
+        '<input id="veCaption" placeholder="Caption" value="'+attr(v.caption)+'" style="min-width:220px" />' +
+      '</div>' +
+      '<div class="ops-row">' +
+        '<input id="vePoster" placeholder="Poster image URL" value="'+attr(v.poster_url)+'" style="min-width:250px" />' +
+        '<label class="ops-btn ghost" for="vePosterFile" style="cursor:pointer">Upload poster</label>' +
+        '<input type="file" id="vePosterFile" accept="image/*" style="display:none" />' +
+      '</div>' +
+      '<div class="ops-row">' +
+        '<input id="veUrl" placeholder="Video URL" value="'+attr(v.video_url)+'" style="min-width:250px" />' +
+        '<input id="veSort" type="number" placeholder="Order" value="'+(v.sort_order||0)+'" style="width:88px" />' +
+        '<label class="ops-ck-note" style="display:flex;align-items:center;gap:.4rem;margin:0">' +
+          '<input type="checkbox" id="veStory"'+(v.show_story!==false?' checked':'')+' /> show on homepage' +
+        '</label>' +
+      '</div>' +
+      '<div class="ops-row">' +
+        '<button class="ops-btn" id="veSave">Save changes</button>' +
+        '<button class="ops-btn ghost" id="veCancel">Cancel</button>' +
+        '<span id="vePreview"></span>' +
+      '</div>' +
+      '<div class="ops-msg" id="veMsg"></div>' +
+    '</div>';
+  }
+
+  function attr(t){
+    return String(t == null ? '' : t)
+      .replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  }
+
+  async function openVideoEditor(id, rows, products){
+    var v = rows.filter(function(x){ return x.id === id; })[0];
+    if(!v) return;
+    editingVideo = id;
+    var slot = el('opsVidEditSlot');
+    slot.innerHTML = videoEditor(v);
+
+    /* product list */
+    var sel = el('veProduct');
+    sel.innerHTML = '<option value="">— no product —</option>' +
+      products.map(function(p){
+        return '<option value="'+attr(p.id)+'"'+(p.id===v.product_id?' selected':'')+'>'+attr(p.name)+'</option>';
+      }).join('');
+
+    showPosterPreview(v.poster_url);
+    el('vePoster').addEventListener('input', function(){ showPosterPreview(this.value.trim()); });
+
+    el('vePosterFile').addEventListener('change', async function(){
+      var f = this.files && this.files[0];
+      if(!f) return;
+      say('veMsg', 'Uploading poster…', 'info');
+      try{
+        var url = await window.Ascentra.uploadImage(f);   // admin-only, checked server-side
+        el('vePoster').value = url;
+        showPosterPreview(url);
+        say('veMsg', 'Poster uploaded. Press Save changes.', 'ok');
+      }catch(e){
+        say('veMsg', 'Upload failed: ' + (e.message||e), 'bad');
+      }
+      this.value = '';
+    });
+
+    el('veCancel').addEventListener('click', function(){
+      editingVideo = null; slot.innerHTML = '';
+    });
+
+    el('veSave').addEventListener('click', async function(){
+      var patch = {
+        product_id: el('veProduct').value || null,
+        caption:    el('veCaption').value.trim() || null,
+        poster_url: el('vePoster').value.trim() || null,
+        video_url:  el('veUrl').value.trim(),
+        sort_order: Number(el('veSort').value) || 0,
+        show_story: el('veStory').checked
+      };
+      if(!patch.video_url){ say('veMsg','A video needs a URL.','bad'); return; }
+      if(/^\/Users\/|^[A-Za-z]:\\|^file:\/\//.test(patch.video_url)){
+        say('veMsg','That is a path on your computer, not on your site.','bad'); return;
+      }
+      this.disabled = true; this.textContent = 'Saving…';
+      var r = await sb.from('videos').update(patch).eq('id', id);
+      this.disabled = false; this.textContent = 'Save changes';
+      if(r.error){ say('veMsg','Failed: ' + r.error.message, 'bad'); return; }
+      log('video updated', 'ok');
+      editingVideo = null; slot.innerHTML = '';
+      loadVideos();
+    });
+  }
+
+  function showPosterPreview(url){
+    var box = el('vePreview'); if(!box) return;
+    box.innerHTML = url
+      ? '<img src="'+attr(url)+'" alt="" style="width:44px;height:44px;border-radius:50%;' +
+        'object-fit:cover;border:2px solid rgba(230,203,168,.5);vertical-align:middle" />'
+      : '<span class="ops-ck-note">no poster — the circle will be empty</span>';
+  }
+
   async function loadVideos(){
     var wrap = el('opsVidWrap'); if(!wrap) return;
     try{
@@ -607,17 +719,36 @@
 
       wrap.innerHTML = rows.map(function(v){
         var col = v.status==='live' ? '#5FA88C' : v.status==='hidden' ? '#E08A7A' : '#E6CBA8';
-        return '<div class="ops-find">' +
+        var thumb = v.poster_url
+          ? '<img src="'+attr(v.poster_url)+'" alt="" style="width:30px;height:30px;border-radius:50%;' +
+            'object-fit:cover;border:1px solid rgba(230,203,168,.4);vertical-align:middle;margin-right:.5rem" />'
+          : '<span style="display:inline-block;width:30px;height:30px;border-radius:50%;' +
+            'border:1px dashed rgba(255,255,255,.25);vertical-align:middle;margin-right:.5rem"></span>';
+        return '<div class="ops-find">' + thumb +
           '<b style="color:'+col+'">'+v.status.toUpperCase()+'</b> &nbsp;' +
-          (v.caption || v.video_url).slice(0,60) +
-          '<span class="fix">'+v.product_id+' · '+v.views+' views' +
+          attr((v.caption || v.video_url || '').slice(0,52)) +
+          '<span class="fix">'+attr(v.product_id||'no product')+' · '+v.views+' views' +
             ' &nbsp;<button class="ops-btn ghost" style="padding:.3rem .7rem;font-size:.55rem" ' +
+              'data-videdit="'+v.id+'">Edit</button>' +
+            ' <button class="ops-btn ghost" style="padding:.3rem .7rem;font-size:.55rem" ' +
               'data-vidtoggle="'+v.id+'" data-now="'+v.status+'">' +
               (v.status==='live'?'Hide':'Publish')+'</button>' +
             ' <button class="ops-btn danger" style="padding:.3rem .7rem;font-size:.55rem" ' +
               'data-viddel="'+v.id+'">Delete</button>' +
           '</span></div>';
-      }).join('');
+      }).join('') + '<div id="opsVidEditSlot"></div>';
+
+      var productList = [];
+      try{
+        var pl = await sb.from('products').select('id,name').order('name');
+        productList = pl.data || [];
+      }catch(e){}
+
+      wrap.querySelectorAll('[data-videdit]').forEach(function(b){
+        b.addEventListener('click', function(){
+          openVideoEditor(b.dataset.videdit, rows, productList);
+        });
+      });
 
       wrap.querySelectorAll('[data-vidtoggle]').forEach(function(b){
         b.addEventListener('click', async function(){
@@ -785,7 +916,9 @@
           '<input type="file" id="opsVidFile" accept="video/*" style="display:none" />' +
         '</div>' +
         '<div class="ops-row">' +
-          '<input id="opsVidPoster" placeholder="Poster image URL (the story cover)" style="min-width:250px" />' +
+          '<input id="opsVidPoster" placeholder="Poster image URL (the story cover)" style="min-width:230px" />' +
+          '<label class="ops-btn ghost" for="opsVidPosterFile" style="cursor:pointer">Upload poster</label>' +
+          '<input type="file" id="opsVidPosterFile" accept="image/*" style="display:none" />' +
           '<input id="opsVidCaption" placeholder="Caption" style="min-width:190px" />' +
           '<button class="ops-btn" id="opsVidAdd">Add video</button>' +
         '</div>' +
@@ -881,6 +1014,20 @@
     el('opsBackupOrders').addEventListener('click', function(){ backup('orders'); });
     el('opsBackupAll').addEventListener('click', function(){ backup('all'); });
     el('opsVidAdd').addEventListener('click', addVideo);
+    el('opsVidPosterFile').addEventListener('change', async function(){
+      var f = this.files && this.files[0];
+      if(!f) return;
+      say('opsVidMsg', 'Uploading poster…', 'info');
+      try{
+        var url = await window.Ascentra.uploadImage(f);
+        el('opsVidPoster').value = url;
+        say('opsVidMsg', 'Poster uploaded.', 'ok');
+      }catch(e){
+        say('opsVidMsg', 'Poster upload failed: ' + (e.message||e), 'bad');
+      }
+      this.value = '';
+    });
+
     el('opsVidFile').addEventListener('change', async function(){
       var f = this.files && this.files[0];
       if(!f) return;
