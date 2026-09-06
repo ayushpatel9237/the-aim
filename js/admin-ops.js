@@ -626,16 +626,32 @@
       .replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
   }
 
-  async function openVideoEditor(id, rows, products){
-    var v = rows.filter(function(x){ return x.id === id; })[0];
-    if(!v) return;
-    editingVideo = id;
+  async function openVideoEditor(id){
     var slot = el('opsVidEditSlot');
+    if(!slot) return;
+    slot.innerHTML = '<div class="ops-edit"><div class="empty-note">Loading…</div></div>';
+
+    /* fetch the row and the product list here, so the editor never
+       depends on state gathered somewhere else */
+    var v = null, products = [];
+    try{
+      var r = await sb.from('videos').select('*').eq('id', id);
+      v = (r.data || [])[0];
+      var pl = await sb.from('products').select('id,name').order('name');
+      products = pl.data || [];
+    }catch(e){
+      slot.innerHTML = '<div class="ops-edit"><div class="empty-note">Could not open: ' +
+        (e.message||e) + '</div></div>';
+      return;
+    }
+    if(!v){ slot.innerHTML = ''; return; }
+
+    editingVideo = id;
     slot.innerHTML = videoEditor(v);
 
     /* product list */
     var sel = el('veProduct');
-    sel.innerHTML = '<option value="">— no product —</option>' +
+    sel.innerHTML = '<option value="">\u2014 no product \u2014</option>' +
       products.map(function(p){
         return '<option value="'+attr(p.id)+'"'+(p.id===v.product_id?' selected':'')+'>'+attr(p.name)+'</option>';
       }).join('');
@@ -648,7 +664,7 @@
       if(!f) return;
       say('veMsg', 'Uploading poster…', 'info');
       try{
-        var url = await window.Ascentra.uploadImage(f);   // admin-only, checked server-side
+        var url = await uploadPoster(f);
         el('vePoster').value = url;
         showPosterPreview(url);
         say('veMsg', 'Poster uploaded. Press Save changes.', 'ok');
@@ -738,17 +754,19 @@
           '</span></div>';
       }).join('') + '<div id="opsVidEditSlot"></div>';
 
-      var productList = [];
-      try{
-        var pl = await sb.from('products').select('id,name').order('name');
-        productList = pl.data || [];
-      }catch(e){}
-
-      wrap.querySelectorAll('[data-videdit]').forEach(function(b){
-        b.addEventListener('click', function(){
-          openVideoEditor(b.dataset.videdit, rows, productList);
+      /* One delegated listener on the container, attached once. The
+         buttons are re-rendered every refresh, so binding to each one
+         individually meant a slow or failed products query could leave
+         them dead. Delegation cannot miss. */
+      if(!wrap._delegated){
+        wrap._delegated = true;
+        wrap.addEventListener('click', function(e){
+          var b = e.target.closest && e.target.closest('[data-videdit]');
+          if(!b) return;
+          e.preventDefault();
+          openVideoEditor(b.getAttribute('data-videdit'));
         });
-      });
+      }
 
       wrap.querySelectorAll('[data-vidtoggle]').forEach(function(b){
         b.addEventListener('click', async function(){
@@ -771,6 +789,72 @@
     }catch(e){
       wrap.innerHTML = '<div class="empty-note">Could not load: ' + (e.message||e) + '</div>';
     }
+  }
+
+
+
+  /* Posters go to the same bucket as product images. If that bucket is
+     missing too, create it once rather than failing with a message the
+     customer-facing side can do nothing about. */
+  async function uploadPoster(file){
+    if(!/^image\//.test(file.type)) throw new Error('That is not an image file.');
+    if(file.size > 5 * 1024 * 1024)  throw new Error('Keep the poster under 5MB.');
+
+    var ext  = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    var path = 'p_' + Date.now() + '_' + Math.floor(Math.random()*9999) + '.' + ext;
+
+    var up = await sb.storage.from('product-images').upload(path, file, { upsert:false });
+    if(up.error && /bucket|not found/i.test(up.error.message || '')){
+      var mk = await sb.storage.createBucket('product-images', { public:true, fileSizeLimit: 5242880 });
+      if(mk.error && !/exist/i.test(mk.error.message || '')) throw mk.error;
+      up = await sb.storage.from('product-images').upload(path, file, { upsert:false });
+    }
+    if(up.error) throw up.error;
+
+    return sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+  }
+
+  /* ── upload a video file straight from here ───────────────
+     Same idea as the product image uploader: pick a file, it goes to
+     Supabase Storage, and the public URL drops into the link field —
+     no pushing files through Git, no typing paths. */
+  async function uploadVideo(file){
+    var msg = 'opsVidMsg';
+    if(!/^video\//.test(file.type)){
+      say(msg, 'That is not a video file.', 'bad'); return null;
+    }
+    if(file.size > 50 * 1024 * 1024){
+      say(msg, 'Keep it under 50MB \u2014 a story clip has to start instantly on mobile.', 'bad');
+      return null;
+    }
+
+    var ext  = (file.name.split('.').pop() || 'mp4').toLowerCase();
+    var path = 'v_' + Date.now() + '_' + Math.floor(Math.random()*9999) + '.' + ext;
+
+    say(msg, 'Uploading ' + (Math.round(file.size/1024/1024*10)/10) + 'MB\u2026', 'info');
+    var up = await sb.storage.from('product-videos').upload(path, file, { upsert:false });
+
+    /* The first upload on a fresh project fails because the bucket does
+       not exist yet. Create it and retry once, rather than sending you
+       to the dashboard to do it by hand. */
+    if(up.error && /bucket|not found/i.test(up.error.message || '')){
+      say(msg, 'Creating the video bucket\u2026', 'info');
+      var mk = await sb.storage.createBucket('product-videos', {
+        public: true, fileSizeLimit: 52428800
+      });
+      if(mk.error && !/exist/i.test(mk.error.message || '')){
+        say(msg, 'Could not create it: ' + mk.error.message +
+                 ' \u2014 make it by hand: Supabase \u2192 Storage \u2192 New bucket \u2192 ' +
+                 'name product-videos \u2192 tick Public.', 'bad');
+        return null;
+      }
+      up = await sb.storage.from('product-videos').upload(path, file, { upsert:false });
+    }
+
+    if(up.error){ say(msg, 'Upload failed: ' + up.error.message, 'bad'); return null; }
+
+    var pub = sb.storage.from('product-videos').getPublicUrl(path);
+    return pub.data.publicUrl;
   }
 
   async function addVideo(){
@@ -1019,7 +1103,7 @@
       if(!f) return;
       say('opsVidMsg', 'Uploading poster…', 'info');
       try{
-        var url = await window.Ascentra.uploadImage(f);
+        var url = await uploadPoster(f);
         el('opsVidPoster').value = url;
         say('opsVidMsg', 'Poster uploaded.', 'ok');
       }catch(e){
