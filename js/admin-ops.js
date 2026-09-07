@@ -628,7 +628,14 @@
 
   async function openVideoEditor(id){
     var slot = el('opsVidEditSlot');
-    if(!slot) return;
+    if(!slot){
+      say('opsVidMsg', 'The editor panel is missing — refresh the page.', 'bad');
+      return;
+    }
+    if(!id){
+      say('opsVidMsg', 'That row has no id.', 'bad');
+      return;
+    }
     slot.innerHTML = '<div class="ops-edit"><div class="empty-note">Loading…</div></div>';
 
     /* fetch the row and the product list here, so the editor never
@@ -761,10 +768,21 @@
       if(!wrap._delegated){
         wrap._delegated = true;
         wrap.addEventListener('click', function(e){
-          var b = e.target.closest && e.target.closest('[data-videdit]');
-          if(!b) return;
+          var t = e.target;
+          /* walk up by hand: closest() is missing on some targets, and a
+             click can land on a text node inside the button */
+          while(t && t !== wrap && !(t.getAttribute && t.getAttribute('data-videdit'))) t = t.parentNode;
+          if(!t || t === wrap) return;
           e.preventDefault();
-          openVideoEditor(b.getAttribute('data-videdit'));
+          e.stopPropagation();
+          try{
+            openVideoEditor(t.getAttribute('data-videdit'));
+          }catch(err){
+            /* never fail silently — a dead button with no explanation is
+               the worst outcome */
+            say('opsVidMsg', 'Could not open the editor: ' + (err.message || err), 'bad');
+            log('video editor error: ' + (err.message || err), 'bad');
+          }
         });
       }
 
