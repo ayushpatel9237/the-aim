@@ -32,63 +32,21 @@
 .pimg{
   position:relative; z-index:1;
   margin:0 !important;
-  padding:13px 11px 22px !important;   /* walls + shelf board */
-  aspect-ratio:auto !important;        /* height comes from the photo */
+  aspect-ratio:1/1 !important;
   height:auto !important;
-  overflow:visible !important;
-  border:none !important;
-  border-radius:12px 12px 5px 5px !important;
-  background:
-    /* contact shadow where the product meets the shelf */
-    radial-gradient(ellipse 58% 14px at 50% calc(100% - 20px), rgba(0,0,0,.28), transparent 72%),
-    /* the light above the niche */
-    radial-gradient(ellipse 80% 26% at 50% 0%, rgba(255,255,255,.22), transparent 70%),
-    /* wall, dark seam, then the brass shelf edge */
-    linear-gradient(180deg,
-      #F8E9D2 0%,
-      #ECD9BC calc(100% - 16px),
-      #1A2142 calc(100% - 16px),
-      #1A2142 calc(100% - 14px),
-      #E6CBA8 calc(100% - 14px),
-      #A98F6B calc(100% - 5px),
-      #1A2142 100%);
-  box-shadow:
-    inset 0 0 0 1px rgba(231,200,120,.14),
-    inset 0 9px 15px rgba(0,0,0,.16),
-    0 12px 22px -8px rgba(0,0,0,.6) !important;
-  transition:filter .4s ease, box-shadow .4s ease;
-}
-/* the niche light brightens as the customer reaches in */
-.pcase:hover .pimg{
-  transform:none !important;
-  filter:brightness(1.06) saturate(1.03);
+  border-radius:var(--r-media, 14px) !important;
+  overflow:hidden !important;
 }
 
 .pimg img{
   width:100% !important;
-  height:auto !important;
-  aspect-ratio:1/1;
-  object-fit:cover;
-  border-radius:8px;
-  border:1px solid rgba(231,200,120,.3);
-  box-shadow:0 8px 14px rgba(10,8,4,.35);
+  height:100% !important;
+  aspect-ratio:1/1 !important;
+  object-fit:cover !important;
+  display:block !important;
   transition:transform .4s cubic-bezier(.22,.9,.3,1);
 }
-.pcase:hover .pimg img{ transform:translateY(-5px); }
-
-/* the gloss overlay used to cover the whole element — pull it
-   back onto the photo now that the element includes the walls */
-.pimg::after{
-  inset:13px 11px 22px !important;
-  border-radius:8px;
-}
-/* the glint sits on the photo, not on the wall */
-.pimg::before{ top:12% !important; right:14% !important; }
-
-/* badges sit on the photo, inside the walls */
-.pimg .sku{ top:20px !important; right:19px !important; }
-.pimg .off{ left:19px !important; bottom:33px !important; }
-.pimg .vbadge{ z-index:3; }
+.pcase:hover .pimg img{ transform:scale(1.04); }
 
 
 /* ── 3. THE TICKET ─────────────────────────────────────────── */
@@ -152,39 +110,20 @@
     padding:1.9rem .75rem 2.1rem !important;
     border-radius:16px;
   }
-  .grid::after{                      /* the brass plaque */
-    font-size:.5rem !important;
-    letter-spacing:.22em !important;
-    padding:.35rem 1rem !important;
-    top:-11px !important;
-  }
+  .grid::after{ display:none !important; }
 
   .pimg{
-    padding:9px 8px 16px !important;
-    border-radius:10px 10px 4px 4px !important;
-    background:
-      radial-gradient(ellipse 58% 10px at 50% calc(100% - 15px), rgba(0,0,0,.26), transparent 72%),
-      radial-gradient(ellipse 80% 26% at 50% 0%, rgba(255,255,255,.22), transparent 70%),
-      linear-gradient(180deg,
-        #F8E9D2 0%,
-        #ECD9BC calc(100% - 12px),
-        #1A2142 calc(100% - 12px),
-        #1A2142 calc(100% - 10.5px),
-        #E6CBA8 calc(100% - 10.5px),
-        #A98F6B calc(100% - 4px),
-        #1A2142 100%) !important;
+    padding:0 !important;
+    border-radius:var(--r-media, 10px) !important;
+    background:var(--swan-2, #ECECE0) !important;
   }
-  .pimg::after{ inset:9px 8px 16px !important; border-radius:6px; }
-  .pimg img{ border-radius:6px; }
-  .pimg .sku{ top:15px !important; right:14px !important; }
-  .pimg .off{ left:14px !important; bottom:24px !important; }
+  .pimg img{ border-radius:inherit !important; }
 
   .ticket{
-    margin:20px 0 0 !important;
+    margin:10px 0 0 !important;
     padding:.6rem .45rem .7rem !important;
-    border-radius:8px;
   }
-  .ticket::before{ width:24px; height:13px; top:-9px; }
+  .ticket::before{ display:none !important; }
   .ticket .cat{ font-size:.45rem !important; letter-spacing:.2em !important; }
   .ticket .nm{ font-size:.84rem !important; line-height:1.2; }
   .ticket .pr{ font-size:.74rem !important; }
@@ -210,21 +149,71 @@
 
 /* ── 6. PAGE-WIDE MOBILE CLEANUP ───────────────────────────── */
 @media (max-width:760px){
-  html,body{ overflow-x:hidden; max-width:100%; }
+  html,body{ overflow-x:hidden; max-width:100%; width:100%; }
   section{ padding:2.8rem 0 !important; }
-  .wrap{ padding:0 1rem; }
+  .wrap{ padding:0 1.2rem; width:100%; max-width:100%; box-sizing:border-box; }
 
-  /* hero: the ghost numeral and the caption were colliding */
-  .stage{ height:auto !important; padding-bottom:5rem; }
-  .slides{ width:min(300px,76%) !important; margin:0 auto; }
-  .ghost{ font-size:7rem !important; opacity:.45; }
+  /* hero: perfectly centered, zoomed out slightly, clean balanced margins */
+  .hero-grid{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:100% !important;
+    max-width:100% !important;
+    margin:0 auto !important;
+    gap:2rem !important;
+  }
+  .hero-head{
+    width:100% !important;
+    max-width:440px !important;
+    margin:0 auto !important;
+  }
+
+  .stage{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    width:100% !important;
+    max-width:360px !important; /* gently zoomed out, perfectly centered */
+    margin:0 auto !important;
+    height:auto !important;
+    padding:1.5rem 1.2rem 1.8rem !important;
+    border-radius:28px !important;
+    box-shadow:0 18px 44px -12px rgba(0,7,45,.12), inset 0 1px 0 #FFFFFF !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+  }
+  .slides{
+    width:100% !important;
+    max-width:260px !important;
+    aspect-ratio:1/1 !important;
+    margin:0 auto !important;
+    position:relative !important;
+  }
+  .ghost{ font-size:5rem !important; top:0.8rem !important; right:1rem !important; opacity:.04 !important; }
   .stage-foot{
     position:static !important;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:.9rem;
-    margin-top:1.5rem;
+    width:100% !important;
+    max-width:280px !important;
+    margin:1.2rem auto 0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    text-align:center !important;
+    gap:.85rem !important;
   }
+  .stage-cap{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    text-align:center !important;
+  }
+  .stage-cap .cat{ text-align:center !important; }
+  .stage-cap .nm{ font-size:1.15rem !important; text-align:center !important; margin-top:.2rem !important; }
+  .stage-cap .pr{ font-size:1.05rem !important; text-align:center !important; margin-top:.2rem !important; }
+  .stage-nav{ justify-content:center !important; margin-top:.2rem !important; }
 
   .sec-head{ margin-bottom:1.7rem; }
   .foot{ flex-direction:column; align-items:flex-start; gap:1rem; }

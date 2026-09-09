@@ -71,9 +71,10 @@
     });
     document.getElementById('a-go').addEventListener('click', doAuth);
     document.getElementById('a-google').addEventListener('click', function(){
+      var redirectUrl = (window.location.origin || '') + '/curator.html';
       A.raw.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: location.href.split('#')[0] }
+        options: { redirectTo: redirectUrl }
       });
     });
     document.getElementById('a-pass').addEventListener('keydown', function(e){ if(e.key==='Enter') doAuth(); });

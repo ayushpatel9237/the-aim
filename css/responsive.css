@@ -86,10 +86,10 @@ table{ width:100%; }
 body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
       letter-spacing:.005em; }
 
-/* headings: light weight display serif, tight leading, no cramping */
-h1, h2, h3{ font-weight:300; line-height:1.14; letter-spacing:-.012em; }
+/* headings: bold modern sans, tight leading */
+h1, h2, h3{ font-weight:800; line-height:1.18; letter-spacing:-.02em; }
 h1{ margin-bottom:.5em; }
-h2{ letter-spacing:-.008em; }
+h2{ letter-spacing:-.015em; font-weight:700; }
 
 /* body copy: comfortable measure and rhythm */
 p{ line-height:1.75; }
@@ -158,30 +158,33 @@ button, .btn, .save-btn, .buy, .cart, .sh-buy{
 button:hover, .btn:hover, .save-btn:hover, .buy:hover{ transform:translateY(-2px); }
 button:active, .btn:active{ transform:translateY(0); }
 
-/* arrows: quiet circles, not heavy blocks */
+/* arrows: quiet circles, frosted glass */
 [class*="arrow"], [class*="prev"], [class*="next"], .nav-btn{
-  background:rgba(13,19,48,.7) !important;
-  border:1px solid rgba(230,203,168,.16) !important;
+  background:rgba(255,255,255,.85) !important;
+  border:1px solid var(--line, rgba(0,7,45,.12)) !important;
   border-radius:50% !important;
   backdrop-filter:blur(10px);
-  color:#F2EDE3 !important;
+  -webkit-backdrop-filter:blur(10px);
+  color:var(--ink, #00072D) !important;
   width:40px; height:40px;
   display:inline-flex; align-items:center; justify-content:center;
 }
 [class*="arrow"]:hover, [class*="prev"]:hover, [class*="next"]:hover{
-  background:#E6CBA8 !important; color:#050818 !important;
+  background:var(--ink, #00072D) !important; color:#FFFFFF !important;
 }
 
 /* small label chips float too */
 .pill, .chip, .cat-tag, .badge{
-  background:rgba(13,19,48,.6);
-  border:1px solid rgba(230,203,168,.13);
+  background:rgba(255,255,255,.75);
+  border:1px solid var(--line, rgba(0,7,45,.12));
   backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
   border-radius:999px;
+  color:var(--ink, #00072D);
 }
 
 /* focus states stay visible and on-brand */
-:focus-visible{ outline:2px solid #E6CBA8; outline-offset:3px; border-radius:6px; }
+:focus-visible{ outline:2px solid var(--ink, #00072D); outline-offset:3px; border-radius:6px; }
 
 /* ═══════════════════════════════════════════════════════════
    IMAGES — always show the WHOLE image; the frame adapts

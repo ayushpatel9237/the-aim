@@ -28,9 +28,10 @@
 
   async function signIn(){
     if(!live()) return;
+    var redirectUrl = (window.location.origin || '') + '/account.html';
     A.raw.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: location.href.split('#')[0] }
+      options: { redirectTo: redirectUrl }
     });
   }
   async function signOut(){
