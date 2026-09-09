@@ -398,14 +398,6 @@ body.app [class*="arrow"], body.work [class*="arrow"]{
   }
   .ticket{ margin-top:.4rem !important; }
 
-  /* ── PRODUCT SHEET: tight, no dead gaps ── */
-  .sh{ gap:.4rem !important; padding:.2rem !important; }
-  .sh-col-a, .sh-col-b{ gap:.4rem !important; }
-  .sh-info{ padding:.75rem .85rem !important; }
-  .sh-desc{ font-size:.8rem !important; line-height:1.55 !important; }
-  .sh-more > button{ padding:.7rem .85rem !important; }
-  .sh-acts{ padding:.55rem !important; gap:.35rem !important; }
-  .sh-thumbs{ padding:.3rem !important; gap:.3rem !important; }
 
   /* ── TYPE: comfortable, never cramped ── */
   h1{ letter-spacing:-.02em; }
@@ -485,13 +477,6 @@ body.app [class*="arrow"], body.work [class*="arrow"]{
   .ticket .pr{ font-size:.8rem !important; }
   .ticket .cat{ font-size:.46rem !important; }
 
-  /* product sheet: fills the screen properly at this size */
-  .sh{ width:94vw !important; max-height:86vh !important; }
-  .sh-hero img{ max-height:33vh !important; }
-  .sh-name{ font-size:1.06rem !important; }
-  .sh-price{ font-size:1.15rem !important; }
-  .sh-desc{ font-size:.82rem !important; }
-  .sh-t{ width:44px !important; height:44px !important; }
 
   /* reels sized so one and a bit shows — invites the swipe */
   .reel{ flex:0 0 62vw !important; }
@@ -527,16 +512,11 @@ body.app [class*="arrow"], body.work [class*="arrow"]{
   .viewer{ padding:0 .25rem; }
   .thumbs{ margin-top:.85rem !important; }
 
-  /* the sheet's cards need the same breathing room */
-  .sh{ gap:.75rem !important; padding:.5rem !important; }
-  .sh-col-a, .sh-col-b{ gap:.75rem !important; }
-  .card-f{ border-radius:15px !important; }
 }
 
 /* boxes should not run the full width of a big phone */
 @media (min-width:420px) and (max-width:760px){
   .info, .viewer{ max-width:96%; margin-inline:auto; }
-  .sh{ width:90vw !important; }
 }
 
 /* ═══════════════════════════════════════════════════════════

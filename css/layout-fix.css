@@ -385,3 +385,57 @@
   .filters::-webkit-scrollbar{ display:none; }
   .cat-pills > *, .filters > *{ flex:0 0 auto; }
 }
+
+/* ── 8. IOS WIDGET PRODUCT MODAL (DEAD-CENTER, INDEPENDENT FLOATING BOXES) ── */
+.sh{
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  max-width:100vw !important;
+  height:100vh !important;
+  max-height:100vh !important;
+  margin:0 !important;
+  padding:max(3.5vh, 20px) 16px calc(8rem + env(safe-area-inset-bottom)) 16px !important;
+  display:flex !important;
+  justify-content:center !important;
+  align-items:flex-start !important;
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  box-sizing:border-box !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  z-index:9001 !important;
+  -webkit-overflow-scrolling:touch !important;
+}
+
+.sh-card{
+  position:relative !important;
+  max-width:360px !important;
+  width:100% !important;
+  margin:0 auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:16px !important;
+  align-items:center !important;
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  box-sizing:border-box !important;
+}
+
+@media (min-width:640px){
+  .sh-card{ max-width:410px !important; }
+}
+
+@media (max-width:375px){
+  .sh{
+    padding-left:12px !important;
+    padding-right:12px !important;
+  }
+  .sh-card{
+    max-width:330px !important;
+    gap:13px !important;
+  }
+}
