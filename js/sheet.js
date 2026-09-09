@@ -16,71 +16,66 @@
 
     /* ── the scrollable modal container ── */
     '.sh{position:fixed;inset:0;z-index:9001;overflow-y:auto;overflow-x:hidden;',
-      'padding:max(3vh,1.2rem) 1rem calc(3.5rem + env(safe-area-inset-bottom));scrollbar-width:none;',
-      'display:flex;justify-content:center;align-items:flex-start;',
+      'padding:max(2.5vh,1rem) 1.2rem calc(7.5rem + env(safe-area-inset-bottom));scrollbar-width:none;',
+      'display:flex;justify-content:center;align-items:flex-start;box-sizing:border-box;width:100vw;',
       '-webkit-overflow-scrolling:touch;}',
     '.sh::-webkit-scrollbar{display:none;}',
 
     /* ── the card with iOS spring scale pop ── */
-    '.sh-card{position:relative;max-width:520px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:1rem;',
-      'transform:scale(0.88) translateY(24px);opacity:0;',
-      'transition:transform .45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity .3s ease;}',
+    '.sh-card{position:relative;max-width:410px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:.85rem;',
+      'box-sizing:border-box;transform:scale(0.9) translateY(20px);opacity:0;',
+      'transition:transform .4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity .3s ease;}',
     '.sh.on .sh-card{transform:scale(1) translateY(0);opacity:1;}',
+    '@media (max-width:480px){',
+      '.sh-card{max-width:335px !important;}',
+      '.sh{padding-left:12px;padding-right:12px;}',
+    '}',
 
     /* ── MEDIA TILE: Image itself is the squircle box (No layer behind it) ── */
-    '.sh-media-group{display:flex;flex-direction:column;gap:.75rem;}',
-    '.sh-hero-box{position:relative;width:100%;aspect-ratio:1/1;border-radius:32px;overflow:hidden;',
+    '.sh-media-group{display:flex;flex-direction:column;gap:.7rem;}',
+    '.sh-hero-box{position:relative;width:100%;aspect-ratio:1/1;border-radius:28px;overflow:hidden;',
       'background:transparent;cursor:zoom-in;',
-      'box-shadow:0 20px 48px -12px rgba(0,7,45,.25), inset 0 1px 1px rgba(255,255,255,.9);',
-      'border:1px solid rgba(255,255,255,.6);}',
+      'box-shadow:0 18px 40px -12px rgba(0,7,45,.28), inset 0 1px 1px rgba(255,255,255,.9);',
+      'border:1px solid rgba(255,255,255,.6);touch-action:pan-y;}',
     '.sh-hero-box img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .25s;}',
     '.sh-hero-box img.fading{opacity:0;}',
     '.sh-hero-box video{width:100%;height:100%;object-fit:cover;display:block;}',
 
-    /* Floating controls directly on top of the image */
-    '.sh-float-counter{position:absolute;top:14px;left:14px;z-index:5;',
-      'background:rgba(0,7,45,.5);backdrop-filter:blur(20px) saturate(180%);',
-      '-webkit-backdrop-filter:blur(20px) saturate(180%);',
-      'color:#FFFFFF;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:5px 12px;',
-      'font-family:var(--f-mono,monospace);font-size:.62rem;font-weight:600;letter-spacing:.08em;',
-      'box-shadow:0 4px 14px rgba(0,0,0,.25);}',
-    '.sh-float-close{position:absolute;top:14px;right:14px;z-index:5;',
-      'width:36px;height:36px;border-radius:50%;cursor:pointer;',
-      'background:rgba(0,7,45,.5);backdrop-filter:blur(20px) saturate(180%);',
-      '-webkit-backdrop-filter:blur(20px) saturate(180%);',
+    /* Floating minimalist controls directly on top of the image */
+    '.sh-float-counter{position:absolute;top:12px;left:12px;z-index:5;',
+      'background:rgba(0,7,45,.42);backdrop-filter:blur(16px) saturate(180%);',
+      '-webkit-backdrop-filter:blur(16px) saturate(180%);',
+      'color:#FFFFFF;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:3px 10px;',
+      'font-family:var(--f-mono,monospace);font-size:.58rem;font-weight:600;letter-spacing:.08em;',
+      'box-shadow:0 4px 12px rgba(0,0,0,.2);}',
+    '.sh-float-close{position:absolute;top:12px;right:12px;z-index:5;',
+      'width:32px;height:32px;border-radius:50%;cursor:pointer;',
+      'background:rgba(0,7,45,.42);backdrop-filter:blur(16px) saturate(180%);',
+      '-webkit-backdrop-filter:blur(16px) saturate(180%);',
       'color:#FFFFFF;border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;',
-      'font-size:.95rem;box-shadow:0 4px 14px rgba(0,0,0,.25);transition:all .2s;}',
-    '.sh-float-close:hover{background:rgba(0,7,45,.8);transform:scale(1.08);}',
-
-    '.sh-float-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:4;',
-      'width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.88);',
-      'backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);',
-      'border:1px solid rgba(255,255,255,.9);color:var(--ink,#00072D);',
-      'display:flex;align-items:center;justify-content:center;font-family:var(--f-mono,monospace);',
-      'font-size:.95rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,7,45,.15);transition:all .2s;}',
-    '.sh-float-nav:hover{background:#FFFFFF;transform:translateY(-50%) scale(1.08);}',
-    '.sh-float-nav.pv{left:12px;} .sh-float-nav.nx{right:12px;}',
+      'font-size:.85rem;box-shadow:0 4px 12px rgba(0,0,0,.2);transition:all .2s;}',
+    '.sh-float-close:hover{background:rgba(0,7,45,.75);transform:scale(1.08);}',
 
     /* thumbnails — smooth borderless squircle icons */
-    '.sh-thumbs{display:flex;gap:.65rem;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none;}',
+    '.sh-thumbs{display:flex;gap:.6rem;overflow-x:auto;padding:2px 2px 4px;scrollbar-width:none;}',
     '.sh-thumbs::-webkit-scrollbar{display:none;}',
-    '.sh-th{flex:0 0 66px;height:66px;border-radius:18px;overflow:hidden;cursor:pointer;',
-      'border:2px solid transparent;background:transparent;position:relative;opacity:.7;',
+    '.sh-th{flex:0 0 62px;height:62px;border-radius:16px;overflow:hidden;cursor:pointer;',
+      'border:2px solid transparent;background:transparent;position:relative;opacity:.75;',
       'box-shadow:0 4px 12px rgba(0,7,45,.08);transition:all .2s;padding:0;}',
     '.sh-th:hover{opacity:1;transform:translateY(-2px);}',
     '.sh-th.on{opacity:1;border-color:var(--ink,#00072D);box-shadow:0 0 0 2px var(--ink,#00072D), 0 8px 18px rgba(0,7,45,.2);transform:scale(1.04);}',
     '.sh-th img{width:100%;height:100%;object-fit:cover;display:block;}',
     '.sh-th .th-lbl{position:absolute;bottom:3px;right:3px;font-family:var(--f-mono,monospace);',
-      'font-size:.45rem;font-weight:700;background:rgba(0,7,45,.65);color:#fff;padding:1px 4px;border-radius:4px;}',
+      'font-size:.42rem;font-weight:700;background:rgba(0,7,45,.65);color:#fff;padding:1px 4px;border-radius:4px;}',
     '.sh-th.vid::after{content:"▶";position:absolute;inset:0;display:flex;align-items:center;',
       'justify-content:center;background:rgba(0,7,45,.45);color:#fff;font-size:.85rem;}',
 
-    /* ── Info Box & other modules ── */
-    '.sh-box{position:relative;background:rgba(255,255,255,.82);',
-      'backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);',
-      'border:1px solid rgba(255,255,255,.9);border-radius:26px;',
-      'padding:clamp(1.2rem, 3vw, 1.5rem);',
-      'box-shadow:0 12px 36px -12px rgba(0,7,45,.12), inset 0 1px 0 #FFFFFF;}',
+    /* ── Info Box & other modules: translucent glass on blurred page (No opaque white layer) ── */
+    '.sh-box{position:relative;background:rgba(255,255,255,.45);',
+      'backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);',
+      'border:1px solid rgba(255,255,255,.65);border-radius:22px;',
+      'padding:clamp(1rem, 3vw, 1.35rem);',
+      'box-shadow:0 10px 30px -12px rgba(0,7,45,.12), inset 0 1px 0 rgba(255,255,255,.9);}',
 
     '.sh-verified{display:flex;align-items:center;gap:.45rem;font-family:var(--f-mono,monospace);',
       'font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#5A6072);font-weight:600;}',
@@ -210,8 +205,6 @@
           '<div class="sh-hero-box" id="shStageWrap">' +
             '<span class="sh-float-counter" id="shCounter">1 / '+slides.length+'</span>' +
             '<button class="sh-float-close" id="shClose" aria-label="Close modal">✕</button>' +
-            '<button class="sh-float-nav pv" id="shPrev" aria-label="Previous">←</button>' +
-            '<button class="sh-float-nav nx" id="shNext" aria-label="Next">→</button>' +
             '<div id="shStage" style="width:100%;height:100%"></div>' +
           '</div>' +
           (slides.length > 1 ? '<div class="sh-thumbs" id="shThumbs">'+thumbsHtml+'</div>' : '') +
@@ -310,9 +303,27 @@
     sheet.querySelectorAll('.sh-th').forEach(function(th){
       th.addEventListener('click', function(){ renderSlide(+th.dataset.i); });
     });
-    sheet.querySelector('#shPrev').addEventListener('click', function(e){ e.stopPropagation(); renderSlide(curIdx - 1); });
-    sheet.querySelector('#shNext').addEventListener('click', function(e){ e.stopPropagation(); renderSlide(curIdx + 1); });
     sheet.querySelector('#shClose').addEventListener('click', close);
+
+    /* touch swipe on hero image box */
+    var touchStartX = 0;
+    var stageWrap = sheet.querySelector('#shStageWrap');
+    if(stageWrap){
+      stageWrap.addEventListener('touchstart', function(e){
+        if(e.touches && e.touches.length === 1){
+          touchStartX = e.touches[0].clientX;
+        }
+      }, {passive: true});
+      stageWrap.addEventListener('touchend', function(e){
+        if(e.changedTouches && e.changedTouches.length === 1){
+          var diffX = e.changedTouches[0].clientX - touchStartX;
+          if(Math.abs(diffX) > 40){
+            if(diffX < 0){ renderSlide(curIdx + 1); }
+            else { renderSlide(curIdx - 1); }
+          }
+        }
+      }, {passive: true});
+    }
 
     /* zoom photo on click (if not video) */
     sheet.querySelector('#shStageWrap').addEventListener('click', function(e){
