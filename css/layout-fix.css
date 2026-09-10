@@ -48,17 +48,17 @@
   margin:0 !important;
   aspect-ratio:1/1 !important;
   height:auto !important;
-  border-radius:24px !important;
-  background:linear-gradient(135deg, rgba(255, 255, 255, 0.68) 0%, rgba(248, 246, 238, 0.32) 100%) !important;
-  backdrop-filter:blur(32px) saturate(200%) !important;
-  -webkit-backdrop-filter:blur(32px) saturate(200%) !important;
-  border:1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow:inset 0 2px 3px 0 rgba(255, 255, 255, 0.95),
-             inset 0 0 0 1px rgba(255, 255, 255, 0.35),
-             inset 0 -2px 2.5px 0 rgba(0, 7, 45, 0.04),
-             0 16px 38px -10px rgba(0, 7, 45, 0.12),
-             0 3px 10px rgba(0, 7, 45, 0.03) !important;
-  padding:8px !important;
+  border-radius:28px !important;
+  background:linear-gradient(135deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.10) 100%) !important;
+  backdrop-filter:blur(28px) saturate(190%) contrast(105%) !important;
+  -webkit-backdrop-filter:blur(28px) saturate(190%) contrast(105%) !important;
+  border:2px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow:0 20px 48px -12px rgba(0, 7, 45, 0.16),
+             0 4px 14px rgba(0, 7, 45, 0.04),
+             inset 0 3px 4px 0 rgba(255, 255, 255, 0.95),
+             inset 0 0 0 1px rgba(255, 255, 255, 0.45),
+             inset 0 -3px 4px 0 rgba(0, 7, 45, 0.06) !important;
+  padding:9px !important;
   box-sizing:border-box !important;
   overflow:hidden !important;
   transition:transform .45s cubic-bezier(.16,1,.3,1), box-shadow .45s cubic-bezier(.16,1,.3,1) !important;
@@ -69,70 +69,48 @@
   height:100% !important;
   aspect-ratio:1/1 !important;
   object-fit:cover !important;
-  border-radius:16px !important;
+  border-radius:20px !important;
   display:block !important;
   transition:transform .5s cubic-bezier(.16,1,.3,1);
 }
 .pcase:hover .pimg{
-  transform:translateY(-3px) translateZ(10px) scale(1.015) !important;
-  box-shadow:inset 0 2.5px 3.5px 0 #FFFFFF,
-             inset 0 0 0 1px rgba(255, 255, 255, 0.5),
-             inset 0 -2px 2.5px 0 rgba(0, 7, 45, 0.05),
-             0 26px 52px -12px rgba(0, 7, 45, 0.22),
-             0 6px 16px rgba(0, 7, 45, 0.06) !important;
+  transform:translateY(-8px) scale(1.025) !important;
+  box-shadow:0 32px 64px -14px rgba(0, 7, 45, 0.28),
+             0 8px 22px rgba(0, 7, 45, 0.07),
+             inset 0 3.5px 5px 0 #FFFFFF,
+             inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+             inset 0 -3px 4px 0 rgba(0, 7, 45, 0.08) !important;
 }
-.pcase:hover .pimg img{ transform:scale(1.035); }
+.pcase:hover .pimg img{ transform:scale(1.04); }
 
 
-/* ── 3. THE TICKET (SEPARATE FLOATING CARD WITH HINGE TAB) ─── */
+/* ── 3. PRODUCT INFO TEXT (SEAMLESS TYPOGRAPHY — NO SEPARATE WHITE BOX, NO TAB) ─── */
 .ticket{
   position:relative !important;
-  margin:12px 0 0 !important;
-  background:linear-gradient(145deg, rgba(255, 255, 255, 0.74) 0%, rgba(250, 248, 240, 0.38) 100%) !important;
-  backdrop-filter:blur(32px) saturate(200%) !important;
-  -webkit-backdrop-filter:blur(32px) saturate(200%) !important;
-  border:1.5px solid rgba(255, 255, 255, 0.85) !important;
-  border-radius:22px !important;
-  padding:16px 12px 15px !important;
-  box-shadow:inset 0 2px 3px 0 rgba(255, 255, 255, 0.95),
-             inset 0 0 0 1px rgba(255, 255, 255, 0.35),
-             inset 0 -2px 2.5px 0 rgba(0, 7, 45, 0.04),
-             0 16px 38px -10px rgba(0, 7, 45, 0.12),
-             0 3px 10px rgba(0, 7, 45, 0.03) !important;
+  margin:8px 0 0 !important;
+  background:transparent !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  border:none !important;
+  border-radius:0 !important;
+  padding:6px 4px 0 !important;
+  box-shadow:none !important;
   display:flex !important;
   flex-direction:column !important;
   align-items:center !important;
   text-align:center !important;
-  transition:transform .45s cubic-bezier(.16,1,.3,1), box-shadow .45s cubic-bezier(.16,1,.3,1) !important;
+  transition:transform .3s ease !important;
   overflow:visible !important;
 }
 
-/* Centered accent connector tab bridging photo and ticket (Image 1) */
+/* Remove separate bridge tab layer */
 .ticket::before{
-  content:'' !important;
-  display:block !important;
-  position:absolute !important;
-  top:-8px !important;
-  left:50% !important;
-  transform:translateX(-50%) !important;
-  width:28px !important;
-  height:9px !important;
-  background:linear-gradient(180deg, rgba(255,255,255,.95), #E2DEC9) !important;
-  backdrop-filter:blur(16px) !important;
-  -webkit-backdrop-filter:blur(16px) !important;
-  border-radius:4px !important;
-  border:1px solid rgba(255,255,255,.9) !important;
-  box-shadow:0 2px 6px rgba(0,7,45,.14), inset 0 1px 0 #FFFFFF !important;
-  z-index:3 !important;
+  display:none !important;
 }
 
 .pcase:hover .ticket{
-  transform:translateY(-4px) translateZ(12px) !important;
-  box-shadow:inset 0 2.5px 3.5px 0 #FFFFFF,
-             inset 0 0 0 1px rgba(255, 255, 255, 0.5),
-             inset 0 -2px 2.5px 0 rgba(0, 7, 45, 0.05),
-             0 24px 46px -12px rgba(0, 7, 45, 0.2),
-             0 6px 16px rgba(0, 7, 45, 0.05) !important;
+  transform:translateY(-2px) !important;
+  box-shadow:none !important;
 }
 
 .ticket .cat,
@@ -230,21 +208,20 @@
   .grid::after{ display:none !important; }
 
   .pimg{
-    padding:5px !important;
-    border-radius:16px !important;
+    padding:6px !important;
+    border-radius:20px !important;
   }
-  .pimg img{ border-radius:12px !important; }
+  .pimg img{ border-radius:14px !important; }
 
   .ticket{
-    margin:10px 0 0 !important;
-    padding:12px 8px 11px !important;
-    border-radius:15px !important;
+    margin:6px 0 0 !important;
+    padding:4px 4px 0 !important;
+    background:transparent !important;
+    border:none !important;
+    box-shadow:none !important;
   }
   .ticket::before{
-    display:block !important;
-    width:22px !important;
-    height:7px !important;
-    top:-6px !important;
+    display:none !important;
   }
   .ticket .cat{ font-size:.44rem !important; letter-spacing:.16em !important; }
   .ticket .nm{ font-size:.82rem !important; line-height:1.2; min-height:2.4em; }
@@ -519,90 +496,147 @@
   pointer-events: none !important;
 }
 
-/* ── 11. ENHANCED LIQUID OPTICAL GLASS (VISIONOS AESTHETIC) ── */
-/* Opening Video Stage Box: Liquid Glass Lens */
-.stage {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.60) 0%, rgba(246, 245, 237, 0.28) 100%) !important;
-  backdrop-filter: blur(36px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(36px) saturate(200%) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.88) !important;
-  box-shadow: inset 0 2.5px 3.5px 0 rgba(255, 255, 255, 0.95),
-              inset 0 0 0 1px rgba(255, 255, 255, 0.4),
-              inset 0 -2.5px 3px 0 rgba(0, 7, 45, 0.04),
-              0 24px 56px -16px rgba(0, 7, 45, 0.15),
-              0 4px 14px rgba(0, 7, 45, 0.04) !important;
+/* ── 11. 3D LIQUID GLASS CUBES (MEDIA BOXES ONLY) & SEAMLESS TEXT ── */
+
+/* A. HERO PROOF ITEMS & TEXT BOXES: CLEAN & SEAMLESS (NO WHITE SQUARE BOXES) */
+.proof-item {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.proof-item .n {
+  font-family: var(--f-mono) !important;
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+}
+
+.proof-item .l {
+  font-family: var(--f-mono) !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  margin-top: 2px !important;
+}
+
+/* Glass Action Buttons (Subtle Frosted, NOT Opaque White) */
+.btn-glass {
+  background: rgba(255, 255, 255, 0.40) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1.5px solid rgba(0, 7, 45, 0.16) !important;
+  color: var(--ink) !important;
+  box-shadow: 0 4px 14px -4px rgba(0, 7, 45, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.9) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: var(--ink) !important;
+  transform: translateY(-2px) scale(1.01) !important;
+  box-shadow: 0 8px 20px -6px rgba(0, 7, 45, 0.15) !important;
+}
+
+/* B. MEDIA BOX 1: Opening Video Spotlight — 3D Liquid Cube */
+.slide-card {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  border-radius: 32px !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.10) 100%) !important;
+  backdrop-filter: blur(28px) saturate(190%) contrast(105%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) contrast(105%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 28px 60px -14px rgba(0, 7, 45, 0.26),
+              0 6px 18px rgba(0, 7, 45, 0.06),
+              inset 0 3.5px 5px 0 #FFFFFF,
+              inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+              inset 0 -3.5px 5px 0 rgba(0, 7, 45, 0.08) !important;
+  overflow: hidden !important;
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-.stage:hover {
-  transform: translateY(-6px) !important;
-  box-shadow: inset 0 3px 4px 0 #FFFFFF,
-              inset 0 0 0 1px rgba(255, 255, 255, 0.55),
-              inset 0 -2.5px 3px 0 rgba(0, 7, 45, 0.06),
-              0 32px 68px -16px rgba(0, 7, 45, 0.22),
-              0 8px 20px rgba(0, 7, 45, 0.06) !important;
+.slide-card:hover {
+  transform: translateY(-6px) scale(1.02) !important;
+  box-shadow: 0 36px 72px -16px rgba(0, 7, 45, 0.34),
+              inset 0 4px 6px #FFFFFF !important;
 }
 
-/* The Feed Video Cards: Liquid Glass Posters */
+.stage {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.38) 0%, rgba(246, 245, 237, 0.15) 100%) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.72) !important;
+  box-shadow: 0 16px 40px -16px rgba(0, 7, 45, 0.08), inset 0 1px 1px #FFFFFF !important;
+}
+
+/* C. MEDIA BOX 2: The Feed Video Cards — 3D Liquid Cubes */
 .reel {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.68) 0%, rgba(248, 246, 238, 0.30) 100%) !important;
-  backdrop-filter: blur(32px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: inset 0 2px 3px 0 rgba(255, 255, 255, 0.95),
-              inset 0 0 0 1px rgba(255, 255, 255, 0.35),
-              inset 0 -2px 2px 0 rgba(0, 7, 45, 0.04),
-              0 18px 40px -12px rgba(0, 7, 45, 0.16) !important;
+  border-radius: 32px !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.42) 0%, rgba(248, 246, 238, 0.12) 100%) !important;
+  backdrop-filter: blur(28px) saturate(190%) contrast(105%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) contrast(105%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 22px 50px -12px rgba(0, 7, 45, 0.22),
+              0 6px 16px rgba(0, 7, 45, 0.05),
+              inset 0 3px 4px 0 #FFFFFF,
+              inset 0 0 0 1px rgba(255, 255, 255, 0.45),
+              inset 0 -3px 4px 0 rgba(0, 7, 45, 0.06) !important;
+  overflow: hidden !important;
   transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .reel:hover {
-  transform: translateY(-7px) scale(1.025) !important;
-  box-shadow: inset 0 2.5px 3.5px 0 #FFFFFF,
-              inset 0 0 0 1px rgba(255, 255, 255, 0.5),
-              0 28px 56px -14px rgba(0, 7, 45, 0.26) !important;
+  transform: translateY(-8px) scale(1.025) !important;
+  box-shadow: 0 32px 64px -14px rgba(0, 7, 45, 0.32),
+              inset 0 3.5px 5px #FFFFFF !important;
 }
 
-/* Proof Items, Glass Buttons & Action Pills (Matching iOS / VisionOS Pills) */
-.proof-item,
-.btn-glass,
+/* D. MEDIA BOX 3: Product Detail Page Main Image — 3D Liquid Cube */
+.photo#photo,
+.sh-hero-box {
+  border-radius: 32px !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.10) 100%) !important;
+  backdrop-filter: blur(28px) saturate(190%) contrast(105%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) contrast(105%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 26px 56px -14px rgba(0, 7, 45, 0.22),
+              0 6px 16px rgba(0, 7, 45, 0.05),
+              inset 0 3px 4px 0 #FFFFFF,
+              inset 0 0 0 1px rgba(255, 255, 255, 0.45),
+              inset 0 -3px 4px 0 rgba(0, 7, 45, 0.06) !important;
+  overflow: hidden !important;
+}
+
+/* E. Nav Header Controls (Pill widgets matching Image 2 & 5) */
 .watch-btn,
 .cart-btn,
 .fpill,
 .cat-pills button,
 .filters button {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.70) 0%, rgba(255, 255, 255, 0.30) 100%) !important;
-  backdrop-filter: blur(28px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.88) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.20) 100%) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
   box-shadow: inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
-              inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.3),
               inset 0 -1.5px 2px 0 rgba(0, 7, 45, 0.04),
-              0 8px 24px -6px rgba(0, 7, 45, 0.1) !important;
+              0 6px 18px -4px rgba(0, 7, 45, 0.08) !important;
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease !important;
 }
 
-.proof-item:hover,
-.btn-glass:hover,
 .watch-btn:hover,
 .cart-btn:hover,
 .fpill:hover {
-  transform: translateY(-3px) scale(1.02) !important;
+  transform: translateY(-2px) scale(1.02) !important;
   box-shadow: inset 0 2px 2.5px 0 #FFFFFF,
-              inset 0 0 0 1px rgba(255, 255, 255, 0.5),
-              0 14px 28px -6px rgba(0, 7, 45, 0.16) !important;
-}
-
-/* Modal Liquid Glass Widgets */
-.sh-box {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.68) 0%, rgba(255, 255, 255, 0.34) 100%) !important;
-  backdrop-filter: blur(36px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(36px) saturate(200%) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
-  box-shadow: inset 0 2px 3px 0 rgba(255, 255, 255, 0.95),
-              inset 0 0 0 1px rgba(255, 255, 255, 0.4),
-              inset 0 -2px 2px 0 rgba(0, 7, 45, 0.04),
-              0 18px 44px -12px rgba(0, 7, 45, 0.18) !important;
+              0 10px 24px -6px rgba(0, 7, 45, 0.14) !important;
 }
 
 /* ── 12. EDITORIAL TEXT REVEAL TRANSITIONS ─────────────────────── */
