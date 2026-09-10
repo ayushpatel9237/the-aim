@@ -457,8 +457,7 @@ FEATURED.forEach(function(p,i){
   var mediaMarkup = p.featuredVideo ?
     '<video src="' + p.featuredVideo + '" poster="' + (p.featuredPoster || p.hero) + '" autoplay muted loop playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></video>' :
     '<img src="'+p.hero+'" alt="'+p.name+'" '+(i>0?'loading="lazy"':'')+' />';
-  a.innerHTML = '<span class="tag">Featured Film</span><div class="slide-card">' +
-    mediaMarkup + '</div>';
+  a.innerHTML = '<div class="slide-card">' + mediaMarkup + '</div>';
   slidesEl.appendChild(a);
   var bar = document.createElement('i'); if(i===0) bar.className='on';
   sbarEl.appendChild(bar);

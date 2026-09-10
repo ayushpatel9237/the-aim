@@ -43,8 +43,8 @@
       isMobile = window.innerWidth < 768;
     }, {passive:true});
 
-    /* Only target leaf-level visual elements, NOT container parents */
-    var SEL = '.pcase, .shelf-card, .sec-head, .eyebrow';
+    /* Only target leaf-level visual cards for depth-of-field */
+    var SEL = '.pcase, .shelf-card';
 
     function collect(){
       var els = document.querySelectorAll(SEL);
@@ -110,7 +110,6 @@
       raf = 0;
     }
 
-
     function requestTick(){
       if(!raf) raf = requestAnimationFrame(tick);
     }
@@ -119,6 +118,21 @@
       collect();
       tick(); /* immediate first paint */
       window.addEventListener('scroll', requestTick, {passive:true});
+
+      /* Editorial Text Reveal Observer */
+      if('IntersectionObserver' in window){
+        var textObs = new IntersectionObserver(function(entries){
+          entries.forEach(function(entry){
+            if(entry.isIntersecting){
+              entry.target.classList.add('in');
+              textObs.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -25px 0px' });
+
+        var textTargets = document.querySelectorAll('.sec-head, .feed-head, .cur-head, .text-reveal, .proof-item, .hero-sub');
+        textTargets.forEach(function(el){ textObs.observe(el); });
+      }
 
       /* MutationObserver for dynamically rendered cards */
       if('MutationObserver' in window){
