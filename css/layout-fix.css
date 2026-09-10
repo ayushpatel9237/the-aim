@@ -440,45 +440,25 @@
   }
 }
 
-/* ── 9. SCROLL-DRIVEN DEPTH-OF-FIELD REVEAL ────────────────────────────
-   Elements blur/sharpen based on distance from viewport centre.
-   JS sets --dof custom properties per element every scroll frame.
-   Outer edges = hard blur, inner = soft blur, centre = crystal clear.
+/* ── 9. SCROLL-DRIVEN DEPTH-OF-FIELD ───────────────────────────────────
+   ONLY blur. No opacity fade, no scale, no translate.
+   Elements stay fully opaque and in-place — just soft focus at edges.
+   Feels like natural camera depth, not a layer on top.
    ───────────────────────────────────────────────────────────────────── */
 
-/* Depth-field elements: driven by CSS custom properties set from JS */
 .dof-item {
   --dof-blur: 0px;
-  --dof-opa: 1;
-  --dof-y: 0px;
-  --dof-sc: 1;
   filter: blur(var(--dof-blur));
-  opacity: var(--dof-opa);
-  transform: translateY(var(--dof-y)) scale(var(--dof-sc));
-  transition: filter 0.22s ease-out,
-              opacity 0.22s ease-out,
-              transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: filter 0.25s ease-out;
 }
 
-/* First-entrance spring (one-shot, JS adds then removes) */
 .dof-enter {
-  transition: filter 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  transition: filter 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-/* Mobile: faster transitions, no transform bounce (momentum scroll) */
 @media (max-width: 768px) {
-  .dof-item {
-    transition: filter 0.15s linear,
-                opacity 0.15s linear,
-                transform 0.2s ease-out;
-  }
-  .dof-enter {
-    transition: filter 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) !important;
-  }
+  .dof-item { transition: filter 0.18s ease-out; }
+  .dof-enter { transition: filter 0.38s cubic-bezier(0.16, 1, 0.3, 1) !important; }
 }
 
 /* Tactile 3D product cards */

@@ -24,19 +24,13 @@
 
     /* ─── Tuning: Desktop vs Mobile ─── */
     var CFG = isMobile ? {
-      clearZone : 0.62,   /* 62% of viewport is perfectly sharp */
-      softZone  : 0.18,   /* 18% gentle gradient on each side */
-      maxBlur   : 4,      /* max blur px at extreme edge */
-      minOpacity: 0.5,    /* opacity at extreme edge */
-      maxLift   : 0,      /* no Y shift on mobile (causes jank with momentum) */
-      minScale  : 1       /* no scale on mobile */
+      clearZone : 0.65,   /* 65% of viewport is crystal sharp */
+      softZone  : 0.16,   /* gentle blur only at extreme edges */
+      maxBlur   : 3.5     /* subtle natural optical blur */
     } : {
-      clearZone : 0.50,   /* 50% of viewport is perfectly sharp */
-      softZone  : 0.22,   /* 22% gentle gradient on each side */
-      maxBlur   : 5.5,    /* max blur px at extreme edge */
-      minOpacity: 0.42,   /* opacity at extreme edge */
-      maxLift   : 12,     /* slight Y push at edge */
-      minScale  : 0.97    /* slight scale-down at edge */
+      clearZone : 0.55,   /* 55% of viewport is crystal sharp */
+      softZone  : 0.20,   /* gentle gradient on edges */
+      maxBlur   : 4.5     /* subtle natural optical blur */
     };
 
     var items = [];
@@ -92,10 +86,8 @@
 
         /* Skip far off-screen elements */
         if(rect.bottom < -50 || rect.top > vh + 50){
-          /* Reset off-screen items to blurred so they reveal when entering */
           if(el._entered){
             el.style.setProperty('--dof-blur', CFG.maxBlur + 'px');
-            el.style.setProperty('--dof-opa', String(CFG.minOpacity));
           }
           continue;
         }
@@ -103,18 +95,10 @@
         var d = depth(rect);
         var e = ease(d);
 
-        /* Set custom properties */
+        /* Set ONLY optical focal blur - NO opacity, NO transform shifts */
         el.style.setProperty('--dof-blur', (e * CFG.maxBlur).toFixed(1) + 'px');
-        el.style.setProperty('--dof-opa', (1 - e * (1 - CFG.minOpacity)).toFixed(3));
 
-        if(CFG.maxLift > 0){
-          el.style.setProperty('--dof-y', (e * CFG.maxLift).toFixed(1) + 'px');
-        }
-        if(CFG.minScale < 1){
-          el.style.setProperty('--dof-sc', (1 - e * (1 - CFG.minScale)).toFixed(4));
-        }
-
-        /* First-time entrance: slower spring transition */
+        /* First-time entrance: slower smooth transition */
         if(!el._entered && d < 0.5){
           el._entered = true;
           el.classList.add('dof-enter');
@@ -125,6 +109,7 @@
       }
       raf = 0;
     }
+
 
     function requestTick(){
       if(!raf) raf = requestAnimationFrame(tick);
