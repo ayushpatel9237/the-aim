@@ -163,19 +163,24 @@
       init();
     }
 
-    /* ── 2. 3D POINTER TILT (desktop only) ── */
+    /* ── 2. 3D POINTER TILT (desktop only, ONLY on liquid media cube) ── */
     if(!isMobile && window.matchMedia('(hover:hover) and (pointer:fine)').matches){
       document.addEventListener('pointermove', function(ev){
         var card = ev.target.closest('.pcase');
         if(!card) return;
-        var r = card.getBoundingClientRect();
-        var rx = ((ev.clientY - r.top - r.height*0.5) / (r.height*0.5) * -3.5).toFixed(2);
-        var ry = ((ev.clientX - r.left - r.width*0.5) / (r.width*0.5) * 3.5).toFixed(2);
-        card.style.transform = 'perspective(900px) rotateX('+rx+'deg) rotateY('+ry+'deg) translateY(-5px) scale(1.015)';
+        var pimg = card.querySelector('.pimg');
+        if(!pimg) return;
+        var r = pimg.getBoundingClientRect();
+        var rx = ((ev.clientY - r.top - r.height*0.5) / (r.height*0.5) * -4).toFixed(2);
+        var ry = ((ev.clientX - r.left - r.width*0.5) / (r.width*0.5) * 4).toFixed(2);
+        pimg.style.transform = 'perspective(1000px) rotateX('+rx+'deg) rotateY('+ry+'deg) translateY(-10px) scale(1.025)';
       });
       document.addEventListener('pointerout', function(ev){
         var card = ev.target.closest('.pcase');
-        if(card) card.style.transform = '';
+        if(card){
+          var pimg = card.querySelector('.pimg');
+          if(pimg) pimg.style.transform = '';
+        }
       });
     }
   }

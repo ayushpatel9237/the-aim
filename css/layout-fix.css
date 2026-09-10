@@ -34,14 +34,23 @@
   overflow:visible !important;
   text-decoration:none !important;
   color:inherit !important;
-  transform-style:preserve-3d !important;
-  transition:transform .45s cubic-bezier(.16,1,.3,1) !important;
+  transform:none !important;
+  transition:none !important;
 }
 
 .pcase:hover{
-  transform:perspective(1000px) translateY(-7px) !important;
+  transform:none !important;
+  box-shadow:none !important;
+  background:transparent !important;
 }
 
+/* ── 2. 3D LIQUID GLASS CUBE (MEDIA BOX ONLY) ──────────────────────────
+   Realistic multi-angle studio lighting:
+   • Top specular overhead glint + downward refraction
+   • Left edge directional key light
+   • Bottom & right caustic refraction depth shadows
+   • Multi-tier floor contact + ambient floating shadow
+   ─────────────────────────────────────────────────────────────────────── */
 .pimg{
   position:relative !important;
   z-index:1;
@@ -49,15 +58,19 @@
   aspect-ratio:1/1 !important;
   height:auto !important;
   border-radius:28px !important;
-  background:linear-gradient(135deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.10) 100%) !important;
-  backdrop-filter:blur(28px) saturate(190%) contrast(105%) !important;
-  -webkit-backdrop-filter:blur(28px) saturate(190%) contrast(105%) !important;
+  background:linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.20) 40%, rgba(240, 238, 226, 0.08) 60%, rgba(255, 255, 255, 0.35) 100%) !important;
+  backdrop-filter:blur(28px) saturate(200%) contrast(106%) !important;
+  -webkit-backdrop-filter:blur(28px) saturate(200%) contrast(106%) !important;
   border:2px solid rgba(255, 255, 255, 0.95) !important;
-  box-shadow:0 20px 48px -12px rgba(0, 7, 45, 0.16),
-             0 4px 14px rgba(0, 7, 45, 0.04),
-             inset 0 3px 4px 0 rgba(255, 255, 255, 0.95),
-             inset 0 0 0 1px rgba(255, 255, 255, 0.45),
-             inset 0 -3px 4px 0 rgba(0, 7, 45, 0.06) !important;
+  box-shadow:
+    0 4px 10px -2px rgba(0, 7, 45, 0.12),
+    0 16px 36px -8px rgba(0, 7, 45, 0.16),
+    0 28px 56px -12px rgba(0, 7, 45, 0.14),
+    inset 0 2px 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 6px 12px 0 rgba(255, 255, 255, 0.65),
+    inset 2.5px 0 6px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -4px 8px 0 rgba(0, 7, 45, 0.14),
+    inset -2px 0 6px 0 rgba(0, 7, 45, 0.08) !important;
   padding:9px !important;
   box-sizing:border-box !important;
   overflow:hidden !important;
@@ -71,35 +84,40 @@
   object-fit:cover !important;
   border-radius:20px !important;
   display:block !important;
+  box-shadow:inset 0 0 0 1px rgba(0, 7, 45, 0.06), 0 2px 6px rgba(0, 7, 45, 0.08) !important;
   transition:transform .5s cubic-bezier(.16,1,.3,1);
 }
+
 .pcase:hover .pimg{
-  transform:translateY(-8px) scale(1.025) !important;
-  box-shadow:0 32px 64px -14px rgba(0, 7, 45, 0.28),
-             0 8px 22px rgba(0, 7, 45, 0.07),
-             inset 0 3.5px 5px 0 #FFFFFF,
-             inset 0 0 0 1px rgba(255, 255, 255, 0.6),
-             inset 0 -3px 4px 0 rgba(0, 7, 45, 0.08) !important;
+  transform:perspective(1000px) translateY(-10px) rotateX(2.5deg) scale(1.025) !important;
+  box-shadow:
+    0 8px 18px -4px rgba(0, 7, 45, 0.16),
+    0 24px 48px -10px rgba(0, 7, 45, 0.24),
+    0 40px 72px -16px rgba(0, 7, 45, 0.22),
+    inset 0 3px 2px 0 #FFFFFF,
+    inset 0 8px 18px 0 rgba(255, 255, 255, 0.8),
+    inset 3px 0 8px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -5px 10px 0 rgba(0, 7, 45, 0.18) !important;
 }
-.pcase:hover .pimg img{ transform:scale(1.04); }
+.pcase:hover .pimg img{ transform:scale(1.035); }
 
 
-/* ── 3. PRODUCT INFO TEXT (SEAMLESS TYPOGRAPHY — NO SEPARATE WHITE BOX, NO TAB) ─── */
+/* ── 3. PRODUCT INFO TEXT (SEAMLESS TYPOGRAPHY — MATCHES EXACT THE AIM UI) ─── */
 .ticket{
   position:relative !important;
-  margin:8px 0 0 !important;
+  margin:12px 0 0 !important;
   background:transparent !important;
   backdrop-filter:none !important;
   -webkit-backdrop-filter:none !important;
   border:none !important;
   border-radius:0 !important;
-  padding:6px 4px 0 !important;
+  padding:0 !important;
   box-shadow:none !important;
   display:flex !important;
   flex-direction:column !important;
   align-items:center !important;
   text-align:center !important;
-  transition:transform .3s ease !important;
+  transition:none !important;
   overflow:visible !important;
 }
 
@@ -109,8 +127,9 @@
 }
 
 .pcase:hover .ticket{
-  transform:translateY(-2px) !important;
+  transform:none !important;
   box-shadow:none !important;
+  background:transparent !important;
 }
 
 .ticket .cat,
@@ -131,52 +150,67 @@
 
 .ticket .cat{
   font-family:var(--f-mono) !important;
-  font-size:.52rem !important;
-  letter-spacing:.18em !important;
+  font-size:.60rem !important;
+  letter-spacing:.20em !important;
   text-transform:uppercase !important;
-  color:#7A8090 !important;
-  font-weight:700 !important;
-  margin:2px 0 4px !important;
+  color:var(--muted, #727B93) !important;
+  font-weight:600 !important;
+  margin:0 0 4px 0 !important;
   display:block !important;
 }
 
 .ticket .nm{
-  font-family:var(--f-sans) !important;
-  font-weight:700 !important;
-  font-size:.92rem !important;
-  line-height:1.25 !important;
+  font-family:var(--f-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif) !important;
+  font-weight:800 !important;
+  font-size:1.02rem !important;
+  line-height:1.26 !important;
+  letter-spacing:-.015em !important;
   color:var(--ink, #00072D) !important;
   min-height:2.5em;
   display:-webkit-box;
   -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
   overflow:hidden;
+  text-align:center !important;
+  transition:color .2s ease !important;
+}
+
+.pcase:hover .ticket .nm{
+  color:var(--cobalt, #002288) !important;
 }
 
 .ticket .pr{
-  font-family:var(--f-mono) !important;
+  font-family:var(--f-mono, ui-monospace, SFMono-Regular, monospace) !important;
   font-weight:800 !important;
-  font-size:1.05rem !important;
-  color:#9C7736 !important;
-  margin-top:6px !important;
+  font-size:1.15rem !important;
+  letter-spacing:-.02em !important;
+  color:var(--ink, #00072D) !important;
+  margin-top:5px !important;
   display:block !important;
 }
 
 .ticket .go{
   font-family:var(--f-mono) !important;
-  font-size:.52rem !important;
+  font-size:.56rem !important;
   letter-spacing:.14em !important;
   text-transform:uppercase !important;
-  color:#8C92A4 !important;
+  color:var(--muted, #727B93) !important;
   font-weight:700 !important;
   margin-top:7px !important;
-  display:inline-block !important;
+  padding:3px 10px !important;
+  border-radius:999px !important;
+  background:rgba(0,7,45,.04) !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:3px !important;
   opacity:1 !important;
-  transition:color .2s ease, transform .2s ease !important;
+  transition:all .2s ease !important;
 }
+
 .pcase:hover .ticket .go{
-  color:var(--ink, #00072D) !important;
-  transform:translateX(2px) !important;
+  background:var(--ink, #00072D) !important;
+  color:#FFFFFF !important;
+  transform:translateY(-1px) !important;
 }
 
 
@@ -472,13 +506,12 @@
   -webkit-transform-style: preserve-3d;
 }
 
-/* Desktop hover lift */
+/* Desktop hover lift: only pimg lifts, pcase has NO shadow plate */
 @media (hover: hover) and (pointer: fine) {
   .pcase:hover {
-    transform: perspective(900px) translateY(-6px) scale(1.018) rotateX(1.5deg) !important;
-    box-shadow: 0 22px 44px -12px rgba(0, 7, 45, 0.2), 0 4px 12px rgba(0, 7, 45, 0.07) !important;
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transform: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
   }
 }
 
