@@ -1,143 +1,159 @@
 /* ════════════════════════════════════════════════════════════════
-   THE AIM — SCROLL-DRIVEN DEPTH-OF-FIELD REVEAL
-   Each element starts blurred at the viewport edges and smoothly
-   sharpens into crystal focus as it scrolls toward the center.
-   Like a camera pull-focus / Apple launch reveal.
-   + Gold dust motes + cursor ember (unchanged)
+   THE AIM — SCROLL-DRIVEN DEPTH-OF-FIELD REVEAL  v3
+   ─────────────────────────────────────────────────────────────
+   HOW IT WORKS:
+   The viewport is split into 3 vertical zones:
+     • CLEAR ZONE  (big centre area) → everything crystal sharp
+     • SOFT ZONE   (gentle gradient)  → light blur fading in
+     • EDGE ZONE   (extreme top/btm)  → full blur, faded out
+
+   Elements smoothly transition between zones as you scroll,
+   like a camera pulling focus. Content you're reading is
+   ALWAYS sharp — blur only touches stuff leaving the screen.
+
+   Separate tuning for mobile (bigger clear zone, less blur,
+   no transform effects to avoid momentum-scroll jank).
    ════════════════════════════════════════════════════════════════ */
 (function(){
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ── 1. CONTINUOUS SCROLL-DRIVEN DEPTH-OF-FIELD ── */
+  /* ── 1. DEPTH-OF-FIELD ENGINE ── */
   if(!reduceMotion){
 
-    /* Tuning knobs */
-    var MAX_BLUR    = 7;     /* px – blur when fully at the edge */
-    var MIN_OPACITY = 0.35;  /* opacity when fully at the edge */
-    var MAX_LIFT    = 18;    /* px – vertical offset at the edge */
-    var MIN_SCALE   = 0.96;  /* scale when fully at the edge */
-    var SWEET_ZONE  = 0.35;  /* fraction of viewport height that is the "sharp" zone (center) */
-    var FADE_ZONE   = 0.30;  /* fraction of viewport height of the gradient on each side */
+    var isMobile = window.innerWidth < 768;
 
-    var dofItems = [];
-    var seen = new WeakSet();
+    /* ─── Tuning: Desktop vs Mobile ─── */
+    var CFG = isMobile ? {
+      clearZone : 0.62,   /* 62% of viewport is perfectly sharp */
+      softZone  : 0.18,   /* 18% gentle gradient on each side */
+      maxBlur   : 4,      /* max blur px at extreme edge */
+      minOpacity: 0.5,    /* opacity at extreme edge */
+      maxLift   : 0,      /* no Y shift on mobile (causes jank with momentum) */
+      minScale  : 1       /* no scale on mobile */
+    } : {
+      clearZone : 0.50,   /* 50% of viewport is perfectly sharp */
+      softZone  : 0.22,   /* 22% gentle gradient on each side */
+      maxBlur   : 5.5,    /* max blur px at extreme edge */
+      minOpacity: 0.42,   /* opacity at extreme edge */
+      maxLift   : 12,     /* slight Y push at edge */
+      minScale  : 0.97    /* slight scale-down at edge */
+    };
+
+    var items = [];
+    var tracked = new WeakSet();
     var vh = window.innerHeight;
-    var ticking = false;
+    var raf = 0;
 
-    window.addEventListener('resize', function(){ vh = window.innerHeight; }, {passive:true});
+    window.addEventListener('resize', function(){
+      vh = window.innerHeight;
+      isMobile = window.innerWidth < 768;
+    }, {passive:true});
 
-    /* Collect all elements that should participate in depth-of-field */
-    function collectDofItems(){
-      var selectors = '.pcase, .shelf-card, .reveal, .sec-head, .hero, .stage, .proof-strip, .footer-wrap, section, .foot';
-      var els = document.querySelectorAll(selectors);
-      els.forEach(function(el){
-        if(!seen.has(el)){
-          seen.add(el);
-          el.classList.add('dof-item');
-          /* Mark as needing first-entrance spring animation */
-          el._dofFirstSeen = false;
-          dofItems.push(el);
-        }
-      });
-    }
+    /* Only target leaf-level visual elements, NOT container parents */
+    var SEL = '.pcase, .shelf-card, .sec-head, .eyebrow';
 
-    /* The core depth-of-field calculation:
-       Returns 0 (fully sharp, center) to 1 (fully blurred, edge) */
-    function calcDepth(el){
-      var rect = el.getBoundingClientRect();
-      /* Use the vertical center of the element */
-      var elCenter = rect.top + rect.height * 0.5;
-
-      /* Viewport zones (from top):
-         [0 .. fadeEnd]           = fade zone (blur → sharp)
-         [fadeEnd .. sweetEnd]    = sweet zone (fully sharp)
-         [sweetEnd .. sweetEnd+fadeZone] = fade zone (sharp → blur)
-         [beyond]                = fully blurred                    */
-      var sweetStart = vh * (0.5 - SWEET_ZONE * 0.5);
-      var sweetEnd   = vh * (0.5 + SWEET_ZONE * 0.5);
-      var fadeSize   = vh * FADE_ZONE;
-
-      var depth;
-      if(elCenter >= sweetStart && elCenter <= sweetEnd){
-        /* Inside the sweet zone: crystal clear */
-        depth = 0;
-      } else if(elCenter < sweetStart){
-        /* Above sweet zone: fading out toward top */
-        depth = Math.min(1, (sweetStart - elCenter) / fadeSize);
-      } else {
-        /* Below sweet zone: fading out toward bottom */
-        depth = Math.min(1, (elCenter - sweetEnd) / fadeSize);
+    function collect(){
+      var els = document.querySelectorAll(SEL);
+      for(var i = 0; i < els.length; i++){
+        var el = els[i];
+        if(tracked.has(el)) continue;
+        tracked.add(el);
+        el.classList.add('dof-item');
+        el._entered = false;
+        items.push(el);
       }
-      return depth;
     }
 
-    /* Apply depth-of-field CSS custom properties per element */
-    function applyDof(){
-      for(var i = 0; i < dofItems.length; i++){
-        var el = dofItems[i];
+    /* Core: compute how far an element is from the clear zone
+       Returns 0 (sharp) to 1 (fully blurred) */
+    function depth(rect){
+      var mid = rect.top + rect.height * 0.5;
+      var clearHalf = vh * CFG.clearZone * 0.5;
+      var clearTop  = vh * 0.5 - clearHalf;
+      var clearBtm  = vh * 0.5 + clearHalf;
+      var softPx    = vh * CFG.softZone;
+
+      if(mid >= clearTop && mid <= clearBtm) return 0; /* inside clear zone */
+      var dist = mid < clearTop ? (clearTop - mid) : (mid - clearBtm);
+      return Math.min(1, dist / softPx);
+    }
+
+    /* 2-tier eased curve: soft inner blur → hard outer blur
+       Uses smoothstep for a natural gradient that doesn't jump */
+    function ease(t){
+      /* smoothstep: 3t² - 2t³ */
+      return t * t * (3 - 2 * t);
+    }
+
+    function tick(){
+      for(var i = 0; i < items.length; i++){
+        var el = items[i];
         var rect = el.getBoundingClientRect();
 
-        /* Skip elements completely off-screen (above or below) */
-        if(rect.bottom < -100 || rect.top > vh + 100) continue;
+        /* Skip far off-screen elements */
+        if(rect.bottom < -50 || rect.top > vh + 50){
+          /* Reset off-screen items to blurred so they reveal when entering */
+          if(el._entered){
+            el.style.setProperty('--dof-blur', CFG.maxBlur + 'px');
+            el.style.setProperty('--dof-opa', String(CFG.minOpacity));
+          }
+          continue;
+        }
 
-        var d = calcDepth(el);
+        var d = depth(rect);
+        var e = ease(d);
 
-        /* Smooth easing curve for more natural feel */
-        var eased = d * d; /* quadratic easing: slow start, faster at edges */
+        /* Set custom properties */
+        el.style.setProperty('--dof-blur', (e * CFG.maxBlur).toFixed(1) + 'px');
+        el.style.setProperty('--dof-opa', (1 - e * (1 - CFG.minOpacity)).toFixed(3));
 
-        var blur  = (eased * MAX_BLUR).toFixed(1);
-        var opa   = (1 - eased * (1 - MIN_OPACITY)).toFixed(3);
-        var lift  = (eased * MAX_LIFT).toFixed(1);
-        var scale = (1 - eased * (1 - MIN_SCALE)).toFixed(4);
+        if(CFG.maxLift > 0){
+          el.style.setProperty('--dof-y', (e * CFG.maxLift).toFixed(1) + 'px');
+        }
+        if(CFG.minScale < 1){
+          el.style.setProperty('--dof-sc', (1 - e * (1 - CFG.minScale)).toFixed(4));
+        }
 
-        el.style.setProperty('--dof-blur', blur + 'px');
-        el.style.setProperty('--dof-opa', opa);
-        el.style.setProperty('--dof-y', lift + 'px');
-        el.style.setProperty('--dof-scale', scale);
-
-        /* First-time entrance: use the slower spring transition */
-        if(!el._dofFirstSeen && d < 0.6){
-          el._dofFirstSeen = true;
-          el.classList.add('dof-entrance');
-          setTimeout(function(target){
-            return function(){ target.classList.remove('dof-entrance'); };
-          }(el), 800);
+        /* First-time entrance: slower spring transition */
+        if(!el._entered && d < 0.5){
+          el._entered = true;
+          el.classList.add('dof-enter');
+          (function(target){
+            setTimeout(function(){ target.classList.remove('dof-enter'); }, 700);
+          })(el);
         }
       }
-      ticking = false;
+      raf = 0;
     }
 
-    function onScroll(){
-      if(!ticking){
-        requestAnimationFrame(applyDof);
-        ticking = true;
-      }
+    function requestTick(){
+      if(!raf) raf = requestAnimationFrame(tick);
     }
 
     function init(){
-      collectDofItems();
-      applyDof(); /* apply immediately on load */
-      window.addEventListener('scroll', onScroll, {passive:true});
+      collect();
+      tick(); /* immediate first paint */
+      window.addEventListener('scroll', requestTick, {passive:true});
 
-      /* MutationObserver: auto-collect new cards from dynamic rendering */
-      try {
+      /* MutationObserver for dynamically rendered cards */
+      if('MutationObserver' in window){
         var mo = new MutationObserver(function(){
-          collectDofItems();
-          onScroll();
+          collect();
+          requestTick();
         });
-        var containers = document.querySelectorAll('#arrivals, #productGrid, .shelf, .grid, .feed-rail');
-        containers.forEach(function(c){
-          mo.observe(c, { childList: true });
-        });
-      } catch(e){}
+        var watchList = document.querySelectorAll('#arrivals, #productGrid, .shelf, .grid, .feed-rail');
+        for(var i = 0; i < watchList.length; i++){
+          mo.observe(watchList[i], {childList:true});
+        }
+      }
 
-      /* Also hook into renderSelection if it exists (index.html category filters) */
-      var origRender = window.renderSelection;
-      if(typeof origRender === 'function'){
+      /* Hook into renderSelection (index.html category filters) */
+      if(typeof window.renderSelection === 'function'){
+        var orig = window.renderSelection;
         window.renderSelection = function(){
-          var res = origRender.apply(this, arguments);
-          setTimeout(function(){ collectDofItems(); onScroll(); }, 30);
-          return res;
+          var r = orig.apply(this, arguments);
+          setTimeout(function(){ collect(); requestTick(); }, 25);
+          return r;
         };
       }
     }
@@ -148,22 +164,18 @@
       init();
     }
 
-    /* ── 2. INTERACTIVE 3D POINTER TILT (DESKTOP) ── */
-    if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
-      document.addEventListener('pointermove', function(e){
-        var card = e.target.closest('.pcase');
+    /* ── 2. 3D POINTER TILT (desktop only) ── */
+    if(!isMobile && window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+      document.addEventListener('pointermove', function(ev){
+        var card = ev.target.closest('.pcase');
         if(!card) return;
-        var rect = card.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-        var cx = rect.width * 0.5;
-        var cy = rect.height * 0.5;
-        var rx = ((y - cy) / cy * -4).toFixed(2);
-        var ry = ((x - cx) / cx * 4).toFixed(2);
-        card.style.transform = 'perspective(900px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateY(-5px) scale(1.02)';
+        var r = card.getBoundingClientRect();
+        var rx = ((ev.clientY - r.top - r.height*0.5) / (r.height*0.5) * -3.5).toFixed(2);
+        var ry = ((ev.clientX - r.left - r.width*0.5) / (r.width*0.5) * 3.5).toFixed(2);
+        card.style.transform = 'perspective(900px) rotateX('+rx+'deg) rotateY('+ry+'deg) translateY(-5px) scale(1.015)';
       });
-      document.addEventListener('pointerout', function(e){
-        var card = e.target.closest('.pcase');
+      document.addEventListener('pointerout', function(ev){
+        var card = ev.target.closest('.pcase');
         if(card) card.style.transform = '';
       });
     }
@@ -204,7 +216,7 @@
     }
     requestAnimationFrame(draw);
 
-    /* ── 4. CURSOR EMBER (DESKTOP) ── */
+    /* ── 4. CURSOR EMBER (desktop) ── */
     if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
       var g = document.createElement('div');
       g.setAttribute('aria-hidden','true');
@@ -226,3 +238,4 @@
     }
   }
 })();
+

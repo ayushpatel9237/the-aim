@@ -440,56 +440,65 @@
   }
 }
 
-/* ── 9. SCROLL-DRIVEN DEPTH-OF-FIELD REVEAL & 3D SPRING BOUNCE ─────────
-   Elements themselves blur/sharpen continuously based on their distance
-   from the viewport sweet-spot. No static overlay layers.
+/* ── 9. SCROLL-DRIVEN DEPTH-OF-FIELD REVEAL ────────────────────────────
+   Elements blur/sharpen based on distance from viewport centre.
+   JS sets --dof custom properties per element every scroll frame.
+   Outer edges = hard blur, inner = soft blur, centre = crystal clear.
    ───────────────────────────────────────────────────────────────────── */
 
-/* 3D Perspective Context for parent containers */
-.shelf, .stage, .pcase-wrap, #arrivals, .grid, .hero, .feed-rail, .spotlight-wrap {
-  perspective: 1200px;
-  -webkit-perspective: 1200px;
-}
-
-/* ── Depth-field cards: JS continuously sets --dof-blur, --dof-opa, --dof-y, --dof-scale ── */
+/* Depth-field elements: driven by CSS custom properties set from JS */
 .dof-item {
-  filter: blur(var(--dof-blur, 0px));
-  opacity: var(--dof-opa, 1);
-  transform: perspective(1000px)
-             translateY(var(--dof-y, 0px))
-             scale(var(--dof-scale, 1));
-  transition: filter 0.18s linear,
-              opacity 0.18s linear,
-              transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-  will-change: filter, opacity, transform;
+  --dof-blur: 0px;
+  --dof-opa: 1;
+  --dof-y: 0px;
+  --dof-sc: 1;
+  filter: blur(var(--dof-blur));
+  opacity: var(--dof-opa);
+  transform: translateY(var(--dof-y)) scale(var(--dof-sc));
+  transition: filter 0.22s ease-out,
+              opacity 0.22s ease-out,
+              transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* First-time entrance spring (one-shot, added by JS then removed) */
-.dof-entrance {
-  transition: filter 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+/* First-entrance spring (one-shot, JS adds then removes) */
+.dof-enter {
+  transition: filter 0.55s cubic-bezier(0.16, 1, 0.3, 1),
               opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+              transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+/* Mobile: faster transitions, no transform bounce (momentum scroll) */
+@media (max-width: 768px) {
+  .dof-item {
+    transition: filter 0.15s linear,
+                opacity 0.15s linear,
+                transform 0.2s ease-out;
+  }
+  .dof-enter {
+    transition: filter 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
 }
 
 /* Tactile 3D product cards */
 .pcase, .shelf-card {
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-  will-change: transform, box-shadow;
 }
 
-/* Subtle 3D dynamic hover lift & bounce (desktop) */
+/* Desktop hover lift */
 @media (hover: hover) and (pointer: fine) {
   .pcase:hover {
-    transform: perspective(900px) translateY(-7px) scale(1.022) rotateX(2deg) !important;
-    box-shadow: 0 24px 48px -12px rgba(0, 7, 45, 0.22), 0 4px 14px rgba(0, 7, 45, 0.08) !important;
-    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transform: perspective(900px) translateY(-6px) scale(1.018) rotateX(1.5deg) !important;
+    box-shadow: 0 22px 44px -12px rgba(0, 7, 45, 0.2), 0 4px 12px rgba(0, 7, 45, 0.07) !important;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 }
 
-/* Press / Touch spring response */
+/* Touch press spring */
 .pcase:active {
-  transform: perspective(900px) scale(0.97) translateY(-1px) !important;
-  transition-duration: 0.12s !important;
+  transform: scale(0.975) translateY(-1px) !important;
+  transition-duration: 0.1s !important;
 }
