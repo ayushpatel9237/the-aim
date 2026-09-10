@@ -1,147 +1,154 @@
 /* ════════════════════════════════════════════════════════════════
-   THE AIM — AMBIENT LIFE & APPLE 3D SCROLL DEPTH SYSTEM
-   - Dynamic top & bottom edge blur vignettes (folding screen depth)
-   - 3D spring bounce & depth-of-field reveal on scroll
-   - Inertial scroll physics & interactive 3D pointer tilt
-   - Gold dust motes + warm cursor ember
+   THE AIM — SCROLL-DRIVEN DEPTH-OF-FIELD REVEAL
+   Each element starts blurred at the viewport edges and smoothly
+   sharpens into crystal focus as it scrolls toward the center.
+   Like a camera pull-focus / Apple launch reveal.
+   + Gold dust motes + cursor ember (unchanged)
    ════════════════════════════════════════════════════════════════ */
 (function(){
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ── 1. DYNAMIC APPLE TOP & BOTTOM EDGE BLUR VIGNETTES ── */
-  function injectEdgeBlurs(){
-    if(!document.body) return;
-    if(!document.querySelector('.ios-edge-blur-top')){
-      var topBlur = document.createElement('div');
-      topBlur.className = 'ios-edge-blur-top';
-      topBlur.setAttribute('aria-hidden', 'true');
-      document.body.appendChild(topBlur);
-    }
-    if(!document.querySelector('.ios-edge-blur-bottom')){
-      var btmBlur = document.createElement('div');
-      btmBlur.className = 'ios-edge-blur-bottom';
-      btmBlur.setAttribute('aria-hidden', 'true');
-      document.body.appendChild(btmBlur);
-    }
-  }
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', injectEdgeBlurs);
-  } else {
-    injectEdgeBlurs();
-  }
-
-  /* ── 2. 3D SPRING BOUNCE & DEPTH-OF-FIELD REVEAL OBSERVER ── */
+  /* ── 1. CONTINUOUS SCROLL-DRIVEN DEPTH-OF-FIELD ── */
   if(!reduceMotion){
-    var cardObserver = null;
-    function init3DReveal(){
-      if('IntersectionObserver' in window){
-        cardObserver = new IntersectionObserver(function(entries){
-          entries.forEach(function(entry){
-            if(entry.isIntersecting){
-              entry.target.classList.add('in');
-              cardObserver.unobserve(entry.target);
-            }
-          });
-        }, {
-          rootMargin: '0px 0px -30px 0px',
-          threshold: 0.08
-        });
 
-        // Observe existing cards and newly rendered cards
-        observeCards();
+    /* Tuning knobs */
+    var MAX_BLUR    = 7;     /* px – blur when fully at the edge */
+    var MIN_OPACITY = 0.35;  /* opacity when fully at the edge */
+    var MAX_LIFT    = 18;    /* px – vertical offset at the edge */
+    var MIN_SCALE   = 0.96;  /* scale when fully at the edge */
+    var SWEET_ZONE  = 0.35;  /* fraction of viewport height that is the "sharp" zone (center) */
+    var FADE_ZONE   = 0.30;  /* fraction of viewport height of the gradient on each side */
 
-        // Stagger grid cards for natural wave bounce
-        var gridCards = document.querySelectorAll('#arrivals .pcase, .shelf .pcase, .grid .pcase');
-        gridCards.forEach(function(c, i){
-          c.style.transitionDelay = ((i % 4) * 65) + 'ms';
-        });
-      }
-    }
-
-    function observeCards(){
-      if(!cardObserver) return;
-      var targets = document.querySelectorAll('.pcase:not(.in), .shelf-card:not(.in), .ios-3d-jump:not(.in), .reveal:not(.in)');
-      targets.forEach(function(el){
-        el.classList.add('ios-3d-jump');
-        cardObserver.observe(el);
-      });
-    }
-
-    if(document.readyState === 'loading'){
-      document.addEventListener('DOMContentLoaded', init3DReveal);
-    } else {
-      init3DReveal();
-    }
-
-    // Modern MutationObserver to auto-observe cards on dynamic filter/sort updates
-    try {
-      var gridMutObserver = new MutationObserver(function(){
-        setTimeout(observeCards, 20);
-      });
-      document.addEventListener('DOMContentLoaded', function(){
-        var containers = document.querySelectorAll('#arrivals, #productGrid, .shelf, .grid, .feed-rail');
-        containers.forEach(function(c){
-          gridMutObserver.observe(c, { childList: true });
-        });
-      });
-    } catch(e){}
-
-    // Re-observe if dynamic filtering happens (e.g. category pill clicks)
-    var origRender = window.renderSelection;
-    if(typeof origRender === 'function'){
-      window.renderSelection = function(){
-        var res = origRender.apply(this, arguments);
-        setTimeout(observeCards, 40);
-        return res;
-      };
-    }
-
-
-    /* ── 3. SCROLL VELOCITY 3D INERTIAL PHYSICS (JUMP / BOUNCE) ── */
-    var lastScrollY = window.scrollY || window.pageYOffset;
-    var scrollVelocity = 0;
-    var isScrollingTimer = null;
+    var dofItems = [];
+    var seen = new WeakSet();
+    var vh = window.innerHeight;
     var ticking = false;
 
-    function applyScrollPhysics(){
-      var currentScrollY = window.scrollY || window.pageYOffset;
-      var delta = currentScrollY - lastScrollY;
-      lastScrollY = currentScrollY;
+    window.addEventListener('resize', function(){ vh = window.innerHeight; }, {passive:true});
 
-      if(Math.abs(delta) < 150){
-        scrollVelocity += (delta - scrollVelocity) * 0.35;
-      }
-
-      var clampVelocity = Math.max(-28, Math.min(28, scrollVelocity));
-      var tiltDeg = (clampVelocity * 0.08).toFixed(2);
-      var liftPx = (-clampVelocity * 0.14).toFixed(1);
-
-      document.documentElement.style.setProperty('--scroll-tilt', tiltDeg + 'deg');
-      document.documentElement.style.setProperty('--scroll-lift', liftPx + 'px');
-
-      var visibleCards = document.querySelectorAll('.pcase.in');
-      visibleCards.forEach(function(card){
-        card.classList.add('ios-scroll-inertia');
+    /* Collect all elements that should participate in depth-of-field */
+    function collectDofItems(){
+      var selectors = '.pcase, .shelf-card, .reveal, .sec-head, .hero, .stage, .proof-strip, .footer-wrap, section, .foot';
+      var els = document.querySelectorAll(selectors);
+      els.forEach(function(el){
+        if(!seen.has(el)){
+          seen.add(el);
+          el.classList.add('dof-item');
+          /* Mark as needing first-entrance spring animation */
+          el._dofFirstSeen = false;
+          dofItems.push(el);
+        }
       });
+    }
 
-      clearTimeout(isScrollingTimer);
-      isScrollingTimer = setTimeout(function(){
-        document.documentElement.style.setProperty('--scroll-tilt', '0deg');
-        document.documentElement.style.setProperty('--scroll-lift', '0px');
-        scrollVelocity = 0;
-      }, 90);
+    /* The core depth-of-field calculation:
+       Returns 0 (fully sharp, center) to 1 (fully blurred, edge) */
+    function calcDepth(el){
+      var rect = el.getBoundingClientRect();
+      /* Use the vertical center of the element */
+      var elCenter = rect.top + rect.height * 0.5;
 
+      /* Viewport zones (from top):
+         [0 .. fadeEnd]           = fade zone (blur → sharp)
+         [fadeEnd .. sweetEnd]    = sweet zone (fully sharp)
+         [sweetEnd .. sweetEnd+fadeZone] = fade zone (sharp → blur)
+         [beyond]                = fully blurred                    */
+      var sweetStart = vh * (0.5 - SWEET_ZONE * 0.5);
+      var sweetEnd   = vh * (0.5 + SWEET_ZONE * 0.5);
+      var fadeSize   = vh * FADE_ZONE;
+
+      var depth;
+      if(elCenter >= sweetStart && elCenter <= sweetEnd){
+        /* Inside the sweet zone: crystal clear */
+        depth = 0;
+      } else if(elCenter < sweetStart){
+        /* Above sweet zone: fading out toward top */
+        depth = Math.min(1, (sweetStart - elCenter) / fadeSize);
+      } else {
+        /* Below sweet zone: fading out toward bottom */
+        depth = Math.min(1, (elCenter - sweetEnd) / fadeSize);
+      }
+      return depth;
+    }
+
+    /* Apply depth-of-field CSS custom properties per element */
+    function applyDof(){
+      for(var i = 0; i < dofItems.length; i++){
+        var el = dofItems[i];
+        var rect = el.getBoundingClientRect();
+
+        /* Skip elements completely off-screen (above or below) */
+        if(rect.bottom < -100 || rect.top > vh + 100) continue;
+
+        var d = calcDepth(el);
+
+        /* Smooth easing curve for more natural feel */
+        var eased = d * d; /* quadratic easing: slow start, faster at edges */
+
+        var blur  = (eased * MAX_BLUR).toFixed(1);
+        var opa   = (1 - eased * (1 - MIN_OPACITY)).toFixed(3);
+        var lift  = (eased * MAX_LIFT).toFixed(1);
+        var scale = (1 - eased * (1 - MIN_SCALE)).toFixed(4);
+
+        el.style.setProperty('--dof-blur', blur + 'px');
+        el.style.setProperty('--dof-opa', opa);
+        el.style.setProperty('--dof-y', lift + 'px');
+        el.style.setProperty('--dof-scale', scale);
+
+        /* First-time entrance: use the slower spring transition */
+        if(!el._dofFirstSeen && d < 0.6){
+          el._dofFirstSeen = true;
+          el.classList.add('dof-entrance');
+          setTimeout(function(target){
+            return function(){ target.classList.remove('dof-entrance'); };
+          }(el), 800);
+        }
+      }
       ticking = false;
     }
 
-    window.addEventListener('scroll', function(){
+    function onScroll(){
       if(!ticking){
-        window.requestAnimationFrame(applyScrollPhysics);
+        requestAnimationFrame(applyDof);
         ticking = true;
       }
-    }, {passive:true});
+    }
 
-    /* ── 4. INTERACTIVE 3D POINTER TILT (DESKTOP) ── */
+    function init(){
+      collectDofItems();
+      applyDof(); /* apply immediately on load */
+      window.addEventListener('scroll', onScroll, {passive:true});
+
+      /* MutationObserver: auto-collect new cards from dynamic rendering */
+      try {
+        var mo = new MutationObserver(function(){
+          collectDofItems();
+          onScroll();
+        });
+        var containers = document.querySelectorAll('#arrivals, #productGrid, .shelf, .grid, .feed-rail');
+        containers.forEach(function(c){
+          mo.observe(c, { childList: true });
+        });
+      } catch(e){}
+
+      /* Also hook into renderSelection if it exists (index.html category filters) */
+      var origRender = window.renderSelection;
+      if(typeof origRender === 'function'){
+        window.renderSelection = function(){
+          var res = origRender.apply(this, arguments);
+          setTimeout(function(){ collectDofItems(); onScroll(); }, 30);
+          return res;
+        };
+      }
+    }
+
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    /* ── 2. INTERACTIVE 3D POINTER TILT (DESKTOP) ── */
     if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
       document.addEventListener('pointermove', function(e){
         var card = e.target.closest('.pcase');
@@ -149,24 +156,20 @@
         var rect = card.getBoundingClientRect();
         var x = e.clientX - rect.left;
         var y = e.clientY - rect.top;
-        var centerX = rect.width / 2;
-        var centerY = rect.height / 2;
-        var rotateX = ((y - centerY) / centerY * -4.5).toFixed(2);
-        var rotateY = ((x - centerX) / centerX * 4.5).toFixed(2);
-
-        card.style.transform = 'perspective(900px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-6px) scale(1.025)';
+        var cx = rect.width * 0.5;
+        var cy = rect.height * 0.5;
+        var rx = ((y - cy) / cy * -4).toFixed(2);
+        var ry = ((x - cx) / cx * 4).toFixed(2);
+        card.style.transform = 'perspective(900px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateY(-5px) scale(1.02)';
       });
-
       document.addEventListener('pointerout', function(e){
         var card = e.target.closest('.pcase');
-        if(card){
-          card.style.transform = '';
-        }
+        if(card) card.style.transform = '';
       });
     }
   }
 
-  /* ── 5. GOLD DUST MOTES ── */
+  /* ── 3. GOLD DUST MOTES ── */
   if(!reduceMotion){
     var c = document.createElement('canvas');
     c.setAttribute('aria-hidden','true');
@@ -177,7 +180,7 @@
     size(); window.addEventListener('resize', size);
 
     var N = window.innerWidth < 700 ? 14 : 32, P = [];
-    for (var i = 0; i < N; i++) P.push({
+    for(var i = 0; i < N; i++) P.push({
       x: Math.random(), y: Math.random(),
       r: Math.random()*1.3 + .4,
       s: Math.random()*.00032 + .00012,
@@ -187,10 +190,10 @@
     });
     function draw(t){
       ctx.clearRect(0,0,W,H);
-      for (var i = 0; i < P.length; i++){
+      for(var i = 0; i < P.length; i++){
         var p = P[i];
         p.y -= p.s; p.x += p.w * Math.sin(t*.0004 + p.ph);
-        if (p.y < -.02){ p.y = 1.02; p.x = Math.random(); }
+        if(p.y < -.02){ p.y = 1.02; p.x = Math.random(); }
         var tw = .5 + .5 * Math.sin(t*.0012 + p.ph);
         ctx.beginPath();
         ctx.fillStyle = 'rgba(231,200,120,' + (p.a * tw * .8).toFixed(3) + ')';
@@ -201,8 +204,8 @@
     }
     requestAnimationFrame(draw);
 
-    /* ── 6. CURSOR EMBER (DESKTOP) ── */
-    if (window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+    /* ── 4. CURSOR EMBER (DESKTOP) ── */
+    if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
       var g = document.createElement('div');
       g.setAttribute('aria-hidden','true');
       g.style.cssText =
@@ -223,4 +226,3 @@
     }
   }
 })();
-

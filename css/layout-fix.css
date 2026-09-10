@@ -440,86 +440,56 @@
   }
 }
 
-/* ── 9. APPLE-STYLE DYNAMIC SCROLL EDGE BLUR & 3D SPRING BOUNCE ── */
+/* ── 9. SCROLL-DRIVEN DEPTH-OF-FIELD REVEAL & 3D SPRING BOUNCE ─────────
+   Elements themselves blur/sharpen continuously based on their distance
+   from the viewport sweet-spot. No static overlay layers.
+   ───────────────────────────────────────────────────────────────────── */
 
-/* Top & Bottom Progressive Blur Vignettes (Folding / Curved Screen Edge Depth) */
-.ios-edge-blur-top {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  height: clamp(58px, 8.5vh, 92px) !important;
-  pointer-events: none !important;
-  z-index: 85 !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0) 100%) !important;
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0) 100%) !important;
-}
-
-.ios-edge-blur-bottom {
-  position: fixed !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  height: clamp(68px, 10.5vh, 108px) !important;
-  pointer-events: none !important;
-  z-index: 85 !important;
-  backdrop-filter: blur(22px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(180%) !important;
-  mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 45%, rgba(0,0,0,0) 100%) !important;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 45%, rgba(0,0,0,0) 100%) !important;
-}
-
-/* 3D Perspective Context */
+/* 3D Perspective Context for parent containers */
 .shelf, .stage, .pcase-wrap, #arrivals, .grid, .hero, .feed-rail, .spotlight-wrap {
   perspective: 1200px;
   -webkit-perspective: 1200px;
 }
 
-/* 3D Spring Bounce & Depth Reveal on scroll */
-.ios-3d-jump, .reveal {
-  opacity: 0;
-  filter: blur(8px);
-  transform: perspective(1000px) rotateX(10deg) translateY(28px) scale(0.94);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-  will-change: opacity, filter, transform;
+/* ── Depth-field cards: JS continuously sets --dof-blur, --dof-opa, --dof-y, --dof-scale ── */
+.dof-item {
+  filter: blur(var(--dof-blur, 0px));
+  opacity: var(--dof-opa, 1);
+  transform: perspective(1000px)
+             translateY(var(--dof-y, 0px))
+             scale(var(--dof-scale, 1));
+  transition: filter 0.18s linear,
+              opacity 0.18s linear,
+              transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: filter, opacity, transform;
 }
 
-.ios-3d-jump.in, .reveal.in {
-  opacity: 1 !important;
-  filter: blur(0px) !important;
-  transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1) !important;
+/* First-time entrance spring (one-shot, added by JS then removed) */
+.dof-entrance {
+  transition: filter 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
 }
 
-/* Tactile 3D Shelf & Product Cards */
+/* Tactile 3D product cards */
 .pcase, .shelf-card {
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.35s ease;
   will-change: transform, box-shadow;
 }
 
-/* Subtle 3D dynamic hover lift & bounce */
+/* Subtle 3D dynamic hover lift & bounce (desktop) */
 @media (hover: hover) and (pointer: fine) {
   .pcase:hover {
     transform: perspective(900px) translateY(-7px) scale(1.022) rotateX(2deg) !important;
     box-shadow: 0 24px 48px -12px rgba(0, 7, 45, 0.22), 0 4px 14px rgba(0, 7, 45, 0.08) !important;
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 }
 
-/* Press/Touch Spring response */
+/* Press / Touch spring response */
 .pcase:active {
   transform: perspective(900px) scale(0.97) translateY(-1px) !important;
   transition-duration: 0.12s !important;
-}
-
-/* Inertial bounce helper applied during active scroll velocity */
-.ios-scroll-inertia {
-  transform: perspective(1000px) rotateX(var(--scroll-tilt, 0deg)) translateY(var(--scroll-lift, 0px)) !important;
-  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
