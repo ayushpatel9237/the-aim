@@ -163,13 +163,13 @@
       init();
     }
 
-    /* ── 2. 3D POINTER TILT (desktop only, ONLY on liquid media cube) ── */
+    /* ── 2. 3D POINTER TILT (desktop only, ONLY on legacy media wells without cube.js) ── */
     if(!isMobile && window.matchMedia('(hover:hover) and (pointer:fine)').matches){
       document.addEventListener('pointermove', function(ev){
         var card = ev.target.closest('.pcase');
         if(!card) return;
         var pimg = card.querySelector('.pimg');
-        if(!pimg) return;
+        if(!pimg || pimg.classList.contains('aim-cube')) return;
         var r = pimg.getBoundingClientRect();
         var rx = ((ev.clientY - r.top - r.height*0.5) / (r.height*0.5) * -4).toFixed(2);
         var ry = ((ev.clientX - r.left - r.width*0.5) / (r.width*0.5) * 4).toFixed(2);
@@ -179,7 +179,7 @@
         var card = ev.target.closest('.pcase');
         if(card){
           var pimg = card.querySelector('.pimg');
-          if(pimg) pimg.style.transform = '';
+          if(pimg && !pimg.classList.contains('aim-cube')) pimg.style.transform = '';
         }
       });
     }

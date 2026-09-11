@@ -1,0 +1,121 @@
+/* ═══════════════════════════════════════════════════════════════
+   THE AIM — LIQUID GLASS CUBE  (ported from the approved Claude Design)
+   Turns flat .pimg media wells into recessed 3D glass cubes and gives
+   the buttons a liquid sheen. Pairs with js/cube.js (the tilt engine).
+   Load this AFTER aim-design-tokens.css. Uses your existing tokens.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root{
+  /* warm ambient bounce under each cube — tune or override per element */
+  --aim-bounce: #7a5a3a;
+}
+
+/* gentle idle float — opt in with .aim-cube--float (hero only, keep grids calm) */
+@keyframes aim-float{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-10px) } }
+
+/* ── the wrapper = perspective stage ─────────────────────────── */
+.aim-cube{
+  position: relative;
+  perspective: 1300px;
+  z-index: 1;
+}
+.aim-cube--float{ animation: aim-float 6.5s ease-in-out infinite; }
+
+/* floating shadow + coloured ambient bounce */
+.aim-cube__shadow{
+  position:absolute; left:7%; right:7%; top:16%; bottom:2%;
+  border-radius:26px;
+  box-shadow:
+    0 28px 50px -16px rgba(18,24,40,.34),
+    0 50px 84px -28px color-mix(in srgb, var(--aim-bounce,#7a5a3a) 55%, transparent);
+  transition:opacity .3s ease, transform .3s ease;
+  z-index:0;
+}
+
+/* the 3D body — js drives its rotate/lift/scale */
+.aim-cube__cube{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  will-change:transform;
+  z-index:1;
+}
+
+/* the media plane, pushed back behind the glass (js keeps it recessed) */
+.aim-cube__media{
+  position:absolute; inset:0;
+  border-radius:20px; overflow:hidden;
+  background:#e9e8dd;
+  box-shadow: inset 0 0 0 1px rgba(20,25,40,.06);
+  will-change:transform;
+  transform: translateZ(-42px) scale(1.16);   /* rest recess; js updates depth */
+}
+.aim-cube__media img,
+.aim-cube__media video{
+  width:100%; height:100%; object-fit:cover; display:block; border-radius:inherit;
+}
+
+/* the glass front face: bevel + edge light */
+.aim-cube__front{
+  position:absolute; inset:0;
+  border-radius:22px;
+  pointer-events:none;
+  background:linear-gradient(135deg,
+    rgba(255,255,255,.30), rgba(255,255,255,.03) 42%, rgba(255,255,255,0) 62%);
+  border:1px solid rgba(255,255,255,.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 3px 4px 10px rgba(255,255,255,.5),
+    inset -3px -4px 14px rgba(20,25,40,.10),
+    inset 0 0 0 1px rgba(255,255,255,.30);
+  z-index:2;
+}
+/* specular highlight — js moves it via --sx/--sy and fades it via --glow */
+.aim-cube__front::before{
+  content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  mix-blend-mode:screen;
+  background:radial-gradient(130% 100% at var(--sx,30%) var(--sy,20%),
+    rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 46%);
+  opacity:calc(.28 + .72*var(--glow,0));
+  transition:opacity .25s ease;
+}
+/* corner sheen */
+.aim-cube__front::after{
+  content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(135deg, rgba(255,255,255,.75), rgba(255,255,255,0) 20%);
+  box-shadow:inset 0 0 22px rgba(255,255,255,.22);
+}
+
+/* ── make the existing .pimg card behave as a cube wrapper ──────
+   neutralises shelf.css's own well styling so the cube owns the look */
+.pimg.aim-cube{
+  overflow:visible;        /* let the lift, glow and shadow escape the frame */
+  padding:0;
+  background:transparent;
+  border:none;
+  box-shadow:none;
+}
+.pimg.aim-cube > .vbadge,
+.pimg.aim-cube > .sku{ z-index:5; }          /* keep badges above the glass */
+/* the card's own hover nudge would fight the cube engine — silence it */
+.pcase:hover .pimg.aim-cube{ transform:none; box-shadow:none; }
+.pcase:hover .pimg.aim-cube img{ transform:none; }
+
+/* ── liquid-glass buttons (quiet — supports the media, doesn't shout) ── */
+.btn-navy, .btn-glass{
+  position:relative; overflow:hidden; isolation:isolate;
+  transition:all .18s ease;
+}
+.btn-navy{ box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 8px 20px -12px rgba(0,7,45,.5); }
+.btn-navy::after, .btn-glass::after{
+  content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(135deg, rgba(255,255,255,.5), rgba(255,255,255,0) 42%);
+  mix-blend-mode:screen; opacity:.5; transition:opacity .2s ease;
+}
+.btn-navy:hover::after, .btn-glass:hover::after{ opacity:.85; }
+.btn-navy:active, .btn-glass:active{ transform:translateY(0) scale(.97); }   /* liquid squish */
+
+/* ── accessibility: no motion means static glass, no tilt/float/squish ── */
+@media (prefers-reduced-motion: reduce){
+  .aim-cube--float{ animation:none !important; }
+  .btn-navy:active, .btn-glass:active{ transform:none; }
+}
