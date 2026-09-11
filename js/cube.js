@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════
    THE AIM — LIQUID GLASS 3D CUBE ENGINE
-   Auto-upgrades flat .pimg media wells into recessed 3D liquid
-   glass cubes with cursor-reactive specular highlights, depth
-   recess parallax, and dynamic ambient bounce.
+   Auto-upgrades flat .pimg media wells into unified optical
+   glass cubes with cursor-reactive specular highlights and
+   seamless 1-piece 3D physics.
    ═══════════════════════════════════════════════════════════════ */
 (function(){
   'use strict';
@@ -14,13 +14,13 @@
   function getProfile(){
     var mode = (document.documentElement.getAttribute('data-glass') || 'balanced').toLowerCase();
     if(mode === 'subtle'){
-      return { maxTilt: 4.5, recess: -28, scale: 1.12, parallax: 3.5 };
+      return { maxTilt: 4.0, lift: 6, scale: 1.015 };
     }
     if(mode === 'bold'){
-      return { maxTilt: 10.5, recess: -52, scale: 1.20, parallax: 8.0 };
+      return { maxTilt: 9.0, lift: 10, scale: 1.03 };
     }
     // Default: balanced
-    return { maxTilt: 7.5, recess: -42, scale: 1.16, parallax: 6.0 };
+    return { maxTilt: 6.5, lift: 8, scale: 1.022 };
   }
 
   // Upgrade a single .pimg element into an .aim-cube
@@ -45,14 +45,14 @@
     var cube = document.createElement('div');
     cube.className = 'aim-cube__cube';
 
-    // Create media recess container
+    // Create media container (flush, 1-piece with glass)
     var mediaContainer = document.createElement('div');
     mediaContainer.className = 'aim-cube__media';
 
     // Move media inside media container
     mediaContainer.appendChild(mediaEl);
 
-    // Create glass front face
+    // Create optical glass front face
     var front = document.createElement('div');
     front.className = 'aim-cube__front';
 
@@ -68,26 +68,23 @@
 
     // Attach mouse / pointer interaction if not reduced motion & has fine pointer
     if(!isReduced && hasFinePointer){
-      bindInteraction(pimg, cube, mediaContainer, front);
+      bindInteraction(pimg, cube, shadow);
     }
   }
 
-  function bindInteraction(pimg, cube, media, front){
+  function bindInteraction(pimg, cube, shadow){
     var card = pimg.closest('.pcase') || pimg;
     var rafId = null;
     var targetRx = 0, targetRy = 0, targetLift = 0;
-    var targetPx = 0, targetPy = 0;
     var currentRx = 0, currentRy = 0, currentLift = 0;
-    var currentPx = 0, currentPy = 0;
     var isHovered = false;
 
     function renderLoop(){
       if(!isHovered && Math.abs(currentRx) < 0.05 && Math.abs(currentRy) < 0.05 && Math.abs(currentLift) < 0.05){
         cube.style.transform = '';
-        var profile = getProfile();
-        media.style.transform = 'translateZ(' + profile.recess + 'px) scale(' + profile.scale + ')';
-        cube.style.transition = 'transform .45s cubic-bezier(.2,.8,.3,1)';
-        media.style.transition = 'transform .45s cubic-bezier(.2,.8,.3,1)';
+        if(shadow) shadow.style.transform = '';
+        cube.style.transition = 'transform .45s cubic-bezier(.16,1,.3,1)';
+        if(shadow) shadow.style.transition = 'transform .45s cubic-bezier(.16,1,.3,1)';
         rafId = null;
         return;
       }
@@ -96,16 +93,15 @@
       currentRx += (targetRx - currentRx) * 0.18;
       currentRy += (targetRy - currentRy) * 0.18;
       currentLift += (targetLift - currentLift) * 0.18;
-      currentPx += (targetPx - currentPx) * 0.18;
-      currentPy += (targetPy - currentPy) * 0.18;
 
       var profile = getProfile();
 
-      // 3D rotation + hover lift
-      cube.style.transform = 'translateY(' + (-currentLift * 8) + 'px) translateZ(' + (currentLift * 14) + 'px) rotateX(' + currentRx.toFixed(2) + 'deg) rotateY(' + currentRy.toFixed(2) + 'deg) scale(' + (1 + currentLift * 0.02) + ')';
+      // 3D rotation + hover lift — image and glass move together as ONE solid piece
+      cube.style.transform = 'translateY(' + (-currentLift * profile.lift) + 'px) translateZ(' + (currentLift * 12) + 'px) rotateX(' + currentRx.toFixed(2) + 'deg) rotateY(' + currentRy.toFixed(2) + 'deg) scale(' + (1 + currentLift * (profile.scale - 1)) + ')';
 
-      // Parallax media opposite to cursor motion while remaining recessed
-      media.style.transform = 'translateZ(' + profile.recess + 'px) translateX(' + (-currentPx * profile.parallax).toFixed(2) + 'px) translateY(' + (-currentPy * profile.parallax).toFixed(2) + 'px) scale(' + profile.scale + ')';
+      if(shadow){
+        shadow.style.transform = 'translateY(' + (currentLift * 6) + 'px) scale(' + (1 + currentLift * 0.03) + ')';
+      }
 
       rafId = requestAnimationFrame(renderLoop);
     }
@@ -114,7 +110,7 @@
       isHovered = true;
       targetLift = 1;
       cube.style.transition = 'none';
-      media.style.transition = 'none';
+      if(shadow) shadow.style.transition = 'none';
       pimg.style.setProperty('--glow', '1');
       if(!rafId) rafId = requestAnimationFrame(renderLoop);
     });
@@ -133,10 +129,8 @@
       var profile = getProfile();
       targetRx = -ny * profile.maxTilt;
       targetRy = nx * profile.maxTilt;
-      targetPx = nx;
-      targetPy = ny;
 
-      // Specular highlight tracks cursor across glass face (0% to 100%)
+      // Specular highlight tracks cursor across glass face (5% to 95%)
       var sx = Math.max(5, Math.min(95, Math.round(x * 100)));
       var sy = Math.max(5, Math.min(95, Math.round(y * 100)));
       pimg.style.setProperty('--sx', sx + '%');
@@ -150,8 +144,6 @@
       targetRx = 0;
       targetRy = 0;
       targetLift = 0;
-      targetPx = 0;
-      targetPy = 0;
       pimg.style.setProperty('--glow', '0');
       pimg.style.setProperty('--sx', '30%');
       pimg.style.setProperty('--sy', '20%');
