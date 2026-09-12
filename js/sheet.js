@@ -76,13 +76,16 @@
     '.sh-th.vid::after{content:"▶";position:absolute;inset:0;display:flex;align-items:center;',
       'justify-content:center;background:rgba(0,7,45,.4);color:#fff;font-size:.85rem;}',
 
-    /* ── WIDGET 3, 4, 5: STANDALONE FLOATING iOS GLASS BOXES (Like Spotify / Apple widgets) ── */
+    /* ── WIDGET 3, 4, 5: STANDALONE FLOATING LIQUID GLASS BOXES ── */
     '.sh-box{position:relative !important;width:100% !important;box-sizing:border-box !important;',
-      'background:rgba(255,255,255,.92) !important;backdrop-filter:blur(24px) saturate(180%) !important;',
-      '-webkit-backdrop-filter:blur(24px) saturate(180%) !important;',
-      'border:1.5px solid rgba(255,255,255,.95) !important;border-radius:24px !important;',
-      'padding:1.15rem 1.25rem !important;',
-      'box-shadow:0 14px 34px -10px rgba(0,7,45,.18), 0 2px 8px rgba(0,7,45,.04), inset 0 1px 0 #FFFFFF !important;margin:0 !important;}',
+      'background:linear-gradient(135deg, rgba(255,255,255,0.76) 0%, rgba(255,255,255,0.48) 100%) !important;',
+      'backdrop-filter:blur(32px) saturate(190%) !important;',
+      '-webkit-backdrop-filter:blur(32px) saturate(190%) !important;',
+      'border:1px solid rgba(255,255,255,0.85) !important;border-top:1.5px solid #FFFFFF !important;',
+      'border-radius:24px !important;padding:1.15rem 1.25rem !important;overflow:hidden !important;',
+      'box-shadow:0 18px 40px -10px rgba(0,7,45,.14), 0 2px 6px rgba(0,7,45,.03), inset 0 1.5px 1px #FFFFFF, inset 0 -1px 1px rgba(0,7,45,.03) !important;margin:0 !important;}',
+    '.sh-box::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;',
+      'background:linear-gradient(125deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.06) 45%, transparent 60%);}',
 
     '.sh-verified{display:flex;align-items:center;gap:.45rem;font-family:var(--f-mono,monospace);',
       'font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#5A6072);font-weight:600;}',
@@ -112,7 +115,7 @@
       'text-transform:uppercase;color:var(--ink,#00072D);font-weight:700;cursor:pointer;background:none;border:none;}',
     '.sh-acc-btn .chev{transition:transform .25s;font-size:.65rem;}',
     '.sh-acc-btn.open .chev{transform:rotate(180deg);}',
-    '.sh-acc-content{display:none;padding:0 1.25rem 1.05rem;border-top:1px solid var(--line,#E4E4D8);}',
+    '.sh-acc-content{display:none;padding:0 1.25rem 1.05rem;border-top:1px solid rgba(0,7,45,.07);}',
     '.sh-acc-content.open{display:block;}',
     '.sh-spec-row{display:flex;justify-content:space-between;gap:1rem;font-size:.78rem;',
       'padding:.45rem 0;border-bottom:1px solid rgba(0,7,45,.06);}',
@@ -121,13 +124,15 @@
       'color:var(--muted,#5A6072);text-transform:uppercase;}',
     '.sh-spec-v{color:var(--ink,#00072D);font-weight:500;}',
 
-    /* ── WIDGET 6: STANDALONE ACTIONS & TRUST WIDGET ── */
+    /* ── WIDGET 6: STANDALONE LIQUID GLASS ACTIONS & TRUST WIDGET ── */
     '.sh-action-widget{display:flex !important;flex-direction:column !important;gap:.85rem !important;',
       'width:100% !important;box-sizing:border-box !important;}',
     '.sh-actions{display:flex;gap:.7rem;align-items:stretch;width:100%;}',
     '.sh-qty-pill{display:flex;align-items:center;flex:none;overflow:hidden;',
-      'background:rgba(255,255,255,.95);border:1px solid var(--line,#E4E4D8);border-radius:999px;',
-      'box-shadow:0 4px 14px rgba(0,7,45,.08);}',
+      'background:linear-gradient(135deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.56) 100%);',
+      'backdrop-filter:blur(24px) saturate(190%);-webkit-backdrop-filter:blur(24px) saturate(190%);',
+      'border:1px solid rgba(255,255,255,0.85);border-radius:999px;',
+      'box-shadow:0 6px 18px -4px rgba(0,7,45,.10), inset 0 1px 0 #FFFFFF;}',
     '.sh-qty-pill button{width:38px;height:46px;font-size:1.1rem;color:var(--ink,#00072D);',
       'background:transparent;border:none;cursor:pointer;transition:background .15s;}',
     '.sh-qty-pill button:hover{background:rgba(0,7,45,.06);}',
@@ -138,17 +143,22 @@
       'font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;cursor:pointer;',
       'box-shadow:0 12px 26px -6px rgba(0,7,45,.38);transition:all .2s;}',
     '.sh-btn-buy:hover{background:var(--ink-soft,#2A3358);transform:translateY(-1px);}',
-    '.sh-btn-bag{flex:1;min-height:46px;border-radius:999px;background:rgba(255,255,255,.92);',
-      'color:var(--ink,#00072D);border:1px solid var(--line,#E4E4D8);font-family:var(--f-mono,monospace);',
+    '.sh-btn-bag{flex:1;min-height:46px;border-radius:999px;',
+      'background:linear-gradient(135deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.62) 100%);',
+      'backdrop-filter:blur(24px) saturate(190%);-webkit-backdrop-filter:blur(24px) saturate(190%);',
+      'color:var(--ink,#00072D);border:1px solid rgba(255,255,255,0.9);font-family:var(--f-mono,monospace);',
       'font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;cursor:pointer;',
-      'box-shadow:0 4px 14px rgba(0,7,45,.08);transition:all .2s;}',
+      'box-shadow:0 8px 22px -6px rgba(0,7,45,.12), inset 0 1px 0 #FFFFFF;transition:all .2s;}',
     '.sh-btn-bag:hover{background:#FFFFFF;border-color:var(--ink,#00072D);}',
 
     /* trust badges */
     '.sh-trust{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:.2rem;',
       'font-family:var(--f-mono,monospace);font-size:.62rem;color:var(--muted,#5A6072);}',
-    '.sh-trust li{display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.65);backdrop-filter:blur(12px);',
-      'padding:.45rem .65rem;border-radius:12px;border:1px solid rgba(255,255,255,.8);box-shadow:0 2px 8px rgba(0,7,45,.04);}',
+    '.sh-trust li{display:flex;align-items:center;gap:.4rem;',
+      'background:linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.45) 100%);',
+      'backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);',
+      'padding:.45rem .65rem;border-radius:12px;border:1px solid rgba(255,255,255,0.8);',
+      'box-shadow:0 4px 14px rgba(0,7,45,.05), inset 0 1px 0 #FFFFFF;}',
     '.sh-trust li span{color:var(--live,#1F9268);font-weight:700;}',
 
     /* zoom */

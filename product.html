@@ -56,16 +56,22 @@ button{ font:inherit; color:inherit; background:none; border:none; cursor:pointe
   }
 }
 
-/* frosted glass card module */
+/* liquid glass card module */
 .prod-card{
   position:relative;
-  background:rgba(255,255,255,.8);
-  backdrop-filter:blur(24px) saturate(180%);
-  -webkit-backdrop-filter:blur(24px) saturate(180%);
-  border:1px solid rgba(255,255,255,.9);
+  background:linear-gradient(135deg, rgba(255,255,255,0.76) 0%, rgba(255,255,255,0.48) 100%);
+  backdrop-filter:blur(32px) saturate(190%);
+  -webkit-backdrop-filter:blur(32px) saturate(190%);
+  border:1px solid rgba(255,255,255,0.85);
+  border-top:1.5px solid #FFFFFF;
   border-radius:24px;
   padding:clamp(1.2rem, 3vw, 1.6rem);
-  box-shadow:0 12px 36px -12px rgba(0,7,45,.1), inset 0 1px 0 #FFFFFF;
+  box-shadow:0 18px 40px -10px rgba(0,7,45,.14), 0 2px 6px rgba(0,7,45,.03), inset 0 1.5px 1px #FFFFFF, inset 0 -1px 1px rgba(0,7,45,.03);
+  overflow:hidden;
+}
+.prod-card::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(125deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.06) 45%, transparent 60%);
 }
 
 /* header */
@@ -286,10 +292,16 @@ header{
 }
 .qty{
   display:flex; align-items:center; flex:none; overflow:hidden;
-  border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.9);
+  border:1px solid rgba(255,255,255,0.85); border-top:1.5px solid #FFFFFF;
+  border-radius:999px;
+  background:linear-gradient(135deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.56) 100%);
+  backdrop-filter:blur(24px) saturate(190%);
+  -webkit-backdrop-filter:blur(24px) saturate(190%);
+  box-shadow:0 6px 18px -4px rgba(0,7,45,.10), inset 0 1px 0 #FFFFFF;
 }
 .qty button{
   width:44px; height:52px; font-size:1.1rem; color:var(--ink);
+  background:transparent; border:none; cursor:pointer;
   transition:background .2s; display:flex; align-items:center; justify-content:center;
 }
 .qty button:hover{ background:rgba(0,7,45,.06); }
@@ -309,14 +321,19 @@ header{
 }
 .cart{
   flex:1 1 140px; min-height:52px; border-radius:999px; padding:0 1.4rem;
-  background:rgba(255,255,255,.8); color:var(--ink); border:1px solid var(--line);
+  background:linear-gradient(135deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.62) 100%);
+  backdrop-filter:blur(24px) saturate(190%);
+  -webkit-backdrop-filter:blur(24px) saturate(190%);
+  color:var(--ink); border:1px solid rgba(255,255,255,0.9);
+  border-top:1.5px solid #FFFFFF;
   font-family:var(--f-mono); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase;
   font-weight:700; cursor:pointer; transition:all .25s ease;
-  box-shadow:var(--sh-chip);
+  box-shadow:0 8px 22px -6px rgba(0,7,45,.12), inset 0 1px 0 #FFFFFF;
   display:inline-flex; align-items:center; justify-content:center;
 }
 .cart:hover{
   background:#FFFFFF; border-color:var(--ink); transform:translateY(-2px);
+  box-shadow:0 12px 28px -6px rgba(0,7,45,.18);
 }
 
 .trust{
@@ -326,6 +343,11 @@ header{
 @media (max-width:540px){ .trust{ grid-template-columns:1fr; } }
 .trust li{
   display:flex; align-items:center; gap:.6rem;
+  background:linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.45) 100%);
+  backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%);
+  padding:.55rem .85rem; border-radius:14px;
+  border:1px solid rgba(255,255,255,0.8); border-top:1.5px solid #FFFFFF;
+  box-shadow:0 4px 14px rgba(0,7,45,.05), inset 0 1px 0 #FFFFFF;
   font-family:var(--f-mono); font-size:.66rem; letter-spacing:.04em; color:var(--muted);
 }
 .trust .ti{ color:var(--live); font-weight:700; font-size:.8rem; }
@@ -705,6 +727,21 @@ header{
   });
   document.getElementById('cartBtn').addEventListener('click', function(){
     if(window.addToCart) window.addToCart(p, q);
+  });
+
+  /* live-products.js sync */
+  document.addEventListener('products:updated', function(){
+    var fresh = PRODUCTS.find(function(x){ return x.id === id; });
+    if(!fresh) return;
+    p = fresh;
+    var prEl = document.querySelector('.price-main');
+    if(prEl) prEl.textContent = fmt(p.price);
+    var nameEl = document.querySelector('.prod-card h1');
+    if(nameEl) nameEl.textContent = p.name;
+    var stockEl = document.getElementById('stockline');
+    if(stockEl && p.stock != null){
+      stockEl.textContent = p.stock > 0 ? (p.stock <= 5 ? 'Only ' + p.stock + ' left' : '✓ In stock · ships in 1–2 days') : 'Sold out';
+    }
   });
 })();
 </script>

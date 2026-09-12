@@ -67,15 +67,17 @@
     shelf.appendChild(shelfDeck);
     shelf.appendChild(shelfLip);
 
-    // Assemble the 3D unit
+    // Assemble the 3D product unit (product floats above shelf on hover)
     cube.appendChild(mediaContainer);
-    cube.appendChild(contactShadow);
-    cube.appendChild(shelf);
 
-    // Clear and assemble pimg
+    // Shelf stays 100% unmovable and permanently anchored to the base
+    shelf.appendChild(contactShadow);
+
+    // Clear and assemble pimg (floor shadow -> stationary shelf -> floating product cube)
     pimg.innerHTML = '';
     badges.forEach(function(b){ pimg.appendChild(b); });
     pimg.appendChild(floorShadow);
+    pimg.appendChild(shelf);
     pimg.appendChild(cube);
 
     // Attach smooth pointer interaction if fine pointer & motion allowed

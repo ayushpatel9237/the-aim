@@ -25,7 +25,7 @@ const PRODUCTS = [
     "sku": "AIM-003",
     "name": "Type-C Docking Station Stand",
     "category": "Desk",
-    "price": 1499,
+    "price": 2999,
     "desc": "Phone stand with a built-in Type-C hub — charge and connect while you work.",
     "hero": "images/products/12_typec_docking_station_stand_hero.webp",
     "gallery": [

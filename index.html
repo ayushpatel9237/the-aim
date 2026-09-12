@@ -569,6 +569,23 @@ if(filterPills){
 
 renderSelection('All');
 
+/* live-products.js merges database prices in asynchronously and then fires this.
+   Re-render the grid and hero stage so prices are always 100% in sync with the database and modal sheet. */
+document.addEventListener('products:updated', function(){
+  renderSelection(currentCat);
+  FEATURED = [
+    { id: '22_butterfly_phone_stand', video: 'videos/Butterfly Phone Stand.MP4', poster: 'images/products/22_butterfly_phone_stand_hero.webp' },
+    { id: '11_magnetic_pocket_phone_stand', video: 'videos/Magnetic Pocket Phone Stand.MP4', poster: 'images/products/11_magnetic_pocket_phone_stand_hero.webp' },
+    { id: '26_foldable_bluetooth_keyboard', video: 'videos/Foldable Bluetooth Keyboard.MP4', poster: 'images/products/26_foldable_bluetooth_keyboard_hero.webp' },
+    { id: '12_typec_docking_station_stand', video: 'videos/Type-C Docking Station Stand.MP4', poster: 'images/products/12_typec_docking_station_stand_hero.webp' }
+  ].map(function(item){
+    var p = byId(item.id);
+    if(!p) return null;
+    return Object.assign({}, p, { featuredVideo: item.video, featuredPoster: item.poster });
+  }).filter(Boolean);
+  if(typeof show === 'function' && typeof idx !== 'undefined') show(idx);
+});
+
 /* header + reveal */
 var hd = document.getElementById('hd');
 window.addEventListener('scroll', function(){
