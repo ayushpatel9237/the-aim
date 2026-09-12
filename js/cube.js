@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════
-   THE AIM — LIQUID GLASS 3D CUBE ENGINE
-   Auto-upgrades flat .pimg media wells into unified optical
-   glass cubes with cursor-reactive specular highlights and
-   seamless 1-piece 3D physics.
+   THE AIM — REAL SHOWCASE SHELF ENGINE
+   Auto-upgrades product cards into boutique display shelves
+   where the product sits proudly on a physical shelf plinth,
+   with realistic contact shadows and glare-free photography.
    ═══════════════════════════════════════════════════════════════ */
 (function(){
   'use strict';
@@ -10,20 +10,20 @@
   var isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hasFinePointer = window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 
-  // Glass profile settings based on <html data-glass="subtle|balanced|bold">
+  // Shelf profile settings based on <html data-glass="subtle|balanced|bold">
   function getProfile(){
     var mode = (document.documentElement.getAttribute('data-glass') || 'balanced').toLowerCase();
     if(mode === 'subtle'){
-      return { maxTilt: 4.0, lift: 6, scale: 1.015 };
+      return { maxTilt: 3.5, lift: 5, scale: 1.015 };
     }
     if(mode === 'bold'){
-      return { maxTilt: 9.0, lift: 10, scale: 1.03 };
+      return { maxTilt: 7.5, lift: 9, scale: 1.025 };
     }
     // Default: balanced
-    return { maxTilt: 6.5, lift: 8, scale: 1.022 };
+    return { maxTilt: 5.0, lift: 7, scale: 1.020 };
   }
 
-  // Upgrade a single .pimg element into an .aim-cube
+  // Upgrade a single .pimg element into an .aim-cube showcase shelf
   function upgradePimg(pimg){
     if(!pimg || pimg.dataset.cubeInit === 'true') return;
 
@@ -34,41 +34,53 @@
     pimg.dataset.cubeInit = 'true';
     pimg.classList.add('aim-cube');
 
-    // Extract badges or overlays to preserve them above the cube
+    // Extract badges or overlays to preserve them above the showcase
     var badges = Array.prototype.slice.call(pimg.querySelectorAll('.vbadge, .sku'));
 
-    // Create shadow element
-    var shadow = document.createElement('div');
-    shadow.className = 'aim-cube__shadow';
+    // 1. Ambient Floor shadow underneath the whole shelf
+    var floorShadow = document.createElement('div');
+    floorShadow.className = 'aim-cube__shadow';
 
-    // Create cube 3D body
+    // 2. The 3D body container (Product + Shelf move as ONE)
     var cube = document.createElement('div');
     cube.className = 'aim-cube__cube';
 
-    // Create media container (flush, 1-piece with glass)
+    // 3. Clean product media container (NO light effect / glare)
     var mediaContainer = document.createElement('div');
     mediaContainer.className = 'aim-cube__media';
-
-    // Move media inside media container
     mediaContainer.appendChild(mediaEl);
 
-    // Create optical glass front face
-    var front = document.createElement('div');
-    front.className = 'aim-cube__front';
+    // 4. Contact shadow directly under the product, grounding it on the shelf
+    var contactShadow = document.createElement('div');
+    contactShadow.className = 'aim-cube__contact-shadow';
 
+    // 5. The Real Display Shelf Underneath
+    var shelf = document.createElement('div');
+    shelf.className = 'aim-cube__shelf';
+
+    var shelfDeck = document.createElement('div');
+    shelfDeck.className = 'aim-cube__shelf-deck';
+
+    var shelfLip = document.createElement('div');
+    shelfLip.className = 'aim-cube__shelf-lip';
+
+    shelf.appendChild(shelfDeck);
+    shelf.appendChild(shelfLip);
+
+    // Assemble the 3D unit
     cube.appendChild(mediaContainer);
-    cube.appendChild(front);
+    cube.appendChild(contactShadow);
+    cube.appendChild(shelf);
 
     // Clear and assemble pimg
     pimg.innerHTML = '';
-    // Append badges back if any
     badges.forEach(function(b){ pimg.appendChild(b); });
-    pimg.appendChild(shadow);
+    pimg.appendChild(floorShadow);
     pimg.appendChild(cube);
 
-    // Attach mouse / pointer interaction if not reduced motion & has fine pointer
+    // Attach smooth pointer interaction if fine pointer & motion allowed
     if(!isReduced && hasFinePointer){
-      bindInteraction(pimg, cube, shadow);
+      bindInteraction(pimg, cube, floorShadow);
     }
   }
 
@@ -83,8 +95,8 @@
       if(!isHovered && Math.abs(currentRx) < 0.05 && Math.abs(currentRy) < 0.05 && Math.abs(currentLift) < 0.05){
         cube.style.transform = '';
         if(shadow) shadow.style.transform = '';
-        cube.style.transition = 'transform .45s cubic-bezier(.16,1,.3,1)';
-        if(shadow) shadow.style.transition = 'transform .45s cubic-bezier(.16,1,.3,1)';
+        cube.style.transition = 'transform .42s cubic-bezier(.16,1,.3,1)';
+        if(shadow) shadow.style.transition = 'transform .42s cubic-bezier(.16,1,.3,1)';
         rafId = null;
         return;
       }
@@ -96,22 +108,21 @@
 
       var profile = getProfile();
 
-      // 3D rotation + hover lift — image and glass move together as ONE solid piece
-      cube.style.transform = 'translateY(' + (-currentLift * profile.lift) + 'px) translateZ(' + (currentLift * 12) + 'px) rotateX(' + currentRx.toFixed(2) + 'deg) rotateY(' + currentRy.toFixed(2) + 'deg) scale(' + (1 + currentLift * (profile.scale - 1)) + ')';
+      // Product and shelf elevate and tilt together in 3D
+      cube.style.transform = 'translateY(' + (-currentLift * profile.lift) + 'px) translateZ(' + (currentLift * 10) + 'px) rotateX(' + currentRx.toFixed(2) + 'deg) rotateY(' + currentRy.toFixed(2) + 'deg) scale(' + (1 + currentLift * (profile.scale - 1)) + ')';
 
       if(shadow){
-        shadow.style.transform = 'translateY(' + (currentLift * 6) + 'px) scale(' + (1 + currentLift * 0.03) + ')';
+        shadow.style.transform = 'translateY(' + (currentLift * 4) + 'px) scale(' + (1 + currentLift * 0.04) + ')';
       }
 
       rafId = requestAnimationFrame(renderLoop);
     }
 
-    card.addEventListener('pointerenter', function(e){
+    card.addEventListener('pointerenter', function(){
       isHovered = true;
       targetLift = 1;
       cube.style.transition = 'none';
       if(shadow) shadow.style.transition = 'none';
-      pimg.style.setProperty('--glow', '1');
       if(!rafId) rafId = requestAnimationFrame(renderLoop);
     });
 
@@ -122,19 +133,13 @@
       var x = (e.clientX - r.left) / r.width;
       var y = (e.clientY - r.top) / r.height;
 
-      // Clamped normalized coords from -1 to 1
+      // Clamped normalized coords (-1 to 1)
       var nx = Math.max(-1, Math.min(1, (x - 0.5) * 2));
       var ny = Math.max(-1, Math.min(1, (y - 0.5) * 2));
 
       var profile = getProfile();
       targetRx = -ny * profile.maxTilt;
       targetRy = nx * profile.maxTilt;
-
-      // Specular highlight tracks cursor across glass face (5% to 95%)
-      var sx = Math.max(5, Math.min(95, Math.round(x * 100)));
-      var sy = Math.max(5, Math.min(95, Math.round(y * 100)));
-      pimg.style.setProperty('--sx', sx + '%');
-      pimg.style.setProperty('--sy', sy + '%');
 
       if(!rafId) rafId = requestAnimationFrame(renderLoop);
     });
@@ -144,9 +149,6 @@
       targetRx = 0;
       targetRy = 0;
       targetLift = 0;
-      pimg.style.setProperty('--glow', '0');
-      pimg.style.setProperty('--sx', '30%');
-      pimg.style.setProperty('--sy', '20%');
       if(!rafId) rafId = requestAnimationFrame(renderLoop);
     });
   }
