@@ -45,16 +45,17 @@ create policy "curator requests own payout" on curator_payouts
 -- curators can never update/delete payouts (only admin marks paid)
 revoke update, delete on curator_payouts from anon, authenticated;
 
--- ── HOLE 4: orders must not be writable from the browser ──
+-- ── HOLE 4: orders must not be insertable from the browser ──
 -- Orders are created only by the secure Edge Function (service role).
-revoke insert, update, delete on orders from anon, authenticated;
+-- Admins can update orders (for fulfillment tracking and status).
+revoke insert, delete on orders from anon, authenticated;
+grant select, update on orders to authenticated;
 
 -- ── HOLE 5: products must not be editable by non-admins ──
-revoke insert, update, delete on products from anon, authenticated;
--- (the "admin writes products" policy already allows admin through)
-
--- ── Least privilege: public may only READ what it needs ──
-grant select on products to anon, authenticated;
+-- RLS ensures only users with app_metadata role='admin' can write.
+-- Table privileges must remain granted to authenticated so RLS can run.
+grant select, insert, update, delete on products to authenticated;
+grant select on products to anon;
 
 -- ── Make the vote/poll data safe if you add it later ──
 -- (placeholder note: any future public-write table needs its own checks)
