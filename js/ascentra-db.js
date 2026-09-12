@@ -74,13 +74,37 @@ window.Ascentra = (function(){
 
   /* ── admin: products ── */
   async function allProducts(){
-    var { data } = await sb.from('products').select('*').order('id');
-    return data || [];
+    try {
+      var { data, error } = await sb.from('products').select('*').order('id');
+      if(error) throw error;
+      return data || [];
+    } catch(e){
+      console.warn('allProducts failed:', e);
+      return [];
+    }
   }
   async function saveProduct(p){
     if(!(await isAdmin())) throw new Error('Admins only');
     if(!p.id || !p.name || !(Number(p.price) > 0)) throw new Error('Invalid product');
-    return sb.from('products').upsert(p).select();
+    var payload = Object.assign({}, p);
+    if(payload.status !== undefined && payload.active === undefined){
+      payload.active = (payload.status === 'active');
+    }
+    // Attempt upsert with retry if columns are not found in the Supabase schema cache
+    var maxRetries = 10;
+    while(maxRetries-- > 0){
+      var res = await sb.from('products').upsert(payload).select();
+      if(!res.error) return res;
+      var msg = (res.error.message || '') + ' ' + (res.error.details || '');
+      var match = msg.match(/Could not find the '([^']+)' column/i)
+               || msg.match(/column "?([^"'\s]+)"? of relation "products" does not exist/i);
+      if(match && match[1] && payload.hasOwnProperty(match[1])){
+        delete payload[match[1]];
+        continue;
+      }
+      return res;
+    }
+    return sb.from('products').upsert(payload).select();
   }
   async function deleteProduct(id){
     if(!(await isAdmin())) throw new Error('Admins only');
@@ -95,6 +119,11 @@ window.Ascentra = (function(){
     var ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
     var path = 'p_' + Date.now() + '_' + Math.floor(Math.random()*9999) + '.' + ext;
     var up = await sb.storage.from('product-images').upload(path, file, { upsert:false });
+    if(up.error && /bucket|not found/i.test(up.error.message || '')){
+      var mk = await sb.storage.createBucket('product-images', { public:true, fileSizeLimit: 5242880 });
+      if(mk.error && !/exist/i.test(mk.error.message || '')) throw mk.error;
+      up = await sb.storage.from('product-images').upload(path, file, { upsert:false });
+    }
     if(up.error) throw up.error;
     var pub = sb.storage.from('product-images').getPublicUrl(path);
     return pub.data.publicUrl;
@@ -158,8 +187,16 @@ window.Ascentra = (function(){
   }
   /* ── admin: what is running out ── */
   async function lowStock(){
-    var { data } = await sb.from('low_stock').select('*');
-    return data || [];
+    try {
+      var res = await sb.from('low_stock').select('*');
+      if(!res.error && res.data) return res.data;
+    } catch(e){}
+    try {
+      var pRes = await sb.from('products').select('*').lte('stock', 10).order('stock');
+      return pRes.data || [];
+    } catch(e){
+      return [];
+    }
   }
 
   return {

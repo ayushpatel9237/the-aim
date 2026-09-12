@@ -116,7 +116,7 @@
     /* 1 ── database reachable */
     var products = [];
     try{
-      var r = await sb.from('products').select('id,name,stock,price,mrp,active,category').limit(500);
+      var r = await sb.from('products').select('*').limit(500);
       if(r.error) throw r.error;
       products = r.data || [];
       setCheck('db','ok', products.length + ' products readable.');
@@ -223,7 +223,7 @@
   async function loadStockTable(){
     var wrap = el('opsStockWrap'); if(!wrap) return;
     try{
-      var r = await sb.from('products').select('id,name,stock,category,active').order('stock',{ascending:true}).limit(200);
+      var r = await sb.from('products').select('*').order('stock',{ascending:true}).limit(200);
       if(r.error) throw r.error;
       var rows = r.data || [];
       if(!rows.length){ wrap.innerHTML = '<div class="empty-note">No products.</div>'; return; }
@@ -500,7 +500,7 @@
     };
 
     try{
-      var pr = await sb.from('products').select('id,name,active,stock,price,mrp,images');
+      var pr = await sb.from('products').select('*');
       var or = await sb.from('orders').select('id,status,total,created_at,razorpay_payment_id');
       var products = pr.data || [], orders = or.data || [];
 
@@ -1144,9 +1144,17 @@
     return true;
   }
 
+  window.initAdminOps = build;
+
   /* the admin builds its shell asynchronously after sign-in, so wait for it */
   var tries = 0;
   var timer = setInterval(function(){
-    if(build() || ++tries > 100) clearInterval(timer);
+    if(build() || ++tries > 150) clearInterval(timer);
   }, 200);
+
+  if(A && A.onAuth){
+    A.onAuth(function(user){
+      if(user) setTimeout(build, 250);
+    });
+  }
 })();

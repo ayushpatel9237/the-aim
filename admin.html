@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Admin — The AIM</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#000000"
+<meta name="theme-color" content="#000000" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -288,7 +288,6 @@ table tr:hover td{ background:rgba(255,255,255,.03) !important; }
 .trk.crr{ width:110px; }
 .trk:focus{ border-color:#FFF; }
 @media (max-width:600px){ .ord-act{ gap:.4rem; } .trk, .trk.crr{ width:100%; } }
-</style></head><body>' +
 </style>
 <script src="js/transitions.js"></script>
 <link rel="stylesheet" href="css/responsive.css">
@@ -489,14 +488,17 @@ table tr:hover td{ background:rgba(255,255,255,.03) !important; }
       if(np) np.addEventListener('click', function(){ openEditor({}); });
     }, 100);
     wireProductForm();
+    if(window.initAdminOps) window.initAdminOps();
   }
 
   async function loadDashboard(){
     var orders = await A.allOrders();
     var curators = await A.allCurators();
+    var payouts = await A.allPayouts();
     var paidOrders = orders.filter(function(o){ return ['paid','confirmed','shipped','delivered'].indexOf(o.status)>-1; });
     var revenue = paidOrders.reduce(function(s,o){ return s + Number(o.total||0); }, 0);
     var pendingCur = curators.filter(function(c){ return c.status==='pending'; }).length;
+    var pendingPay = (payouts||[]).filter(function(p){ return p.status==='requested'; }).length;
     document.getElementById('statRow').innerHTML =
       '<div class="scard"><div class="l">Total orders</div><div class="v">'+orders.length+'</div></div>' +
       '<div class="scard"><div class="l">Revenue</div><div class="v">'+fmt(revenue)+'</div></div>' +
@@ -504,6 +506,8 @@ table tr:hover td{ background:rgba(255,255,255,.03) !important; }
       '<div class="scard"><div class="l">Pending approvals</div><div class="v">'+pendingCur+'</div></div>';
     var cc = document.getElementById('cntCur');
     if(cc){ if(pendingCur){ cc.textContent = pendingCur; cc.style.display='inline-flex'; } else cc.style.display='none'; }
+    var cp = document.getElementById('cntPay');
+    if(cp){ if(pendingPay){ cp.textContent = pendingPay; cp.style.display='inline-flex'; } else cp.style.display='none'; }
     var newOrders = orders.filter(function(o){ return ['paid','confirmed'].indexOf(o.status)>-1; }).length;
     var co = document.getElementById('cntOrders');
     if(co){ if(newOrders){ co.textContent = newOrders; co.style.display='inline-flex'; } else co.style.display='none'; }
@@ -901,6 +905,59 @@ table tr:hover td{ background:rgba(255,255,255,.03) !important; }
     }); });
   }
 
+  /* ── CURATORS ── */
+  async function loadCurators(){
+    var rows = await A.allCurators();
+    var wrap = document.getElementById('curWrap');
+    if(!wrap) return;
+    if(!rows.length){ wrap.innerHTML = '<div class="empty-state"><div class="ico">◉</div><p>No curators yet</p></div>'; return; }
+    wrap.innerHTML = '<table><thead><tr><th>Name</th><th>Code</th><th>Sales</th><th>Earned</th><th>Status</th><th>Actions</th></tr></thead><tbody>' +
+      rows.map(function(c){
+        var pill = c.status==='active'?'<span class="pill pill-live">Active</span>':
+                   c.status==='pending'?'<span class="pill pill-wait">Pending</span>':
+                   c.status==='rejected'?'<span class="pill pill-off">Rejected</span>':
+                   '<span class="pill pill-off">'+c.status+'</span>';
+        var actions = '';
+        if(c.status==='pending') actions = '<button class="mini" data-ca="approve" data-cid="'+c.id+'">Approve</button><button class="mini danger" data-ca="reject" data-cid="'+c.id+'" style="margin-left:.4rem">Reject</button>';
+        else if(c.status==='active') actions = '<button class="mini danger" data-ca="suspend" data-cid="'+c.id+'">Suspend</button>';
+        else actions = '<button class="mini" data-ca="approve" data-cid="'+c.id+'">Activate</button>';
+        return '<tr><td>'+c.name+'<br><span style="color:var(--faint);font-size:.72rem">'+c.email+'</span></td>' +
+          '<td class="mono">'+c.ref_code+'</td><td class="mono">'+(c.total_sales||0)+'</td>' +
+          '<td class="mono" style="color:var(--gold-hi)">'+fmt(c.total_earned||0)+'</td>' +
+          '<td>'+pill+'</td><td>'+actions+'</td></tr>';
+      }).join('') + '</tbody></table>';
+    wrap.querySelectorAll('[data-ca]').forEach(function(b){
+      b.addEventListener('click', async function(){
+        var map = { approve:'active', reject:'rejected', suspend:'suspended' };
+        await A.setCuratorStatus(b.dataset.cid, map[b.dataset.ca]);
+        loadCurators(); loadDashboard();
+      });
+    });
+  }
+
+  /* ── PAYOUTS ── */
+  async function loadPayouts(){
+    var rows = await A.allPayouts();
+    var wrap = document.getElementById('payWrap');
+    if(!wrap) return;
+    if(!rows.length){ wrap.innerHTML = '<div class="empty-state"><div class="ico">◇</div><p>No payout requests</p></div>'; return; }
+    wrap.innerHTML = '<table><thead><tr><th>Curator</th><th>Amount</th><th>Method</th><th>Requested</th><th>Status</th><th>Actions</th></tr></thead><tbody>' +
+      rows.map(function(p){
+        var who = p.curators ? (p.curators.name+' ('+p.curators.ref_code+')') : (p.curator_id ? p.curator_id.slice(0,8) : '—');
+        var pill = p.status==='paid'?'<span class="pill pill-live">✓ Paid</span>':'<span class="pill pill-wait">Requested</span>';
+        var act = p.status==='requested' ? '<button class="mini" data-pay="'+p.id+'">Mark paid</button>' : '';
+        return '<tr><td>'+who+'</td><td class="mono" style="color:var(--gold-hi)">'+fmt(p.amount)+'</td>' +
+          '<td class="mono" style="font-size:.72rem">'+(p.method||'—')+'</td>' +
+          '<td class="mono">'+new Date(p.requested_at).toLocaleDateString('en-IN')+'</td>' +
+          '<td>'+pill+'</td><td>'+act+'</td></tr>';
+      }).join('') + '</tbody></table>';
+    wrap.querySelectorAll('[data-pay]').forEach(function(b){
+      b.addEventListener('click', async function(){
+        if(!confirm('Mark this payout as paid? Do this only after you have sent the money.')) return;
+        await A.markPayoutPaid(b.dataset.pay); loadPayouts(); loadDashboard();
+      });
+    });
+  }
 
   /* ══════════════════════════════════════════════════════
      FULL PRODUCT EDITOR — opens with everything already in it
